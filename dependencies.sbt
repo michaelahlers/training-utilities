@@ -7,5 +7,8 @@ ThisBuild / libraryDependencies ++=
     "io.circe" %% "circe-parser" % "0.13.0" ::
     Nil
 
-//libraryDependencies +=
-//  "org.xerial" %% "sqlite-jdbc" % "3.39.2.1"
+libraryDependencies +=
+  "org.xerial" % "sqlite-jdbc" % "3.44.1.0"
+
+libraryDependencies +=
+  "com.github.pathikrit" %% "better-files" % "3.9.2"
