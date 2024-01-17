@@ -12,3 +12,9 @@ libraryDependencies +=
 
 libraryDependencies +=
   "com.github.pathikrit" %% "better-files" % "3.9.2"
+
+libraryDependencies +=
+  "org.scala-lang.modules" %% "scala-xml" % "2.2.0"
+
+libraryDependencies +=
+  "com.lihaoyi" %% "requests" % "0.8.0"
