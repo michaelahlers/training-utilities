@@ -1,4 +1,4 @@
-package trainerroad.workout
+package trainerroad.schema.web
 
 import cats.data.NonEmptyList
 
