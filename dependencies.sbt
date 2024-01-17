@@ -21,3 +21,6 @@ libraryDependencies +=
 
 libraryDependencies +=
   "com.lihaoyi" %% "scalatags" % "0.12.0"
+
+libraryDependencies +=
+  "com.garmin" % "fit" % "21.126.0"
