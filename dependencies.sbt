@@ -18,3 +18,6 @@ libraryDependencies +=
 
 libraryDependencies +=
   "com.lihaoyi" %% "requests" % "0.8.0"
+
+libraryDependencies +=
+  "com.lihaoyi" %% "scalatags" % "0.12.0"
