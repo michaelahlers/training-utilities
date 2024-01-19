@@ -2,10 +2,10 @@ package zwift.schema.desktop
 
 import scala.xml.encoding.XmlEncoder
 import scala.xml.encoding.syntax._
-import zwift.schema.desktop.workout_file.Step
-import zwift.schema.desktop.workout_file.Tag
+import zwift.schema.desktop.WorkoutFile.Step
+import zwift.schema.desktop.WorkoutFile.Tag
 
-case class workout_file(
+case class WorkoutFile(
   author: String,
   name: String,
   description: String,
@@ -14,12 +14,12 @@ case class workout_file(
   workout: Seq[Step],
 )
 
-object workout_file {
+object WorkoutFile {
 
   case class Tag(name: String)
   object Tag {
     implicit val xmlEncoder: XmlEncoder[Tag] = tag =>
-      <tag name ={tag.name} />
+      <tag name={tag.name} />
   }
 
   case class workout(
@@ -30,15 +30,15 @@ object workout_file {
   object Step {
 
     case class SteadyState(
-      Duration: Int,
-      Power: Float,
+      duration: Int,
+      power: Float,
     ) extends Step
 
     object SteadyState {
       implicit val xmlEncoder: XmlEncoder[SteadyState] = step =>
         <SteadyState
-          Duration={step.Duration.toString}
-          Power={step.Power.toString} />
+          Duration={step.duration.toString}
+          Power={step.power.toString} />
     }
 
     implicit val xmlEncoder: XmlEncoder[Step] = {
@@ -47,7 +47,7 @@ object workout_file {
 
   }
 
-  implicit val xmlEncoder: XmlEncoder[workout_file] = file =>
+  implicit val xmlEncoder: XmlEncoder[WorkoutFile] = file =>
     <workout_file>
       <author>{file.author}</author>
       <name>{file.name}</name>
