@@ -2,7 +2,6 @@ package zwift.schema.desktop
 
 import scala.xml.encoding.XmlEncoder
 import scala.xml.encoding.syntax._
-import zwift.schema.desktop.WorkoutFile.Step
 import zwift.schema.desktop.WorkoutFile.Tag
 
 case class WorkoutFile(
@@ -11,7 +10,7 @@ case class WorkoutFile(
   description: String,
   sportType: String,
   tags: Seq[Tag],
-  workout: Seq[Step],
+  workout: Seq[WorkoutStep],
 )
 
 object WorkoutFile {
@@ -23,29 +22,8 @@ object WorkoutFile {
   }
 
   case class workout(
-    steps: Step,
+    steps: WorkoutStep,
   )
-
-  sealed trait Step
-  object Step {
-
-    case class SteadyState(
-      duration: Int,
-      power: Float,
-    ) extends Step
-
-    object SteadyState {
-      implicit val xmlEncoder: XmlEncoder[SteadyState] = step =>
-        <SteadyState
-          Duration={step.duration.toString}
-          Power={step.power.toString} />
-    }
-
-    implicit val xmlEncoder: XmlEncoder[Step] = {
-      case step: SteadyState => step.asXml
-    }
-
-  }
 
   implicit val xmlEncoder: XmlEncoder[WorkoutFile] = file =>
     <workout_file>
