@@ -10,7 +10,19 @@ import trainerroad.schema.web.WorkoutData
 private[workout] case class IntervalDetails(
   interval: IntervalData,
   details: NonEmptyChain[WorkoutData],
-)
+) {
+  import interval.end
+  import interval.start
+
+  require(
+    details.forall { detail =>
+      detail.centiseconds >= interval.start * 100 &&
+      detail.centiseconds < interval.end * 100
+    },
+    s"Workout details must be within interval's start ($start, inclusive) and end ($end, exclusive).",
+  )
+
+}
 
 private[workout] object IntervalDetails {
 
