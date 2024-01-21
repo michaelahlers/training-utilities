@@ -19,7 +19,7 @@ private[workout] case class IntervalDetails(
       detail.centiseconds >= interval.start * 100 &&
       detail.centiseconds < interval.end * 100
     },
-    s"Workout details must be within interval's start ($start, inclusive) and end ($end, exclusive).",
+    s"All timestamps must be within centisecond interval [${start * 100}, ${end * 100}).",
   )
 
 }
@@ -29,14 +29,22 @@ private[workout] object IntervalDetails {
   def fromSeq(
     interval: IntervalData,
     details: Seq[WorkoutData],
-  ): Validated[Error, IntervalDetails] = NonEmptyChain.fromSeq(details
-    .takeWhile(_.centiseconds <= interval.end * 100))
-    .map(details =>
-      IntervalDetails(
-        interval = interval,
-        details = details,
-      ).valid,
-    )
-    .getOrElse(NoDetailsForInterval(interval).invalid)
+  ): Validated[Error, IntervalDetails] =
+    NonEmptyChain.fromSeq(details
+      .takeWhile { detail =>
+        detail.centiseconds <
+          interval.end * 100
+      })
+      .map { details =>
+        IntervalDetails(
+          interval = interval,
+          details = details,
+        ).valid
+      }
+      .getOrElse {
+        NoDetailsForInterval(
+          interval = interval,
+        ).invalid
+      }
 
 }
