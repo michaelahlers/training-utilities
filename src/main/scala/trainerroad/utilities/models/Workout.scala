@@ -10,7 +10,6 @@ object Workout {
   case class Description(toText: String) extends AnyVal
 
   case class Interval(
-
-                     )
+  )
 
 }
