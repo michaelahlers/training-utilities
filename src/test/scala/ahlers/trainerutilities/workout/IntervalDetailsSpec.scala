@@ -3,7 +3,7 @@ package ahlers.trainerutilities.workout
 import ahlers.trainerutilities.workout.Error.NoDetailsForInterval
 import ahlers.trainerutilities.workout.diffx.instances._
 import cats.data.Validated.Invalid
-import com.softwaremill.diffx.cats.instances._
+import cats.data.diffx.instances._
 import com.softwaremill.diffx.scalatest.DiffShouldMatcher._
 import org.scalatest.wordspec.AnyWordSpec
 import trainerroad.schema.web.IntervalData

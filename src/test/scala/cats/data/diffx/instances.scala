@@ -1,9 +1,10 @@
-package com.softwaremill.diffx.cats
+package cats.data.diffx
 
 import cats.data.Validated
 import cats.data.Validated.Invalid
 import cats.data.Validated.Valid
 import com.softwaremill.diffx.Diff
+import com.softwaremill.diffx.cats.DiffCatsInstances
 import com.softwaremill.diffx.generic.auto._
 
 /**
