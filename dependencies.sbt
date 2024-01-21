@@ -36,13 +36,13 @@ libraryDependencies +=
   "org.scala-lang.modules" %% "scala-xml" % "2.2.0"
 
 /**
- * @todo Consider removing.
+ * @todo Might not be needed; consider removing.
  */
 libraryDependencies +=
   "com.lihaoyi" %% "requests" % "0.8.0"
 
 /**
- * @todo Consider removing.
+ * @todo Might not be needed; consider removing.
  */
 libraryDependencies +=
   "com.lihaoyi" %% "scalatags" % "0.12.0"
@@ -83,6 +83,16 @@ libraryDependencies +=
  */
 libraryDependencies +=
   "org.scalatest" %% "scalatest" % "3.2.17" % Test
+
+/**
+ * Property-based testing for Scala, with support for ScalaTest.
+ * @see [[https://scalacheck.org]]
+ * @see [[https://scalatest.org/plus/scalacheck]]
+ */
+libraryDependencies ++=
+  "org.scalacheck" %% "scalacheck" % "1.14.1" % Test ::
+    "org.scalatestplus" %% "scalacheck-1-17" % "3.2.17.0" % Test ::
+    Nil
 
 /**
  * Native Scala mocking framework.
