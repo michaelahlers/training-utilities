@@ -8,7 +8,14 @@ case class IntervalData(
   end: Int,
   isFake: Boolean,
   startTargetPowerPercent: Float,
-)
+) {
+
+  require(
+    start <= end,
+    s"Start ($start) must be less than or equal to end ($end).",
+  )
+
+}
 
 object IntervalData {
 
