@@ -86,12 +86,16 @@ libraryDependencies +=
 
 /**
  * Property-based testing for Scala, with support for ScalaTest.
+ * Also includes support for automatic derivation of ScalaCheck instances.
+ *
  * @see [[https://scalacheck.org]]
  * @see [[https://scalatest.org/plus/scalacheck]]
+ * @see [[https://github.com/spotify/magnolify]]
  */
 libraryDependencies ++=
   "org.scalacheck" %% "scalacheck" % "1.14.1" % Test ::
     "org.scalatestplus" %% "scalacheck-1-17" % "3.2.17.0" % Test ::
+    "com.spotify" %% "magnolify-scalacheck" % "0.7.0" % Test ::
     Nil
 
 /**
