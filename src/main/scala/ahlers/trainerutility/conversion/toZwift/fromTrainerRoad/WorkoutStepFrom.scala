@@ -4,6 +4,7 @@ import ahlers.trainerutility.conversion.toZwift.fromTrainerRoad.Error.NoWorkouts
 import cats.data.Validated
 import cats.syntax.validated._
 import trainerroad.schema.web.IntervalData
+import trainerroad.schema.web.Workout
 import trainerroad.schema.web.WorkoutData
 import zwift.schema.desktop.WorkoutStep
 import zwift.schema.desktop.WorkoutStep.Ramp
@@ -15,10 +16,15 @@ private[fromTrainerRoad] object WorkoutStepFrom {
     interval: IntervalData,
     workouts: Seq[WorkoutData],
   ): Validated[Error, (WorkoutStep, Seq[WorkoutData])] = {
-    val (current, next) = workouts
+
+    /**
+     * [[current]] contains all [[WorkoutData]] values within the given [[interval]] range.
+     * [[next]] are all those remaining, which is non-empty since [[Workout.workoutData]], even being zero-indexed, always contains a terminator.
+     */
+    val (current: Seq[WorkoutData], next: Seq[WorkoutData]) = workouts
       .partition { workout =>
-        workout.centiseconds <
-          interval.end * 100
+        workout.milliseconds <
+          interval.end * 1000
       }
 
     current match {
@@ -29,12 +35,9 @@ private[fromTrainerRoad] object WorkoutStepFrom {
         ).invalid
 
       case workouts =>
-        val durationSeconds =
-          interval.end -
-            interval.start
-
-        val ftpPowerLowPercent = workouts.map(_.ftpPercent).min
-        val ftpPowerHighPercent = workouts.map(_.ftpPercent).max
+        val durationSeconds = interval.end - interval.start
+        val ftpPowerLowPercent = workouts.map(_.ftpPercent).min.round
+        val ftpPowerHighPercent = workouts.map(_.ftpPercent).max.round
 
         val step: WorkoutStep =
           if (ftpPowerLowPercent == ftpPowerHighPercent) {
@@ -42,7 +45,6 @@ private[fromTrainerRoad] object WorkoutStepFrom {
               durationSeconds = durationSeconds,
               ftpPowerRatio = ftpPowerLowPercent / 100f,
             )
-
           } else {
             Ramp(
               durationSeconds = durationSeconds,
@@ -52,7 +54,6 @@ private[fromTrainerRoad] object WorkoutStepFrom {
           }
 
         (step, next).valid
-
     }
 
   }
