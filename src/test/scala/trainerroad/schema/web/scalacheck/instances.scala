@@ -29,7 +29,7 @@ object instances {
     memberFtpPercent <- Gen.choose(0.0f, 100.0f)
     ftpPercent <- Gen.choose(0.0f, 100.0f)
   } yield WorkoutData(
-    centiseconds = centiseconds,
+    milliseconds = centiseconds,
     memberFtpPercent = memberFtpPercent,
     ftpPercent = ftpPercent,
   ))
