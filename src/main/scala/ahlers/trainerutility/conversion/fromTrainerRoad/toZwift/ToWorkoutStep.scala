@@ -8,10 +8,26 @@ import trainerroad.schema.web.Workout
 import trainerroad.schema.web.WorkoutData
 import zwift.schema.desktop.WorkoutFile
 import zwift.schema.desktop.WorkoutStep
+import zwift.schema.desktop.WorkoutStep.Cooldown
 import zwift.schema.desktop.WorkoutStep.Ramp
 import zwift.schema.desktop.WorkoutStep.SteadyState
+import zwift.schema.desktop.WorkoutStep.Warmup
 
 private[fromTrainerRoad] object ToWorkoutStep {
+
+  sealed trait Slope
+  object Slope {
+    case object Up extends Slope
+    case object Flat extends Slope
+    case object Down extends Slope
+  }
+
+  sealed trait Phase
+  object Phase {
+    object First extends Phase
+    object Interior extends Phase
+    object Last extends Phase
+  }
 
   def apply(
     interval: IntervalData,
@@ -39,26 +55,57 @@ private[fromTrainerRoad] object ToWorkoutStep {
         /** [[WorkoutFile.workout]] is order dependent, and only the duration is required. */
         val durationSeconds = interval.end - interval.start
 
-        val ftpPowerLowPercent = workouts.map(_.ftpPercent).min
-        val ftpPowerHighPercent = workouts.map(_.ftpPercent).max
+        val phase: Phase =
+          if (interval.start == 0) Phase.First
+          else if (next.size == 1) Phase.Last
+          else Phase.Interior
 
-        val ftpPowerLowRatio = ftpPowerLowPercent.round / 100f
-        val ftpPowerHighRatio = ftpPowerHighPercent.round / 100f
+        val slope: Slope =
+          if (workouts.head.ftpPercent == workouts.last.ftpPercent) Slope.Flat
+          else if (workouts.head.ftpPercent < workouts.last.ftpPercent) Slope.Up
+          else Slope.Down
 
-        val step: WorkoutStep =
-          if (ftpPowerLowPercent == ftpPowerHighPercent) {
-            SteadyState(
+        val step: WorkoutStep = (phase, slope) match {
+
+          case (Phase.First, Slope.Up) =>
+            val ftpPowerLowRatio = workouts.head.ftpPercent / 100f
+            val ftpPowerHighRatio = workouts.last.ftpPercent / 100f
+            Warmup(
               durationSeconds = durationSeconds,
-              ftpPowerRatio = ftpPowerLowRatio,
+              ftpPowerLowRatio = ftpPowerLowRatio,
+              ftpPowerHighRatio = ftpPowerHighRatio,
             )
-          } else {
+
+          case (Phase.Interior, Slope.Up | Slope.Down) =>
+            val ftpPowerLowPercent = workouts.head.ftpPercent.min(workouts.last.ftpPercent)
+            val ftpPowerHighPercent = workouts.last.ftpPercent.max(workouts.head.ftpPercent)
+
+            val ftpPowerLowRatio = ftpPowerLowPercent / 100f
+            val ftpPowerHighRatio = ftpPowerHighPercent / 100f
 
             Ramp(
               durationSeconds = durationSeconds,
               ftpPowerLowRatio = ftpPowerLowRatio,
               ftpPowerHighRatio = ftpPowerHighRatio,
             )
-          }
+
+          case (Phase.Last, Slope.Down) =>
+            val ftpPowerLowRatio = workouts.head.ftpPercent / 100f
+            val ftpPowerHighRatio = workouts.last.ftpPercent / 100f
+            Cooldown(
+              durationSeconds = durationSeconds,
+              ftpPowerLowRatio = ftpPowerLowRatio,
+              ftpPowerHighRatio = ftpPowerHighRatio,
+            )
+
+          case (_, Slope.Flat) =>
+            val ftpPowerRatio = workouts.head.ftpPercent / 100f
+            SteadyState(
+              durationSeconds = durationSeconds,
+              ftpPowerRatio = ftpPowerRatio,
+            )
+
+        }
 
         (step, next).valid
     }
