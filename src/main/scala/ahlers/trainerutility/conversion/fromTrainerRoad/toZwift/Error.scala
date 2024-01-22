@@ -1,4 +1,4 @@
-package ahlers.trainerutility.conversion.toZwift.fromTrainerRoad
+package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
 import trainerroad.schema.web.IntervalData
 

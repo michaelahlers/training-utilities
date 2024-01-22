@@ -1,6 +1,6 @@
-package ahlers.trainerutility.conversion.toZwift.fromTrainerRoad.diffx
+package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.diffx
 
-import ahlers.trainerutility.conversion.toZwift.fromTrainerRoad.Error
+import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error
 import cats.data.diffx.instances._
 import com.softwaremill.diffx.Diff
 import com.softwaremill.diffx.generic.auto._

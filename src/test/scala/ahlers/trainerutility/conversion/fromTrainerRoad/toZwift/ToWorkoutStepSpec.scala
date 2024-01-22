@@ -1,6 +1,6 @@
-package ahlers.trainerutility.conversion.toZwift.fromTrainerRoad
+package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
-import ahlers.trainerutility.conversion.toZwift.fromTrainerRoad.Error.NoWorkoutsForInterval
+import Error.NoWorkoutsForInterval
 import cats.data.Validated.Invalid
 import cats.data.Validated.Valid
 import cats.data.diffx.instances._
@@ -14,14 +14,14 @@ import zwift.schema.desktop.WorkoutStep.Ramp
 import zwift.schema.desktop.WorkoutStep.SteadyState
 import zwift.schema.desktop.diffx.instances._
 
-class WorkoutStepFromSpec extends AnyWordSpec {
+class ToWorkoutStepSpec extends AnyWordSpec {
 
-  "Invalid no workouts for interval" when {
+  "No workouts for interval" when {
 
     "workouts are empty" in {
       val interval: IntervalData = null
 
-      WorkoutStepFrom(
+      ToWorkoutStep(
         interval = interval,
         workouts = Seq.empty,
       ).shouldMatchTo(Invalid(NoWorkoutsForInterval(
@@ -38,7 +38,7 @@ class WorkoutStepFromSpec extends AnyWordSpec {
         startTargetPowerPercent = 0,
       )
 
-      WorkoutStepFrom(
+      ToWorkoutStep(
         interval = interval,
         workouts = Seq(
           WorkoutData(
@@ -54,7 +54,7 @@ class WorkoutStepFromSpec extends AnyWordSpec {
 
   }
 
-  "Valid steady state workout step" when {
+  "Steady state workout step" when {
 
     "constant power" in {
       val interval: IntervalData = IntervalData(
@@ -88,7 +88,7 @@ class WorkoutStepFromSpec extends AnyWordSpec {
         ftpPowerRatio = 0.5f,
       )
 
-      WorkoutStepFrom(
+      ToWorkoutStep(
         interval = interval,
         workouts = current ++ next,
       ).shouldMatchTo(Valid((step, next)))
@@ -96,12 +96,12 @@ class WorkoutStepFromSpec extends AnyWordSpec {
 
   }
 
-  "Valid ramp workout step" when {
+  "Ramp workout step" when {
 
     "increasing power" in {
       val interval: IntervalData = IntervalData(
         name = null,
-        start = 0,
+        start = 5,
         end = 10,
         isFake = false,
         startTargetPowerPercent = 0,
@@ -109,7 +109,7 @@ class WorkoutStepFromSpec extends AnyWordSpec {
 
       val current: Seq[WorkoutData] =
         (interval.start until interval.end).map { second =>
-          val ftpPercent = 50 + second + 0.1f * second
+          val ftpPercent = 50 + second - interval.start
           WorkoutData(
             milliseconds = second * 1000,
             memberFtpPercent = 0,
@@ -127,12 +127,12 @@ class WorkoutStepFromSpec extends AnyWordSpec {
         }
 
       val step: Ramp = Ramp(
-        durationSeconds = 10,
+        durationSeconds = 5,
         ftpPowerLowRatio = 0.5f,
-        ftpPowerHighRatio = 0.6f,
+        ftpPowerHighRatio = 0.54f,
       )
 
-      WorkoutStepFrom(
+      ToWorkoutStep(
         interval = interval,
         workouts = current ++ next,
       ).shouldMatchTo(Valid((step, next)))
@@ -141,7 +141,7 @@ class WorkoutStepFromSpec extends AnyWordSpec {
     "decreasing power" in {
       val interval: IntervalData = IntervalData(
         name = null,
-        start = 0,
+        start = 5,
         end = 10,
         isFake = false,
         startTargetPowerPercent = 0,
@@ -149,7 +149,7 @@ class WorkoutStepFromSpec extends AnyWordSpec {
 
       val current: Seq[WorkoutData] =
         (interval.start until interval.end).map { second =>
-          val ftpPercent = 50 - second - 0.1f * second
+          val ftpPercent = 50 - second + interval.start
           WorkoutData(
             milliseconds = second * 1000,
             memberFtpPercent = 0,
@@ -167,12 +167,12 @@ class WorkoutStepFromSpec extends AnyWordSpec {
         }
 
       val step: Ramp = Ramp(
-        durationSeconds = 10,
-        ftpPowerLowRatio = 0.4f,
+        durationSeconds = 5,
+        ftpPowerLowRatio = 0.46f,
         ftpPowerHighRatio = 0.5f,
       )
 
-      WorkoutStepFrom(
+      ToWorkoutStep(
         interval = interval,
         workouts = current ++ next,
       ).shouldMatchTo(Valid((step, next)))

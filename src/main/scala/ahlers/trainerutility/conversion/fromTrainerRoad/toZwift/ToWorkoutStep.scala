@@ -1,16 +1,17 @@
-package ahlers.trainerutility.conversion.toZwift.fromTrainerRoad
+package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
-import ahlers.trainerutility.conversion.toZwift.fromTrainerRoad.Error.NoWorkoutsForInterval
+import Error.NoWorkoutsForInterval
 import cats.data.Validated
 import cats.syntax.validated._
 import trainerroad.schema.web.IntervalData
 import trainerroad.schema.web.Workout
 import trainerroad.schema.web.WorkoutData
+import zwift.schema.desktop.WorkoutFile
 import zwift.schema.desktop.WorkoutStep
 import zwift.schema.desktop.WorkoutStep.Ramp
 import zwift.schema.desktop.WorkoutStep.SteadyState
 
-private[fromTrainerRoad] object WorkoutStepFrom {
+private[fromTrainerRoad] object ToWorkoutStep {
 
   def apply(
     interval: IntervalData,
@@ -35,21 +36,27 @@ private[fromTrainerRoad] object WorkoutStepFrom {
         ).invalid
 
       case workouts =>
+        /** [[WorkoutFile.workout]] is order dependent, and only the duration is required. */
         val durationSeconds = interval.end - interval.start
-        val ftpPowerLowPercent = workouts.map(_.ftpPercent).min.round
-        val ftpPowerHighPercent = workouts.map(_.ftpPercent).max.round
+
+        val ftpPowerLowPercent = workouts.map(_.ftpPercent).min
+        val ftpPowerHighPercent = workouts.map(_.ftpPercent).max
+
+        val ftpPowerLowRatio = ftpPowerLowPercent.round / 100f
+        val ftpPowerHighRatio = ftpPowerHighPercent.round / 100f
 
         val step: WorkoutStep =
           if (ftpPowerLowPercent == ftpPowerHighPercent) {
             SteadyState(
               durationSeconds = durationSeconds,
-              ftpPowerRatio = ftpPowerLowPercent / 100f,
+              ftpPowerRatio = ftpPowerLowRatio,
             )
           } else {
+
             Ramp(
               durationSeconds = durationSeconds,
-              ftpPowerLowRatio = ftpPowerLowPercent / 100f,
-              ftpPowerHighRatio = ftpPowerHighPercent / 100f,
+              ftpPowerLowRatio = ftpPowerLowRatio,
+              ftpPowerHighRatio = ftpPowerHighRatio,
             )
           }
 

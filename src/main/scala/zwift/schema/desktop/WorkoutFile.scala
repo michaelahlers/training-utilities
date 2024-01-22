@@ -21,10 +21,6 @@ object WorkoutFile {
       <tag name={tag.name} />
   }
 
-  case class workout(
-    steps: WorkoutStep,
-  )
-
   implicit val xmlEncoder: XmlEncoder[WorkoutFile] = file =>
     <workout_file>
       <author>{file.author}</author>
