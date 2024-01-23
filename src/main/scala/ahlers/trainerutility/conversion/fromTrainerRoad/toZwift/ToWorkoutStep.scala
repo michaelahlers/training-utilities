@@ -67,13 +67,27 @@ private[fromTrainerRoad] object ToWorkoutStep {
 
         val step: WorkoutStep = (phase, slope) match {
 
-          case (Phase.First, Slope.Up) =>
-            val ftpPowerLowRatio = workouts.head.ftpPercent / 100f
-            val ftpPowerHighRatio = workouts.last.ftpPercent / 100f
+          case (Phase.First, Slope.Up | Slope.Down) =>
+            val ftpPowerLowPercent = workouts.head.ftpPercent.min(workouts.last.ftpPercent)
+            val ftpPowerHighPercent = workouts.last.ftpPercent.max(workouts.head.ftpPercent)
+
+            val ftpPowerLowRatio = ftpPowerLowPercent / 100f
+            val ftpPowerHighRatio = ftpPowerHighPercent / 100f
+
             Warmup(
               durationSeconds = durationSeconds,
               ftpPowerLowRatio = ftpPowerLowRatio,
               ftpPowerHighRatio = ftpPowerHighRatio,
+            )
+
+          case (Phase.First, Slope.Flat) =>
+            val ftpPowerPercent = workouts.head.ftpPercent
+            val ftpPowerRatio = ftpPowerPercent / 100f
+
+            Warmup(
+              durationSeconds = durationSeconds,
+              ftpPowerLowRatio = ftpPowerRatio,
+              ftpPowerHighRatio = ftpPowerRatio,
             )
 
           case (Phase.Interior, Slope.Up | Slope.Down) =>
@@ -89,20 +103,36 @@ private[fromTrainerRoad] object ToWorkoutStep {
               ftpPowerHighRatio = ftpPowerHighRatio,
             )
 
-          case (Phase.Last, Slope.Down) =>
-            val ftpPowerLowRatio = workouts.head.ftpPercent / 100f
-            val ftpPowerHighRatio = workouts.last.ftpPercent / 100f
+          case (Phase.Interior, Slope.Flat) =>
+            val ftpPowerPercent = workouts.head.ftpPercent
+            val ftpPowerRatio = ftpPowerPercent / 100f
+
+            SteadyState(
+              durationSeconds = durationSeconds,
+              ftpPowerRatio = ftpPowerRatio,
+            )
+
+          case (Phase.Last, Slope.Up | Slope.Down) =>
+            val ftpPowerLowPercent = workouts.head.ftpPercent.min(workouts.last.ftpPercent)
+            val ftpPowerHighPercent = workouts.last.ftpPercent.max(workouts.head.ftpPercent)
+
+            val ftpPowerLowRatio = ftpPowerLowPercent / 100f
+            val ftpPowerHighRatio = ftpPowerHighPercent / 100f
+
             Cooldown(
               durationSeconds = durationSeconds,
               ftpPowerLowRatio = ftpPowerLowRatio,
               ftpPowerHighRatio = ftpPowerHighRatio,
             )
 
-          case (_, Slope.Flat) =>
-            val ftpPowerRatio = workouts.head.ftpPercent / 100f
-            SteadyState(
+          case (Phase.Last, Slope.Flat) =>
+            val ftpPowerPercent = workouts.head.ftpPercent
+            val ftpPowerRatio = ftpPowerPercent / 100f
+
+            Cooldown(
               durationSeconds = durationSeconds,
-              ftpPowerRatio = ftpPowerRatio,
+              ftpPowerLowRatio = ftpPowerRatio,
+              ftpPowerHighRatio = ftpPowerRatio,
             )
 
         }

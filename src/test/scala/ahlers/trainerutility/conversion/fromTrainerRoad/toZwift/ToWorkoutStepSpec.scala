@@ -58,48 +58,6 @@ class ToWorkoutStepSpec extends AnyWordSpec {
 
   "Steady state workout step" when {
 
-    "first interval" that {
-
-      "specifies constant power" in {
-        val interval: IntervalData = IntervalData(
-          name = null,
-          start = 0,
-          end = 5,
-          isFake = false,
-          startTargetPowerPercent = 0,
-        )
-
-        val current: Seq[WorkoutData] =
-          (interval.start until interval.end).map { second =>
-            WorkoutData(
-              milliseconds = second * 1000,
-              memberFtpPercent = 0,
-              ftpPercent = 50,
-            )
-          }
-
-        val next: Seq[WorkoutData] =
-          (interval.end until interval.end + 5).map { second =>
-            WorkoutData(
-              milliseconds = second * 1000,
-              memberFtpPercent = 0,
-              ftpPercent = 0,
-            )
-          }
-
-        val step: SteadyState = SteadyState(
-          durationSeconds = 5,
-          ftpPowerRatio = 0.5f,
-        )
-
-        ToWorkoutStep(
-          interval = interval,
-          workouts = current ++ next,
-        ).shouldMatchTo(Valid((step, next)))
-      }
-
-    }
-
     "interior interval" that {
 
       "specifies constant power" in {
@@ -128,49 +86,6 @@ class ToWorkoutStepSpec extends AnyWordSpec {
               ftpPercent = 0,
             )
           }
-
-        val step: SteadyState = SteadyState(
-          durationSeconds = 5,
-          ftpPowerRatio = 0.5f,
-        )
-
-        ToWorkoutStep(
-          interval = interval,
-          workouts = current ++ next,
-        ).shouldMatchTo(Valid((step, next)))
-      }
-
-    }
-
-    "last interval" that {
-
-      "specifies constant power" in {
-        val interval: IntervalData = IntervalData(
-          name = null,
-          start = 5,
-          end = 10,
-          isFake = false,
-          startTargetPowerPercent = 0,
-        )
-
-        val current: Seq[WorkoutData] =
-          (interval.start until interval.end).map { second =>
-            WorkoutData(
-              milliseconds = second * 1000,
-              memberFtpPercent = 0,
-              ftpPercent = 50,
-            )
-          }
-
-        /** If only one [[WorkoutData]] remains, it's the terminator and there are no further intervals. */
-        val next: Seq[WorkoutData] =
-          Seq(
-            WorkoutData(
-              milliseconds = interval.end * 1000,
-              memberFtpPercent = 0,
-              ftpPercent = 0,
-            ),
-          )
 
         val step: SteadyState = SteadyState(
           durationSeconds = 5,
@@ -279,6 +194,45 @@ class ToWorkoutStepSpec extends AnyWordSpec {
 
     "first interval" that {
 
+      "specifies constant power" in {
+        val interval: IntervalData = IntervalData(
+          name = null,
+          start = 0,
+          end = 5,
+          isFake = false,
+          startTargetPowerPercent = 0,
+        )
+
+        val current: Seq[WorkoutData] =
+          (interval.start until interval.end).map { second =>
+            WorkoutData(
+              milliseconds = second * 1000,
+              memberFtpPercent = 0,
+              ftpPercent = 50,
+            )
+          }
+
+        val next: Seq[WorkoutData] =
+          (interval.end until interval.end + 5).map { second =>
+            WorkoutData(
+              milliseconds = second * 1000,
+              memberFtpPercent = 0,
+              ftpPercent = 0,
+            )
+          }
+
+        val step: Warmup = Warmup(
+          durationSeconds = 5,
+          ftpPowerLowRatio = 0.5f,
+          ftpPowerHighRatio = 0.5f,
+        )
+
+        ToWorkoutStep(
+          interval = interval,
+          workouts = current ++ next,
+        ).shouldMatchTo(Valid((step, next)))
+      }
+
       "specifies increasing power" in {
         val interval: IntervalData = IntervalData(
           name = null,
@@ -327,7 +281,46 @@ class ToWorkoutStepSpec extends AnyWordSpec {
 
     "last interval" that {
 
-      "specifies increasing power" in {
+      "specifies constant power" in {
+        val interval: IntervalData = IntervalData(
+          name = null,
+          start = 5,
+          end = 10,
+          isFake = false,
+          startTargetPowerPercent = 0,
+        )
+
+        val current: Seq[WorkoutData] =
+          (interval.start until interval.end).map { second =>
+            WorkoutData(
+              milliseconds = second * 1000,
+              memberFtpPercent = 0,
+              ftpPercent = 50,
+            )
+          }
+
+        val next: Seq[WorkoutData] =
+          Seq(
+            WorkoutData(
+              milliseconds = interval.end * 1000,
+              memberFtpPercent = 0,
+              ftpPercent = 0,
+            ),
+          )
+
+        val step: Cooldown = Cooldown(
+          durationSeconds = 5,
+          ftpPowerLowRatio = 0.5f,
+          ftpPowerHighRatio = 0.5f,
+        )
+
+        ToWorkoutStep(
+          interval = interval,
+          workouts = current ++ next,
+        ).shouldMatchTo(Valid((step, next)))
+      }
+
+      "specifies decreasing power" in {
         val interval: IntervalData = IntervalData(
           name = null,
           start = 5,
@@ -357,8 +350,8 @@ class ToWorkoutStepSpec extends AnyWordSpec {
 
         val step: Cooldown = Cooldown(
           durationSeconds = 5,
-          ftpPowerLowRatio = 0.5f,
-          ftpPowerHighRatio = 0.46f,
+          ftpPowerLowRatio = 0.46f,
+          ftpPowerHighRatio = 0.5f,
         )
 
         ToWorkoutStep(
