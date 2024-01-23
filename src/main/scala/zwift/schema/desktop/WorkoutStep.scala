@@ -109,7 +109,10 @@ object WorkoutStep {
   }
 
   implicit val xmlEncoder: XmlEncoder[WorkoutStep] = {
+    case step: Warmup => step.asXml
     case step: SteadyState => step.asXml
+    case step: Ramp => step.asXml
+    case step: Cooldown => step.asXml
   }
 
 }
