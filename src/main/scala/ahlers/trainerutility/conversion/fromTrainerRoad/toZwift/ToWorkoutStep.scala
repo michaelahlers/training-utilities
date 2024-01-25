@@ -13,7 +13,7 @@ import zwift.schema.desktop.WorkoutStep.Ramp
 import zwift.schema.desktop.WorkoutStep.SteadyState
 import zwift.schema.desktop.WorkoutStep.Warmup
 
-private[fromTrainerRoad] object ToWorkoutStep {
+private[toZwift] object ToWorkoutStep {
 
   sealed trait Slope
   object Slope {
