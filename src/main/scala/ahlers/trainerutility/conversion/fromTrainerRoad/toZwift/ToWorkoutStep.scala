@@ -91,8 +91,8 @@ private[toZwift] object ToWorkoutStep {
             )
 
           case (Phase.Interior, Slope.Up | Slope.Down) =>
-            val ftpPowerLowPercent = workouts.head.ftpPercent.min(workouts.last.ftpPercent)
-            val ftpPowerHighPercent = workouts.last.ftpPercent.max(workouts.head.ftpPercent)
+            val ftpPowerLowPercent = workouts.head.ftpPercent
+            val ftpPowerHighPercent = workouts.last.ftpPercent
 
             val ftpPowerLowRatio = ftpPowerLowPercent / 100f
             val ftpPowerHighRatio = ftpPowerHighPercent / 100f

@@ -42,8 +42,8 @@ object WorkoutStep {
     )
 
     require(
-      ftpPowerLowRatio <= ftpPowerHighRatio,
-      s"FTP power low ratio ($ftpPowerLowRatio) must be less than or equal to FTP power high ratio ($ftpPowerHighRatio).",
+      ftpPowerHighRatio >= 0,
+      s"FTP power low ratio ($ftpPowerHighRatio) must be non-negative.",
     )
 
   }
