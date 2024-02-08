@@ -215,9 +215,9 @@ object ToWorkoutStep {
           )
 
         /**
-         * Steady-state.
+         * Steady-state, with special case where the next interval begins with an inflection point but shares the same [[WorkoutData.ftpPercent]].
          */
-        case head :: tail if acc.last.ftpPercent == head.ftpPercent =>
+        case head :: next :: tail if acc.last.ftpPercent == head.ftpPercent && head.ftpPercent == next.ftpPercent =>
           take2(
             queue = tail,
             acc = acc :+ head,
@@ -229,10 +229,6 @@ object ToWorkoutStep {
             queue = next :: tail,
             acc = acc :+ head,
           )
-
-        /** Special case where the next ramp transitions from previous steady-state. */
-        case head :: next :: _ if slope == Slope.Flat && (Slope.from(head, next) == Slope.Up || Slope.from(head, next) == Slope.Down) => // && acc.last.ftpPercent == next.ftpPercent =>
-          ((acc.head, acc.init.last), acc.last :: queue)
 
         case _ =>
           ((acc.head, acc.last), queue)
