@@ -205,8 +205,8 @@ object ToWorkoutStep {
       queue match {
 
         /** Stop when the terminator is reached. */
-        case _ :: Nil =>
-          ((acc.head, acc.last), queue)
+        case head :: Nil =>
+          ((acc.head, acc.last.copy(ftpPercent = head.ftpPercent)), queue)
 
         case head :: tail if slope == Slope.Undefined =>
           take2(
@@ -231,7 +231,7 @@ object ToWorkoutStep {
           )
 
         /** Special case where the next ramp transitions from previous steady-state. */
-        case head :: next :: _ if slope == Slope.Flat && (Slope.from(head, next) == Slope.Up || Slope.from(head, next) == Slope.Down) =>
+        case head :: next :: _ if slope == Slope.Flat && (Slope.from(head, next) == Slope.Up || Slope.from(head, next) == Slope.Down) => // && acc.last.ftpPercent == next.ftpPercent =>
           ((acc.head, acc.init.last), acc.last :: queue)
 
         case _ =>
