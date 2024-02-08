@@ -198,13 +198,49 @@ object ToWorkoutStep {
       }
     }
 
-    val ((start, end), next) = take(
+    @tailrec
+    def take2(queue: List[WorkoutData], acc: Vector[WorkoutData]): ((WorkoutData, WorkoutData), Seq[WorkoutData]) = {
+      val slope = Slope.from(acc)
+
+      queue match {
+
+        case _ :: Nil =>
+          ((acc.head, acc.last), queue)
+
+        case head :: tail if slope == Slope.Undefined =>
+          take2(
+            queue = tail,
+            acc = acc :+ head,
+          )
+
+        /**
+         * Stead-state interval.
+         */
+        case head :: tail if acc.last.ftpPercent == head.ftpPercent =>
+          take2(
+            queue = tail,
+            acc = acc :+ head,
+          )
+
+        case head :: next :: tail if slope == Slope.from(acc.last, head) && slope == Slope.from(head, next) =>
+          take2(
+            queue = next :: tail,
+            acc = acc :+ head,
+          )
+
+        case _ =>
+          ((acc.head, acc.last), queue)
+
+      }
+    }
+
+    val ((start, end), next) = take2(
       queue = workouts.toList,
       acc = Vector.empty,
     )
 
     /** [[WorkoutFile.workout]] is order dependent, and only the duration is required. */
-    val durationSeconds = (end.milliseconds - start.milliseconds) / 1000
+    val durationSeconds = (next.head.milliseconds - start.milliseconds) / 1000
 
     val phase: Phase =
       if (start.milliseconds == 0) Phase.First
