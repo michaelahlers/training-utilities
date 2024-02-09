@@ -8,7 +8,10 @@ import com.softwaremill.diffx.scalatest.DiffShouldMatcher._
 import diffx.instances._
 import org.scalactic.anyvals.NonEmptyList
 import org.scalatest.wordspec.AnyWordSpec
+import squants.time.Seconds
+import squants.time.Time
 import trainerroad.schema.web.IntervalData
+import trainerroad.schema.web.Workout
 import trainerroad.schema.web.WorkoutData
 import trainerroad.schema.web.diffx.instances._
 import zwift.schema.desktop.WorkoutStep
@@ -334,53 +337,69 @@ class ToWorkoutStepSpec extends AnyWordSpec {
   //
   // }
 
-  pprint.log(toWorkoutData(
-    offsetSeconds = 0,
-    step = Ramp(
+  pprint.log(toWorkoutData(Seq(
+    Ramp(
       durationSeconds = 5,
       ftpRatioStart = 0.5f,
       ftpRatioEnd = 1.0f,
     ),
-    isLast = false,
-  ))
-
-  pprint.log(toWorkoutData(
-    offsetSeconds = 0,
-    step = Ramp(
+    Ramp(
       durationSeconds = 5,
-      ftpRatioStart = 0.5f,
-      ftpRatioEnd = 1.0f,
+      ftpRatioStart = 1.0f,
+      ftpRatioEnd = 0.5f,
     ),
-    isLast = true,
-  ))
+  )))
 
 }
 
 object ToWorkoutStepSpec {
 
-  def toWorkoutData(
-    offsetSeconds: Int,
+  def toFtpRatios(
     step: WorkoutStep,
     isLast: Boolean,
-  ): Seq[WorkoutData] = {
-    import step.durationSeconds
+  ): Seq[Float] = {
     import step.ftpRatioStart
     import step.ftpRatioEnd
 
-    val seconds =
-      if (isLast) 0 to durationSeconds
-      else 0 until durationSeconds
+    /**
+     * The number of step slices (each [[WorkoutData]] is equal to the duration in seconds of [[step]].
+     * However, there's a special case as [[Workout.workoutData]] includes "terminator" slice with the final power.
+     */
+    val slices =
+      if (isLast) 0 to step.durationSeconds
+      else 0 until step.durationSeconds
 
     val ftpDelta: Float = ftpRatioEnd - ftpRatioStart
-    val ftpStep: Float = ftpDelta / (seconds.size - 1)
+    val ftpStep: Float = ftpDelta / (slices.size - 1)
 
-    seconds.map { second =>
-      WorkoutData(
-        milliseconds = (offsetSeconds + second) * 1000,
-        memberFtpPercent = 0,
-        ftpPercent = ftpRatioStart + ftpStep * second,
-      )
+    slices.map { slice =>
+      ftpRatioStart + ftpStep * slice
     }
+  }
+
+  def toWorkoutData(
+    steps: Seq[WorkoutStep],
+  ): Seq[WorkoutData] = {
+    val lastIndex = steps.size - 1
+
+    /** Not efficient, but that's fine. */
+    steps
+      .zipWithIndex
+      .flatMap { case (step, index) =>
+        val isLast = lastIndex == index
+        toFtpRatios(
+          step = step,
+          isLast = isLast,
+        )
+      }
+      .zipWithIndex
+      .map { case (ftpRatio, offsetSeconds) =>
+        WorkoutData(
+          milliseconds = offsetSeconds * 1000,
+          memberFtpPercent = 0,
+          ftpPercent = ftpRatio * 100,
+        )
+      }
   }
 
 }
