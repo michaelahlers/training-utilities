@@ -12,29 +12,6 @@ import zwift.schema.desktop.WorkoutStep
 private[toZwift] object ToWorkoutSteps {
 
   def apply(
-    interval: Seq[IntervalData],
-    workouts: Seq[WorkoutData],
-  ): Validated[Error, Seq[WorkoutStep]] =
-    interval
-      .filterNot { interval =>
-        /** Special case [[IntervalData]] that covers the entire session but doesn't inform the steps. */
-        interval.name == "Workout"
-      }
-      .foldLeft((Vector.empty[WorkoutStep], workouts).valid[Error]) {
-        case (result @ Invalid(_), _) => result
-        case (Valid((steps, workouts)), interval) =>
-          ToWorkoutStep(
-            interval = interval,
-            workouts = workouts,
-          ).map { case (step, workouts) =>
-            (steps :+ step, workouts)
-          }
-      }
-      .map { case (steps, _) =>
-        steps
-      }
-
-  def foo(
     workouts: Seq[WorkoutData],
   ): Validated[Error, Seq[WorkoutStep]] = {
 
@@ -45,7 +22,7 @@ private[toZwift] object ToWorkoutSteps {
     ): Seq[WorkoutStep] = workouts match {
       case Nil => steps
       case workouts =>
-        val (step, next) = ToWorkoutStep.foo(workouts).getOrElse(???)
+        val (step, next) = ToWorkoutStep(workouts).getOrElse(???)
         take(
           workouts = next.toList,
           steps = steps :+ step,
