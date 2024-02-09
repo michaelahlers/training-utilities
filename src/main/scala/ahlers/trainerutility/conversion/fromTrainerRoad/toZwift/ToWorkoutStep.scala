@@ -1,5 +1,6 @@
 package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
+import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.NoWorkoutsForInterval
 import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.UndefinedSlope
 import cats.data.Validated
 import cats.data.Validated.Invalid
@@ -14,8 +15,7 @@ import zwift.schema.desktop.WorkoutStep.Ramp
 import zwift.schema.desktop.WorkoutStep.SteadyState
 import zwift.schema.desktop.WorkoutStep.Warmup
 
-/*private[toZwift]*/
-object ToWorkoutStep {
+private[toZwift] object ToWorkoutStep {
 
   sealed trait Slope
   object Slope {
@@ -40,62 +40,74 @@ object ToWorkoutStep {
     object Last extends Phase
   }
 
+  case class Selection(
+    start: WorkoutData,
+    end: WorkoutData,
+    remainder: Seq[WorkoutData],
+  )
+
+  @tailrec
+  def select(
+    queue: List[WorkoutData],
+    acc: Vector[WorkoutData],
+  ): Validated[Error, Selection] = {
+    val slope = Slope.from(acc)
+
+    (queue, slope) match {
+
+      /** Meaningless when [[queue]] starts empty. */
+      case (Nil, _) => NoWorkoutsForInterval.invalid
+
+      /** Base case: stop when the terminator is reached. */
+      case (head :: Nil, _) =>
+        Selection(acc.head, acc.last.copy(ftpPercent = head.ftpPercent), queue).valid
+
+      case (head :: tail, Invalid(_)) =>
+        select(
+          queue = tail,
+          acc = acc :+ head,
+        )
+
+      /**
+       * Steady-state, with special case where the next interval begins with an inflection point but shares the same [[WorkoutData.ftpPercent]].
+       */
+      case (head :: next :: tail, _) if acc.last.ftpPercent == head.ftpPercent && head.ftpPercent == next.ftpPercent =>
+        select(
+          queue = tail,
+          acc = acc :+ head,
+        )
+
+      /** Continuous ramp. */
+      case (head :: next :: tail, Valid(slope)) if slope == Slope.from(acc.last, head) && slope == Slope.from(head, next) =>
+        select(
+          queue = next :: tail,
+          acc = acc :+ head,
+        )
+
+      case _ =>
+        Selection(acc.head, acc.last, queue).valid
+
+    }
+  }
+
   def apply(
     workouts: Seq[WorkoutData],
-  ): Validated[Error, (WorkoutStep, Seq[WorkoutData])] = {
-
-    @tailrec
-    def partition(
-      queue: List[WorkoutData],
-      acc: Vector[WorkoutData],
-    ): ((WorkoutData, WorkoutData), Seq[WorkoutData]) = {
-      val slope = Slope.from(acc)
-
-      (queue, slope) match {
-
-        /** Stop when the terminator is reached. */
-        case (head :: Nil, _) =>
-          ((acc.head, acc.last.copy(ftpPercent = head.ftpPercent)), queue)
-
-        case (head :: tail, Invalid(_)) =>
-          partition(
-            queue = tail,
-            acc = acc :+ head,
-          )
-
-        /**
-         * Steady-state, with special case where the next interval begins with an inflection point but shares the same [[WorkoutData.ftpPercent]].
-         */
-        case (head :: next :: tail, _) if acc.last.ftpPercent == head.ftpPercent && head.ftpPercent == next.ftpPercent =>
-          partition(
-            queue = tail,
-            acc = acc :+ head,
-          )
-
-        /** Continuous ramp. */
-        case (head :: next :: tail, Valid(slope)) if slope == Slope.from(acc.last, head) && slope == Slope.from(head, next) =>
-          partition(
-            queue = next :: tail,
-            acc = acc :+ head,
-          )
-
-        case _ =>
-          ((acc.head, acc.last), queue)
-
-      }
-    }
-
-    val ((start, end), next) = partition(
+  ): Validated[Error, (WorkoutStep, Seq[WorkoutData])] = for {
+    selection <- select(
       queue = workouts.toList,
       acc = Vector.empty,
     )
+  } yield {
+    import selection.remainder
+    import selection.start
+    import selection.end
 
     /** [[WorkoutFile.workout]] is order dependent, and only the duration is required. */
-    val durationSeconds = (next.head.milliseconds - start.milliseconds) / 1000
+    val durationSeconds = (remainder.head.milliseconds - start.milliseconds) / 1000
 
     val phase: Phase =
       if (start.milliseconds == 0) Phase.First
-      else if (next.size == 1) Phase.Last
+      else if (remainder.size == 1) Phase.Last
       else Phase.Interior
 
     val slope: Slope = Slope.from(start, end)
@@ -116,21 +128,21 @@ object ToWorkoutStep {
         )
 
       case (Phase.First, Slope.Zero) =>
-        val ftpPowerPercent = start.ftpPercent
-        val ftpPowerRatio = ftpPowerPercent / 100f
+        val ftpPercent = start.ftpPercent
+        val ftpRatio = ftpPercent / 100f
 
         Warmup(
           durationSeconds = durationSeconds,
-          ftpRatioStart = ftpPowerRatio,
-          ftpRatioEnd = ftpPowerRatio,
+          ftpRatioStart = ftpRatio,
+          ftpRatioEnd = ftpRatio,
         )
 
       case (Phase.Interior, Slope.Positive | Slope.Negative) =>
-        val ftpPowerStartPercent = start.ftpPercent
-        val ftpPowerEndPercent = end.ftpPercent
+        val ftpPercentStart = start.ftpPercent
+        val ftpPercentEnd = end.ftpPercent
 
-        val ftpRatioStart = ftpPowerStartPercent / 100f
-        val ftpRatioEnd = ftpPowerEndPercent / 100f
+        val ftpRatioStart = ftpPercentStart / 100f
+        val ftpRatioEnd = ftpPercentEnd / 100f
 
         Ramp(
           durationSeconds = durationSeconds,
@@ -139,20 +151,20 @@ object ToWorkoutStep {
         )
 
       case (Phase.Interior, Slope.Zero) =>
-        val ftpPowerPercent = start.ftpPercent
-        val ftpPowerRatio = ftpPowerPercent / 100f
+        val ftpPercent = start.ftpPercent
+        val ftpRatio = ftpPercent / 100f
 
         SteadyState(
           durationSeconds = durationSeconds,
-          ftpRatio = ftpPowerRatio,
+          ftpRatio = ftpRatio,
         )
 
       case (Phase.Last, Slope.Positive | Slope.Negative) =>
-        val ftpPowerStartPercent = start.ftpPercent
-        val ftpPowerEndPercent = end.ftpPercent
+        val ftpPercentStart = start.ftpPercent
+        val ftpPercentEnd = end.ftpPercent
 
-        val ftpRatioStart = ftpPowerStartPercent / 100f
-        val ftpRatioEnd = ftpPowerEndPercent / 100f
+        val ftpRatioStart = ftpPercentStart / 100f
+        val ftpRatioEnd = ftpPercentEnd / 100f
 
         Cooldown(
           durationSeconds = durationSeconds,
@@ -161,19 +173,19 @@ object ToWorkoutStep {
         )
 
       case (Phase.Last, Slope.Zero) =>
-        val ftpPowerPercent = start.ftpPercent
-        val ftpPowerRatio = ftpPowerPercent / 100f
+        val ftpPercent = start.ftpPercent
+        val ftpRatio = ftpPercent / 100f
 
         Cooldown(
           durationSeconds = durationSeconds,
-          ftpRatioStart = ftpPowerRatio,
-          ftpRatioEnd = ftpPowerRatio,
+          ftpRatioStart = ftpRatio,
+          ftpRatioEnd = ftpRatio,
         )
 
     }
 
-    if (next.size == 1) (step, Nil).valid
-    else (step, next).valid
+    if (remainder.size == 1) (step, Nil)
+    else (step, remainder)
   }
 
 }

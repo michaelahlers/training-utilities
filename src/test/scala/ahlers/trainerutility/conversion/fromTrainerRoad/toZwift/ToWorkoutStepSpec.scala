@@ -25,17 +25,17 @@ import zwift.schema.desktop.scalacheck.instances._
 class ToWorkoutStepSpec extends AnyWordSpec {
   import ToWorkoutStepSpec.toWorkoutData
 
-  // "No workouts for interval" when {
-  //
-  //  "workouts are empty" in {
-  //
-  //    ToWorkoutStep(
-  //      workouts = Seq.empty,
-  //    ).shouldMatchTo(Invalid(NoWorkoutsForInterval))
-  //  }
-  //
-  // }
-  //
+   "No workouts for interval" when {
+
+    "workouts are empty" in {
+
+      ToWorkoutStep(
+        workouts = Seq.empty,
+      ).shouldMatchTo(Invalid(NoWorkoutsForInterval))
+    }
+
+   }
+
   // "Steady state workout step" when {
   //
   //  "interior interval" that {
