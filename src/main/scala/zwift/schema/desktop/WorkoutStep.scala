@@ -8,7 +8,7 @@ object WorkoutStep {
 
   case class SteadyState(
     durationSeconds: Int,
-    ftpPowerRatio: Float,
+    ftpRatio: Float,
   ) extends WorkoutStep {
 
     require(
@@ -17,8 +17,8 @@ object WorkoutStep {
     )
 
     require(
-      ftpPowerRatio >= 0,
-      s"FTP power ratio ($ftpPowerRatio) must be non-negative.",
+      ftpRatio >= 0,
+      s"FTP power ratio ($ftpRatio) must be non-negative.",
     )
 
   }
@@ -27,23 +27,23 @@ object WorkoutStep {
     implicit val xmlEncoder: XmlEncoder[SteadyState] = step =>
       <SteadyState
         Duration={step.durationSeconds.toString}
-        Power={step.ftpPowerRatio.toString} />
+        Power={step.ftpRatio.toString} />
   }
 
   case class Ramp(
     durationSeconds: Int,
-    ftpPowerLowRatio: Float,
-    ftpPowerHighRatio: Float,
+    ftpRatioLow: Float,
+    ftpRatioHigh: Float,
   ) extends WorkoutStep {
 
     require(
-      ftpPowerLowRatio >= 0,
-      s"FTP power low ratio ($ftpPowerLowRatio) must be non-negative.",
+      ftpRatioLow >= 0,
+      s"Low FTP ratio ($ftpRatioLow) must be non-negative.",
     )
 
     require(
-      ftpPowerHighRatio >= 0,
-      s"FTP power low ratio ($ftpPowerHighRatio) must be non-negative.",
+      ftpRatioHigh >= 0,
+      s"High FTP ratio ($ftpRatioHigh) must be non-negative.",
     )
 
   }
@@ -52,24 +52,24 @@ object WorkoutStep {
     implicit val xmlEncoder: XmlEncoder[Ramp] = step =>
       <Ramp
         Duration={step.durationSeconds.toString}
-        PowerLow={step.ftpPowerLowRatio.toString}
-        PowerHigh={step.ftpPowerHighRatio.toString} />
+        PowerLow={step.ftpRatioLow.toString}
+        PowerHigh={step.ftpRatioHigh.toString} />
   }
 
   case class Warmup(
     durationSeconds: Int,
-    ftpPowerLowRatio: Float,
-    ftpPowerHighRatio: Float,
+    ftpRatioLow: Float,
+    ftpRatioHigh: Float,
   ) extends WorkoutStep {
 
     require(
-      ftpPowerLowRatio >= 0,
-      s"FTP power low ratio ($ftpPowerLowRatio) must be non-negative.",
+      ftpRatioLow >= 0,
+      s"Low FTP ratio ($ftpRatioLow) must be non-negative.",
     )
 
     require(
-      ftpPowerHighRatio >= 0,
-      s"FTP power high ratio ($ftpPowerHighRatio) must be non-negative.",
+      ftpRatioHigh >= 0,
+      s"High FTP ratio ($ftpRatioHigh) must be non-negative.",
     )
 
   }
@@ -78,24 +78,24 @@ object WorkoutStep {
     implicit val xmlEncoder: XmlEncoder[Warmup] = step =>
       <Warmup
         Duration={step.durationSeconds.toString}
-        PowerLow={step.ftpPowerLowRatio.toString}
-        PowerHigh={step.ftpPowerHighRatio.toString} />
+        PowerLow={step.ftpRatioLow.toString}
+        PowerHigh={step.ftpRatioHigh.toString} />
   }
 
   case class Cooldown(
     durationSeconds: Int,
-    ftpPowerLowRatio: Float,
-    ftpPowerHighRatio: Float,
+    ftpRatioLow: Float,
+    ftpRatioHigh: Float,
   ) extends WorkoutStep {
 
     require(
-      ftpPowerLowRatio >= 0,
-      s"FTP power low ratio ($ftpPowerLowRatio) must be non-negative.",
+      ftpRatioLow >= 0,
+      s"Low FTP ratio ($ftpRatioLow) must be non-negative.",
     )
 
     require(
-      ftpPowerHighRatio >= 0,
-      s"FTP power high ratio ($ftpPowerHighRatio) must be non-negative.",
+      ftpRatioHigh >= 0,
+      s"High FTP ratio ($ftpRatioHigh) must be non-negative.",
     )
 
   }
@@ -104,8 +104,8 @@ object WorkoutStep {
     implicit val xmlEncoder: XmlEncoder[Cooldown] = step =>
       <Cooldown
         Duration={step.durationSeconds.toString}
-        PowerLow={step.ftpPowerLowRatio.toString}
-        PowerHigh={step.ftpPowerHighRatio.toString} />
+        PowerLow={step.ftpRatioLow.toString}
+        PowerHigh={step.ftpRatioHigh.toString} />
   }
 
   implicit val xmlEncoder: XmlEncoder[WorkoutStep] = {

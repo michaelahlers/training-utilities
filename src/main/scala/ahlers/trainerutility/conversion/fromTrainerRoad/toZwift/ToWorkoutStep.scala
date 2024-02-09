@@ -149,8 +149,8 @@ object ToWorkoutStep {
 
         Warmup(
           durationSeconds = durationSeconds,
-          ftpPowerLowRatio = ftpPowerLowRatio,
-          ftpPowerHighRatio = ftpPowerHighRatio,
+          ftpRatioLow = ftpPowerLowRatio,
+          ftpRatioHigh = ftpPowerHighRatio,
         )
 
       case (Phase.First, Slope.Flat) =>
@@ -159,8 +159,8 @@ object ToWorkoutStep {
 
         Warmup(
           durationSeconds = durationSeconds,
-          ftpPowerLowRatio = ftpPowerRatio,
-          ftpPowerHighRatio = ftpPowerRatio,
+          ftpRatioLow = ftpPowerRatio,
+          ftpRatioHigh = ftpPowerRatio,
         )
 
       case (Phase.Interior, Slope.Up | Slope.Down) =>
@@ -172,8 +172,8 @@ object ToWorkoutStep {
 
         Ramp(
           durationSeconds = durationSeconds,
-          ftpPowerLowRatio = ftpPowerLowRatio,
-          ftpPowerHighRatio = ftpPowerHighRatio,
+          ftpRatioLow = ftpPowerLowRatio,
+          ftpRatioHigh = ftpPowerHighRatio,
         )
 
       case (Phase.Interior, Slope.Flat) =>
@@ -182,7 +182,7 @@ object ToWorkoutStep {
 
         SteadyState(
           durationSeconds = durationSeconds,
-          ftpPowerRatio = ftpPowerRatio,
+          ftpRatio = ftpPowerRatio,
         )
 
       case (Phase.Last, Slope.Up | Slope.Down) =>
@@ -194,8 +194,8 @@ object ToWorkoutStep {
 
         Cooldown(
           durationSeconds = durationSeconds,
-          ftpPowerLowRatio = ftpPowerLowRatio,
-          ftpPowerHighRatio = ftpPowerHighRatio,
+          ftpRatioLow = ftpPowerLowRatio,
+          ftpRatioHigh = ftpPowerHighRatio,
         )
 
       case (Phase.Last, Slope.Flat) =>
@@ -204,8 +204,8 @@ object ToWorkoutStep {
 
         Cooldown(
           durationSeconds = durationSeconds,
-          ftpPowerLowRatio = ftpPowerRatio,
-          ftpPowerHighRatio = ftpPowerRatio,
+          ftpRatioLow = ftpPowerRatio,
+          ftpRatioHigh = ftpPowerRatio,
         )
 
     }
