@@ -75,7 +75,7 @@ libraryDependencies +=
  * @see [[https://squants.com]]
  */
 libraryDependencies +=
-  "org.typelevel" %% "squants" % "1.6.0"
+  "org.typelevel" %% "squants" % "1.8.3"
 
 ///**
 // * Scalactic provides constructs related to quality that are useful in both production code and tests.
