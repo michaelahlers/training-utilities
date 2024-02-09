@@ -3,13 +3,21 @@ package zwift.schema.desktop
 import scala.xml.encoding.XmlEncoder
 import scala.xml.encoding.syntax._
 
-sealed trait WorkoutStep
+sealed trait WorkoutStep {
+  def durationSeconds: Int
+  def ftpRatioLow: Float
+  def ftpRatioHigh: Float
+}
+
 object WorkoutStep {
 
   case class SteadyState(
     durationSeconds: Int,
     ftpRatio: Float,
   ) extends WorkoutStep {
+
+    override val ftpRatioLow: Float = ftpRatio
+    override val ftpRatioHigh: Float = ftpRatio
 
     require(
       durationSeconds >= 0,
