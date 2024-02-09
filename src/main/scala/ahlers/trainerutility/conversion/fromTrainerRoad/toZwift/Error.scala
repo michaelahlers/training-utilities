@@ -4,5 +4,5 @@ import trainerroad.schema.web.IntervalData
 
 sealed trait Error
 object Error {
-  case class NoWorkoutsForInterval(interval: IntervalData) extends Error
+  case object NoWorkoutsForInterval extends Error
 }
