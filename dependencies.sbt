@@ -70,6 +70,13 @@ libraryDependencies +=
 libraryDependencies +=
   "com.lihaoyi" %% "pprint" % "0.8.1"
 
+/**
+ * Squants is a framework of data types and a domain specific language (DSL) for representing Quantities, their Units of Measure, and their Dimensional relationships.
+ * @see [[https://squants.com]]
+ */
+libraryDependencies +=
+  "org.typelevel" %% "squants" % "1.6.0"
+
 ///**
 // * Scalactic provides constructs related to quality that are useful in both production code and tests.
 // * @see [[https://www.scalactic.org/]]
