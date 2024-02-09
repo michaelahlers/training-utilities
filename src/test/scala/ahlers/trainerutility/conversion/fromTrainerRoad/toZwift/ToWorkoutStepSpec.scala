@@ -20,6 +20,7 @@ import zwift.schema.desktop.diffx.instances._
 import zwift.schema.desktop.scalacheck.instances._
 
 class ToWorkoutStepSpec extends AnyWordSpec {
+  import ToWorkoutStepSpec.toWorkoutData
 
   // "No workouts for interval" when {
   //
@@ -333,6 +334,53 @@ class ToWorkoutStepSpec extends AnyWordSpec {
   //
   // }
 
+  pprint.log(toWorkoutData(
+    offsetSeconds = 0,
+    step = Ramp(
+      durationSeconds = 5,
+      ftpRatioStart = 0.5f,
+      ftpRatioEnd = 1.0f,
+    ),
+    isLast = false,
+  ))
+
+  pprint.log(toWorkoutData(
+    offsetSeconds = 0,
+    step = Ramp(
+      durationSeconds = 5,
+      ftpRatioStart = 0.5f,
+      ftpRatioEnd = 1.0f,
+    ),
+    isLast = true,
+  ))
+
 }
 
-object ToWorkoutStepSpec {}
+object ToWorkoutStepSpec {
+
+  def toWorkoutData(
+    offsetSeconds: Int,
+    step: WorkoutStep,
+    isLast: Boolean,
+  ): Seq[WorkoutData] = {
+    import step.durationSeconds
+    import step.ftpRatioStart
+    import step.ftpRatioEnd
+
+    val seconds =
+      if (isLast) 0 to durationSeconds
+      else 0 until durationSeconds
+
+    val ftpDelta: Float = ftpRatioEnd - ftpRatioStart
+    val ftpStep: Float = ftpDelta / (seconds.size - 1)
+
+    seconds.map { second =>
+      WorkoutData(
+        milliseconds = (offsetSeconds + second) * 1000,
+        memberFtpPercent = 0,
+        ftpPercent = ftpRatioStart + ftpStep * second,
+      )
+    }
+  }
+
+}
