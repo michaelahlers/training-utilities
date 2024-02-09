@@ -1,7 +1,9 @@
 package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
 import Error.NoWorkoutsForInterval
+import Error.UndefinedSlope
 import cats.data.Validated
+import cats.data.Validated.Invalid
 import cats.data.Validated.Valid
 import cats.syntax.validated._
 import scala.annotation.tailrec
@@ -20,20 +22,18 @@ object ToWorkoutStep {
 
   sealed trait Slope
   object Slope {
-    case object Undefined extends Slope
-    case object Up extends Slope
-    case object Flat extends Slope
-    case object Down extends Slope
+    case object Positive extends Slope
+    case object Zero extends Slope
+    case object Negative extends Slope
 
     def from(start: WorkoutData, end: WorkoutData): Slope =
-      if (start.ftpPercent == end.ftpPercent) Flat
-      else if (start.ftpPercent < end.ftpPercent) Up
-      else Down
+      if (start.ftpPercent == end.ftpPercent) Zero
+      else if (start.ftpPercent < end.ftpPercent) Positive
+      else Negative
 
-    def from(workouts: Seq[WorkoutData]): Slope =
-      if (workouts.size < 2) Undefined
-      else from(workouts.head, workouts.last)
-
+    def from(workouts: Seq[WorkoutData]): Validated[Error, Slope] =
+      if (workouts.size > 1) from(workouts.head, workouts.last).valid
+      else UndefinedSlope(workouts).invalid
   }
 
   sealed trait Phase
@@ -48,54 +48,19 @@ object ToWorkoutStep {
   ): Validated[Error, (WorkoutStep, Seq[WorkoutData])] = {
 
     @tailrec
-    def take(queue: List[WorkoutData], acc: Vector[WorkoutData]): ((WorkoutData, WorkoutData), Seq[WorkoutData]) = {
+    def take2(
+      queue: List[WorkoutData],
+      acc: Vector[WorkoutData],
+    ): ((WorkoutData, WorkoutData), Seq[WorkoutData]) = {
       val slope = Slope.from(acc)
 
-      queue match {
-
-        case _ :: Nil =>
-          ((acc.head, acc.last), queue)
-
-        case head :: tail if slope == Slope.Undefined =>
-          take(
-            queue = tail,
-            acc = acc :+ head,
-          )
-
-        case head :: tail if slope == Slope.from(acc.last, head) =>
-          take(
-            queue = tail,
-            acc = acc :+ head,
-          )
-
-        case head :: _ if slope != Slope.from(acc.last, head) =>
-          val nextSlope = Slope.from(acc.last, head)
-          pprint.log((slope, nextSlope))
-          ((acc.head, acc.last), queue)
-
-        case head :: _ if acc.last.ftpPercent != head.ftpPercent =>
-          ((acc.head, acc.last), queue)
-
-        case head :: tail =>
-          take(
-            queue = tail,
-            acc = acc :+ head,
-          )
-
-      }
-    }
-
-    @tailrec
-    def take2(queue: List[WorkoutData], acc: Vector[WorkoutData]): ((WorkoutData, WorkoutData), Seq[WorkoutData]) = {
-      val slope = Slope.from(acc)
-
-      queue match {
+      (queue, slope) match {
 
         /** Stop when the terminator is reached. */
-        case head :: Nil =>
+        case (head :: Nil, _) =>
           ((acc.head, acc.last.copy(ftpPercent = head.ftpPercent)), queue)
 
-        case head :: tail if slope == Slope.Undefined =>
+        case (head :: tail, Invalid(_)) =>
           take2(
             queue = tail,
             acc = acc :+ head,
@@ -104,14 +69,14 @@ object ToWorkoutStep {
         /**
          * Steady-state, with special case where the next interval begins with an inflection point but shares the same [[WorkoutData.ftpPercent]].
          */
-        case head :: next :: tail if acc.last.ftpPercent == head.ftpPercent && head.ftpPercent == next.ftpPercent =>
+        case (head :: next :: tail, _) if acc.last.ftpPercent == head.ftpPercent && head.ftpPercent == next.ftpPercent =>
           take2(
             queue = tail,
             acc = acc :+ head,
           )
 
         /** Continuous ramp. */
-        case head :: next :: tail if slope == Slope.from(acc.last, head) && slope == Slope.from(head, next) =>
+        case (head :: next :: tail, Valid(slope)) if slope == Slope.from(acc.last, head) && slope == Slope.from(head, next) =>
           take2(
             queue = next :: tail,
             acc = acc :+ head,
@@ -140,7 +105,7 @@ object ToWorkoutStep {
 
     val step: WorkoutStep = (phase, slope) match {
 
-      case (Phase.First, Slope.Up | Slope.Down) =>
+      case (Phase.First, Slope.Positive | Slope.Negative) =>
         val ftpPowerLowPercent = start.ftpPercent
         val ftpPowerHighPercent = end.ftpPercent
 
@@ -153,7 +118,7 @@ object ToWorkoutStep {
           ftpRatioEnd = ftpPowerHighRatio,
         )
 
-      case (Phase.First, Slope.Flat) =>
+      case (Phase.First, Slope.Zero) =>
         val ftpPowerPercent = start.ftpPercent
         val ftpPowerRatio = ftpPowerPercent / 100f
 
@@ -163,7 +128,7 @@ object ToWorkoutStep {
           ftpRatioEnd = ftpPowerRatio,
         )
 
-      case (Phase.Interior, Slope.Up | Slope.Down) =>
+      case (Phase.Interior, Slope.Positive | Slope.Negative) =>
         val ftpPowerLowPercent = start.ftpPercent
         val ftpPowerHighPercent = end.ftpPercent
 
@@ -176,7 +141,7 @@ object ToWorkoutStep {
           ftpRatioEnd = ftpPowerHighRatio,
         )
 
-      case (Phase.Interior, Slope.Flat) =>
+      case (Phase.Interior, Slope.Zero) =>
         val ftpPowerPercent = start.ftpPercent
         val ftpPowerRatio = ftpPowerPercent / 100f
 
@@ -185,7 +150,7 @@ object ToWorkoutStep {
           ftpRatio = ftpPowerRatio,
         )
 
-      case (Phase.Last, Slope.Up | Slope.Down) =>
+      case (Phase.Last, Slope.Positive | Slope.Negative) =>
         val ftpPowerLowPercent = start.ftpPercent
         val ftpPowerHighPercent = end.ftpPercent
 
@@ -198,7 +163,7 @@ object ToWorkoutStep {
           ftpRatioEnd = ftpPowerHighRatio,
         )
 
-      case (Phase.Last, Slope.Flat) =>
+      case (Phase.Last, Slope.Zero) =>
         val ftpPowerPercent = start.ftpPercent
         val ftpPowerRatio = ftpPowerPercent / 100f
 
