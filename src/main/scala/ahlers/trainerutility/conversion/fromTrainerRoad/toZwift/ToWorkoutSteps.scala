@@ -11,7 +11,7 @@ import zwift.schema.desktop.WorkoutStep
 
 private[toZwift] object ToWorkoutSteps {
 
-  def apply(
+  def from(
     workouts: Seq[WorkoutData],
   ): Validated[Error, Seq[WorkoutStep]] = {
 
