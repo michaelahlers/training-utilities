@@ -1,6 +1,6 @@
 package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
-import Error.NoWorkoutsForInterval
+import Error.NoWorkoutsForStep
 import cats.data.Validated.Invalid
 import cats.data.Validated.Valid
 import cats.data.diffx.instances._
@@ -8,6 +8,7 @@ import com.softwaremill.diffx.scalatest.DiffShouldMatcher._
 import diffx.instances._
 import org.scalactic.anyvals.NonEmptyList
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks._
 import squants.time.Seconds
 import squants.time.Time
 import trainerroad.schema.web.IntervalData
@@ -25,13 +26,15 @@ import zwift.schema.desktop.scalacheck.instances._
 class ToWorkoutStepSpec extends AnyWordSpec {
   import ToWorkoutStepSpec.toWorkoutData
 
-   "No workouts for interval" when {
+  "No workouts for interval" when {
 
     "workouts are empty" in {
 
-      ToWorkoutStep(
-        workouts = Seq.empty,
-      ).shouldMatchTo(Invalid(NoWorkoutsForInterval))
+      ToWorkoutStep
+        .from(
+          workouts = Seq.empty,
+        )
+        .shouldMatchTo(Invalid(NoWorkoutsForStep))
     }
 
    }
@@ -370,7 +373,9 @@ object ToWorkoutStepSpec {
       else 0 until step.durationSeconds
 
     val ftpDelta: Float = ftpRatioEnd - ftpRatioStart
-    val ftpStep: Float = ftpDelta / (slices.size - 1)
+    val ftpStep: Float =
+      if (slices.size < 2) ftpDelta
+      else ftpDelta / (slices.size - 1)
 
     slices.map { slice =>
       ftpRatioStart + ftpStep * slice
