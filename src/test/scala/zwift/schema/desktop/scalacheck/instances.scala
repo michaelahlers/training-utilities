@@ -11,40 +11,83 @@ import zwift.schema.desktop.WorkoutStep.Warmup
 
 object instances {
 
-  /** Limits precision of FTP ratios. */
-  private val genPartialWorkoutStep: Gen[(Int, Float, Float)] =
+  /**
+   * Steady-steady or increasing.
+   */
+  val genWarmup: Gen[Warmup] =
     for {
       durationSeconds <- Gen.posNum[Int].map(_ + 1)
       ftpPercentStart <- Gen.posNum[Int]
-      ftpPercentEnd <- Gen.posNum[Int]
+      ftpPercentDelta <- Gen.choose(0, 50)
     } yield {
+      val ftpPercentEnd = ftpPercentStart + ftpPercentDelta
       val ftpRatioStart = ftpPercentStart / 100f
       val ftpRatioEnd = ftpPercentEnd / 100f
-      (durationSeconds, ftpRatioStart, ftpRatioEnd)
+      Warmup(durationSeconds, ftpRatioStart, ftpRatioEnd)
     }
-
-  val genWarmup: Gen[Warmup] =
-    genPartialWorkoutStep.map((Warmup.apply _).tupled)
 
   implicit val arbWarmup: Arbitrary[Warmup] =
     Arbitrary(genWarmup)
 
   val genSteadyState: Gen[SteadyState] =
-    genPartialWorkoutStep.map { case (durationSeconds, ftpRatioStart, _) =>
-      SteadyState(durationSeconds, ftpRatioStart)
+    for {
+      durationSeconds <- Gen.posNum[Int].map(_ + 1)
+      ftpPercent <- Gen.posNum[Int]
+    } yield {
+      val ftpRatio = ftpPercent / 100f
+      SteadyState(durationSeconds, ftpRatio)
     }
 
   implicit val arbSteadyState: Arbitrary[SteadyState] =
     Arbitrary(genSteadyState)
 
-  val genRamp: Gen[Ramp] =
-    genPartialWorkoutStep.map((Ramp.apply _).tupled)
+  val genRampIncreasing: Gen[Ramp] =
+    for {
+      durationSeconds <- Gen.posNum[Int].map(_ + 1)
+      ftpPercentStart <- Gen.posNum[Int]
+      ftpPercentDelta <- Gen.choose(10, 20)
+    } yield {
+      val ftpPercentEnd = ftpPercentStart + ftpPercentDelta
+      val ftpRatioStart = ftpPercentStart / 100f
+      val ftpRatioEnd = ftpPercentEnd / 100f
+      Ramp(durationSeconds, ftpRatioStart, ftpRatioEnd)
+    }
+
+  val genRampDecreasing: Gen[Ramp] =
+    for {
+      durationSeconds <- Gen.posNum[Int].map(_ + 1)
+      ftpPercentDelta <- Gen.choose(10, 20)
+      ftpPercentEnd <- Gen.posNum[Int]
+    } yield {
+      val ftpPercentStart = ftpPercentDelta + ftpPercentEnd
+      val ftpRatioStart = ftpPercentStart / 100f
+      val ftpRatioEnd = ftpPercentEnd / 100f
+      Ramp(durationSeconds, ftpRatioStart, ftpRatioEnd)
+    }
+
+  /** Increasing or decreasing, but never steady-state. */
+  val genRamp: Gen[Ramp] = Gen.oneOf(
+    genRampIncreasing,
+    genRampDecreasing,
+  )
 
   implicit val arbRamp: Arbitrary[Ramp] =
     Arbitrary(genRamp)
 
+  /**
+   * Steady-steady or decreasing.
+   */
   val genCooldown: Gen[Cooldown] =
-    genPartialWorkoutStep.map((Cooldown.apply _).tupled)
+    for {
+      durationSeconds <- Gen.posNum[Int].map(_ + 1)
+      ftpPercentDelta <- Gen.choose(0, 50)
+      ftpPercentEnd <- Gen.posNum[Int]
+    } yield {
+      val ftpPercentStart = ftpPercentDelta + ftpPercentEnd
+      val ftpRatioStart = ftpPercentStart / 100f
+      val ftpRatioEnd = ftpPercentEnd / 100f
+      Cooldown(durationSeconds, ftpRatioStart, ftpRatioEnd)
+    }
 
   implicit val arbCooldown: Arbitrary[Cooldown] =
     Arbitrary(genCooldown)
