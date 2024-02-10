@@ -11,12 +11,17 @@ import zwift.schema.desktop.WorkoutStep.Warmup
 
 object instances {
 
+  /** Limits precision of FTP ratios. */
   private val genPartialWorkoutStep: Gen[(Int, Float, Float)] =
     for {
       durationSeconds <- Gen.posNum[Int].map(_ + 1)
-      ftpRatioStart <- Gen.posNum[Float]
-      ftpRatioEnd <- Gen.posNum[Float]
-    } yield (durationSeconds, ftpRatioStart, ftpRatioEnd)
+      ftpPercentStart <- Gen.posNum[Int]
+      ftpPercentEnd <- Gen.posNum[Int]
+    } yield {
+      val ftpRatioStart = ftpPercentStart / 100f
+      val ftpRatioEnd = ftpPercentEnd / 100f
+      (durationSeconds, ftpRatioStart, ftpRatioEnd)
+    }
 
   val genWarmup: Gen[Warmup] =
     genPartialWorkoutStep.map((Warmup.apply _).tupled)
