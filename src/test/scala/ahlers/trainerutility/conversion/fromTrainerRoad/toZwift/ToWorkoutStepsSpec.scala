@@ -18,6 +18,10 @@ import zwift.schema.desktop.WorkoutStep
 import zwift.schema.desktop.diffx.instances._
 import zwift.schema.desktop.scalacheck.instances._
 
+/**
+ * Overall structure informs special cases of Zwift workouts, specifically the warmup and cooldown intervals.
+ * In that light, there's little logic to tests that don't verify the workout in its entireity.
+ */
 class ToWorkoutStepsSpec extends AnyWordSpec {
   import ToWorkoutStepsSpec.arbSteps
   import ToWorkoutStepsSpec.toWorkoutData
