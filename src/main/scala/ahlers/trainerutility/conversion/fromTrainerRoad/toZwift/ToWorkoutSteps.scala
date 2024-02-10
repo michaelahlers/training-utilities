@@ -29,10 +29,12 @@ private[toZwift] object ToWorkoutSteps {
         )
     }
 
-    take(
+    val steps = take(
       workouts = workouts.toList,
       steps = Vector.empty,
-    ).valid
+    )
+
+    steps.valid
   }
 
 }
