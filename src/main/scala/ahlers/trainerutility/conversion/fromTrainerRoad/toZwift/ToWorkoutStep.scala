@@ -91,7 +91,7 @@ object ToWorkoutStep {
           acc = acc :+ head,
         )
 
-      case (head :: tail, slope: Defined) if slope.ratio === Slope.from(acc.last, head).ratio +- 0.001f =>
+      case (head :: tail, slope: Defined) if slope.ratio === Slope.from(acc.last, head).ratio +- 0.0001f =>
         select(
           queue = tail,
           acc = acc :+ head,
