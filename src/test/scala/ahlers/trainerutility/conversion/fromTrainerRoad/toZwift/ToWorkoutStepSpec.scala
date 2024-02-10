@@ -8,6 +8,8 @@ import cats.data.Validated.Valid
 import cats.data.diffx.instances._
 import cats.data.scalacheck.instances._
 import com.softwaremill.diffx.scalatest.DiffShouldMatcher._
+import org.scalacheck.Arbitrary
+import org.scalacheck.Gen
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks._
 import trainerroad.schema.web.Workout
@@ -38,17 +40,25 @@ class ToWorkoutStepSpec extends AnyWordSpec {
   "Warmup" when {
 
     "first interval" in {
+      implicit val arbSteps: Arbitrary[NonEmptyList[WorkoutStep]] = Arbitrary(for {
+        head <- genWarmup
+        internal <- Gen.listOf(Gen.oneOf(
+          genSteadyState,
+          genRamp,
+        ))
+        last <- genCooldown
+      } yield NonEmptyList(head, internal) :+ last)
 
-      forAll(sizeRange(3)) { (head: Warmup, tail: NonEmptyList[WorkoutStep]) =>
-        val workouts = toWorkoutData(head :: tail).toList
+      forAll(sizeRange(3)) { steps: NonEmptyList[WorkoutStep] =>
+        val workouts = toWorkoutData(steps).toList
 
         ToWorkoutStep
           .from(
             workouts = workouts,
           )
           .shouldMatchTo(Valid((
-            head,
-            workouts.drop(head.durationSeconds),
+            steps.head,
+            workouts.drop(steps.head.durationSeconds),
           )))
       }
     }
