@@ -77,12 +77,12 @@ libraryDependencies +=
 libraryDependencies +=
   "org.typelevel" %% "squants" % "1.8.3"
 
-///**
-// * Scalactic provides constructs related to quality that are useful in both production code and tests.
-// * @see [[https://www.scalactic.org/]]
-// */
-//libraryDependencies +=
-//  "org.scalactic" %% "scalactic" % "3.2.17"
+/**
+ * Scalactic provides constructs related to quality that are useful in both production code and tests.
+ * @see [[https://www.scalactic.org/]]
+ */
+libraryDependencies +=
+  "org.scalactic" %% "scalactic" % "3.2.17"
 
 /**
  * ScalaTest is the most flexible and most popular testing tool in the Scala ecosystem.
