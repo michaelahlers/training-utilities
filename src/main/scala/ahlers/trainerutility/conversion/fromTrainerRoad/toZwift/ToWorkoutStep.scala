@@ -1,6 +1,6 @@
 package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
-import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.NoWorkoutsForInterval
+import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.NoWorkoutsForStep
 import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.UndefinedSlope
 import cats.data.Validated
 import cats.data.Validated.Invalid
@@ -56,7 +56,7 @@ private[toZwift] object ToWorkoutStep {
     (queue, slope) match {
 
       /** Meaningless when [[queue]] starts empty. */
-      case (Nil, _) => NoWorkoutsForInterval.invalid
+      case (Nil, _) => NoWorkoutsForStep.invalid
 
       /** Base case: stop when the terminator is reached. */
       case (head :: Nil, _) =>
@@ -90,7 +90,7 @@ private[toZwift] object ToWorkoutStep {
     }
   }
 
-  def apply(
+  def from(
     workouts: Seq[WorkoutData],
   ): Validated[Error, (WorkoutStep, Seq[WorkoutData])] = for {
     selection <- select(

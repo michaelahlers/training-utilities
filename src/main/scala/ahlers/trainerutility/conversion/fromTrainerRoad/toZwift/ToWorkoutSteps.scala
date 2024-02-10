@@ -22,7 +22,7 @@ private[toZwift] object ToWorkoutSteps {
     ): Seq[WorkoutStep] = workouts match {
       case Nil => steps
       case workouts =>
-        val (step, next) = ToWorkoutStep(workouts).getOrElse(???)
+        val (step, next) = ToWorkoutStep.from(workouts).getOrElse(???)
         take(
           workouts = next.toList,
           steps = steps :+ step,
