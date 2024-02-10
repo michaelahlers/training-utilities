@@ -4,6 +4,6 @@ import trainerroad.schema.web.WorkoutData
 
 sealed trait Error
 object Error {
-  case object NoWorkoutsForInterval extends Error
+  case object NoWorkoutsForStep extends Error
   case class UndefinedSlope(workouts: Seq[WorkoutData]) extends Error
 }
