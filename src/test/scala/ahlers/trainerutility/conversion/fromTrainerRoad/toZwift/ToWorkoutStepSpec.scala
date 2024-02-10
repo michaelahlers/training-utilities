@@ -1,24 +1,20 @@
 package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
-import Error.NoWorkoutsForStep
+import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.NoWorkoutsForStep
+import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.diffx.instances._
+import cats.data.NonEmptyList
 import cats.data.Validated.Invalid
 import cats.data.Validated.Valid
 import cats.data.diffx.instances._
+import cats.data.scalacheck.instances._
 import com.softwaremill.diffx.scalatest.DiffShouldMatcher._
-import diffx.instances._
-import org.scalactic.anyvals.NonEmptyList
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks._
-import squants.time.Seconds
-import squants.time.Time
-import trainerroad.schema.web.IntervalData
 import trainerroad.schema.web.Workout
 import trainerroad.schema.web.WorkoutData
 import trainerroad.schema.web.diffx.instances._
 import zwift.schema.desktop.WorkoutStep
-import zwift.schema.desktop.WorkoutStep.Cooldown
 import zwift.schema.desktop.WorkoutStep.Ramp
-import zwift.schema.desktop.WorkoutStep.SteadyState
 import zwift.schema.desktop.WorkoutStep.Warmup
 import zwift.schema.desktop.diffx.instances._
 import zwift.schema.desktop.scalacheck.instances._
@@ -37,7 +33,27 @@ class ToWorkoutStepSpec extends AnyWordSpec {
         .shouldMatchTo(Invalid(NoWorkoutsForStep))
     }
 
-   }
+  }
+
+  "Warmup" when {
+
+    "first interval" in {
+
+      forAll(sizeRange(3)) { (head: Warmup, tail: NonEmptyList[WorkoutStep]) =>
+        val workouts = toWorkoutData(head :: tail).toList
+
+        ToWorkoutStep
+          .from(
+            workouts = workouts,
+          )
+          .shouldMatchTo(Valid((
+            head,
+            workouts.drop(head.durationSeconds),
+          )))
+      }
+    }
+
+  }
 
   // "Steady state workout step" when {
   //
@@ -340,7 +356,7 @@ class ToWorkoutStepSpec extends AnyWordSpec {
   //
   // }
 
-  pprint.log(toWorkoutData(Seq(
+  pprint.log(toWorkoutData(NonEmptyList.of(
     Ramp(
       durationSeconds = 5,
       ftpRatioStart = 0.5f,
@@ -360,9 +376,8 @@ object ToWorkoutStepSpec {
   def toFtpRatios(
     step: WorkoutStep,
     isLast: Boolean,
-  ): Seq[Float] = {
-    import step.ftpRatioStart
-    import step.ftpRatioEnd
+  ): NonEmptyList[Float] = {
+    import step.{ftpRatioEnd, ftpRatioStart}
 
     /**
      * The number of step slices (each [[WorkoutData]] is equal to the duration in seconds of [[step]].
@@ -377,18 +392,42 @@ object ToWorkoutStepSpec {
       if (slices.size < 2) ftpDelta
       else ftpDelta / (slices.size - 1)
 
-    slices.map { slice =>
+    val ratios = slices.map { slice =>
       ftpRatioStart + ftpStep * slice
     }
+
+    NonEmptyList.fromListUnsafe(ratios.toList)
   }
 
   def toWorkoutData(
-    steps: Seq[WorkoutStep],
-  ): Seq[WorkoutData] = {
+    step: WorkoutStep,
+    offsetSeconds: Int,
+    isLast: Boolean,
+  ): NonEmptyList[WorkoutData] = {
+    val ratios: NonEmptyList[Float] = toFtpRatios(
+      step = step,
+      isLast = isLast,
+    )
+
+    ratios
+      .zipWithIndex
+      .map { case (ftpRatio, slice) =>
+        WorkoutData(
+          milliseconds = (offsetSeconds + slice) * 1000,
+          memberFtpPercent = 0,
+          ftpPercent = ftpRatio * 100,
+        )
+      }
+  }
+
+  def toWorkoutData(
+    steps: NonEmptyList[WorkoutStep],
+    offsetSeconds: Int,
+  ): NonEmptyList[WorkoutData] = {
     val lastIndex = steps.size - 1
 
     /** Not efficient, but that's fine. */
-    steps
+    val ratios: NonEmptyList[Float] = steps
       .zipWithIndex
       .flatMap { case (step, index) =>
         val isLast = lastIndex == index
@@ -397,14 +436,24 @@ object ToWorkoutStepSpec {
           isLast = isLast,
         )
       }
+
+    ratios
       .zipWithIndex
-      .map { case (ftpRatio, offsetSeconds) =>
+      .map { case (ftpRatio, slice) =>
         WorkoutData(
-          milliseconds = offsetSeconds * 1000,
+          milliseconds = (offsetSeconds + slice) * 1000,
           memberFtpPercent = 0,
           ftpPercent = ftpRatio * 100,
         )
       }
   }
+
+  def toWorkoutData(
+    steps: NonEmptyList[WorkoutStep],
+  ): NonEmptyList[WorkoutData] =
+    toWorkoutData(
+      steps = steps,
+      offsetSeconds = 0,
+    )
 
 }
