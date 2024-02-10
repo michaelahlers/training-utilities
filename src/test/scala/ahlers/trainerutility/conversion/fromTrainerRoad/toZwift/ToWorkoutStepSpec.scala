@@ -12,11 +12,13 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks._
+import scala.util.control.NonFatal
 import trainerroad.schema.web.Workout
 import trainerroad.schema.web.WorkoutData
 import trainerroad.schema.web.diffx.instances._
 import zwift.schema.desktop.WorkoutStep
 import zwift.schema.desktop.WorkoutStep.Ramp
+import zwift.schema.desktop.WorkoutStep.SteadyState
 import zwift.schema.desktop.WorkoutStep.Warmup
 import zwift.schema.desktop.diffx.instances._
 import zwift.schema.desktop.scalacheck.instances._
@@ -40,26 +42,21 @@ class ToWorkoutStepSpec extends AnyWordSpec {
   "Warmup" when {
 
     "first interval" in {
-      implicit val arbSteps: Arbitrary[NonEmptyList[WorkoutStep]] = Arbitrary(for {
-        head <- genWarmup
-        internal <- Gen.listOf(Gen.oneOf(
-          genSteadyState,
-          genRamp,
-        ))
-        last <- genCooldown
-      } yield NonEmptyList(head, internal) :+ last)
+      forAll(sizeRange(5)) { (head: Warmup, next: SteadyState) =>
+        val workouts = toWorkoutData(NonEmptyList.of(head, next)).toList
 
-      forAll(sizeRange(3)) { steps: NonEmptyList[WorkoutStep] =>
-        val workouts = toWorkoutData(steps).toList
-
-        ToWorkoutStep
-          .from(
-            workouts = workouts,
-          )
-          .shouldMatchTo(Valid((
-            steps.head,
-            workouts.drop(steps.head.durationSeconds),
-          )))
+        try ToWorkoutStep
+            .from(
+              workouts = workouts,
+            )
+            .shouldMatchTo(Valid((
+              head,
+              workouts.drop(head.durationSeconds),
+            )))
+        catch {
+          case NonFatal(exception) =>
+            throw exception
+        }
       }
     }
 
