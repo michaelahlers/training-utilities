@@ -3,30 +3,12 @@ package trainerroad.view
 import cats.data.NonEmptyList
 import org.scalactic.Tolerance._
 import org.scalactic.TripleEquals._
-import scala.annotation.tailrec
 import squants.time.Milliseconds
 import squants.time.Time
 import trainerroad.schema.web.WorkoutData
-import trainerroad.view.StepList.Empty
-import trainerroad.view.StepList.Instant
-import trainerroad.view.StepList.Range
 
-sealed trait StepList { self =>
+sealed trait StepList {
   def start: WorkoutData
-
-  /** @todo Remove temporary debugging support (implement as [[cats.Foldable]]). */
-  @tailrec
-  final def foreach[A](f: StepList => A): Unit =
-    self match {
-      case step: Empty => f(step)
-      case step: Instant =>
-        f(step)
-        step.tail.foreach(f)
-      case step: Range =>
-        f(step)
-        step.tail.foreach(f)
-    }
-
 }
 
 object StepList {
