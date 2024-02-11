@@ -92,7 +92,16 @@ object StepList {
     def loop(
       queue: List[WorkoutData],
       acc: StepList,
-    ): StepList =
+    ): StepList = {
+
+      def isContinuous(
+        slope: Slope with Slope.Defined,
+        last: WorkoutData,
+        next: WorkoutData,
+      ): Boolean =
+        last.ftpPercent === next.ftpPercent ||
+          slope.ratio === Slope.from(last, next).ratio +- 0.0001f
+
       (queue, acc) match {
 
         case (Nil, acc) => acc
@@ -106,16 +115,7 @@ object StepList {
             ),
           )
 
-        case (head :: tail, acc: Head) if acc.start.ftpPercent === head.ftpPercent =>
-          loop(
-            queue = tail,
-            acc = Head(
-              interval = head :: acc.interval,
-              tail = acc.tail,
-            ),
-          )
-
-        case (head :: tail, acc: Head) if acc.slope.ratio === Slope.from(acc.start, head).ratio +- 0.0001f =>
+        case (head :: tail, acc: Head) if isContinuous(acc.slope, acc.start, head) =>
           loop(
             queue = tail,
             acc = Head(
@@ -134,6 +134,7 @@ object StepList {
           )
 
       }
+    }
 
     loop(
       queue = workouts.init.reverse,
