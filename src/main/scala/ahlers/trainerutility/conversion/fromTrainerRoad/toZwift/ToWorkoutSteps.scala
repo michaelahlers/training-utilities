@@ -198,16 +198,17 @@ private[toZwift] object ToWorkoutSteps {
 
   def from(
     workouts: NonEmptyList[WorkoutData],
-  ): Validated[Error, Seq[WorkoutStep]] = {
+  ): Validated[Error, NonEmptyList[WorkoutStep]] = {
 
     @tailrec
     def take(
       remainder: Seq[WorkoutData],
       steps: Vector[WorkoutStep],
-    ): Validated[Error, Seq[WorkoutStep]] =
+    ): Validated[Error, NonEmptyList[WorkoutStep]] =
       from1(remainder) match {
         case result @ Invalid(_) if steps.isEmpty => result
-        case Invalid(_) => steps.valid
+        /** @todo Handle empty case correctly. */
+        case Invalid(_) => NonEmptyList.fromFoldable(steps).get.valid
         case Valid((step, remainder)) =>
           take(
             remainder = remainder,

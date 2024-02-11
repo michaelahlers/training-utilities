@@ -1,5 +1,7 @@
 package zwift.schema.desktop
 
+import cats.data.NonEmptyList
+
 import scala.xml.encoding.XmlEncoder
 import scala.xml.encoding.syntax._
 import zwift.schema.desktop.WorkoutFile.Tag
@@ -10,7 +12,7 @@ case class WorkoutFile(
   description: String,
   sportType: String,
   tags: Seq[Tag],
-  workout: Seq[WorkoutStep],
+  workout: NonEmptyList[WorkoutStep],
 )
 
 object WorkoutFile {
