@@ -72,6 +72,14 @@ private[toZwift] object ToWorkoutSteps {
   ): Validated[Error, Selection] = {
     val slope = Slope.from(acc)
 
+    def isContinuous(
+      slope: Slope with Slope.Defined,
+      last: WorkoutData,
+      next: WorkoutData,
+    ): Boolean =
+      last.ftpPercent === next.ftpPercent ||
+        slope.ratio === Slope.from(acc.last, next).ratio +- 0.0001f
+
     (queue, slope) match {
 
       /** Meaningless when [[queue]] starts empty. */
@@ -87,13 +95,7 @@ private[toZwift] object ToWorkoutSteps {
           acc = acc :+ head,
         )
 
-      case (head :: tail, Slope.Zero) if acc.last.ftpPercent == head.ftpPercent =>
-        select(
-          queue = tail,
-          acc = acc :+ head,
-        )
-
-      case (head :: tail, slope: Slope.Defined) if slope.ratio === Slope.from(acc.last, head).ratio +- 0.0001f =>
+      case (head :: tail, slope: Slope.Defined) if isContinuous(slope, acc.last, head) =>
         select(
           queue = tail,
           acc = acc :+ head,
