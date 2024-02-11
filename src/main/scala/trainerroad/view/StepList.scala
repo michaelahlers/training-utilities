@@ -140,7 +140,7 @@ object StepList {
             acc = Range(
               start = head,
               end = acc.start,
-              tail = acc,
+              tail = acc.tail,
             ),
           )
 
