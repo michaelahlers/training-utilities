@@ -111,6 +111,15 @@ object Step {
             ),
           )
 
+        case (head :: tail, acc: Head) =>
+          loop(
+            queue = tail,
+            acc = Head(
+              interval = head,
+              tail = acc,
+            ),
+          )
+
       }
 
     loop(
