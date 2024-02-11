@@ -85,25 +85,6 @@ object StepList {
     val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
   }
 
-//case class Head(
-//  interval: NonEmptyList[WorkoutData],
-//  tail: StepList,
-//) extends StepList {
-//  override val start: WorkoutData = interval.head
-//  val slope: Slope with Slope.Defined = Slope.from(start, tail.start)
-//  val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
-//}
-
-//object Head {
-//  def apply(
-//    interval: WorkoutData,
-//    tail: StepList,
-//  ): Head = Head(
-//    interval = NonEmptyList.one(interval),
-//    tail = tail,
-//  )
-//}
-
   def from(
     workouts: NonEmptyList[WorkoutData],
   ): StepList = {
