@@ -3,6 +3,7 @@ package trainerroad.schema.web.scalacheck
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
+import squants.Seconds
 import trainerroad.schema.web.IntervalData
 import trainerroad.schema.web.WorkoutData
 
@@ -25,11 +26,11 @@ object instances {
 
   /** Arbitrary within valid and reasonable limits. */
   implicit val arbWorkoutData: Arbitrary[WorkoutData] = Arbitrary(for {
-    centiseconds <- Gen.posNum[Int]
+    seconds <- Gen.posNum[Int]
     memberFtpPercent <- Gen.choose(0.0f, 100.0f)
     ftpPercent <- Gen.choose(0.0f, 100.0f)
   } yield WorkoutData(
-    milliseconds = centiseconds,
+    offset = Seconds(seconds),
     memberFtpPercent = memberFtpPercent,
     ftpPercent = ftpPercent,
   ))

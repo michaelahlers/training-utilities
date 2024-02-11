@@ -1,18 +1,24 @@
 package zwift.schema.desktop
 
+import scala.xml.Text
 import scala.xml.encoding.XmlEncoder
 import scala.xml.encoding.syntax._
+import squants.time.Seconds
+import squants.time.Time
 
 sealed trait WorkoutStep {
-  def durationSeconds: Int
+  def duration: Time
   def ftpRatioStart: Float
   def ftpRatioEnd: Float
 }
 
 object WorkoutStep {
 
+  implicit private val xmlEncoderTime: XmlEncoder[Time] = time =>
+    Text(time.toSeconds.toInt.toString)
+
   case class SteadyState(
-    durationSeconds: Int,
+    duration: Time,
     ftpRatio: Float,
   ) extends WorkoutStep {
 
@@ -20,8 +26,8 @@ object WorkoutStep {
     override val ftpRatioEnd: Float = ftpRatio
 
     require(
-      durationSeconds >= 0,
-      s"Duration ($durationSeconds) must be non-negative.",
+      duration >= Seconds(0),
+      s"Duration ($duration) must be non-negative.",
     )
 
     require(
@@ -34,12 +40,12 @@ object WorkoutStep {
   object SteadyState {
     implicit val xmlEncoder: XmlEncoder[SteadyState] = step =>
       <SteadyState
-        Duration={step.durationSeconds.toString}
+        Duration={step.duration.asXml}
         Power={step.ftpRatio.toString} />
   }
 
   case class Ramp(
-    durationSeconds: Int,
+    duration: Time,
     ftpRatioStart: Float,
     ftpRatioEnd: Float,
   ) extends WorkoutStep {
@@ -59,13 +65,13 @@ object WorkoutStep {
   object Ramp {
     implicit val xmlEncoder: XmlEncoder[Ramp] = step =>
       <Ramp
-        Duration={step.durationSeconds.toString}
+        Duration={step.duration.asXml}
         PowerLow={step.ftpRatioStart.toString}
         PowerHigh={step.ftpRatioEnd.toString} />
   }
 
   case class Warmup(
-    durationSeconds: Int,
+    duration: Time,
     ftpRatioStart: Float,
     ftpRatioEnd: Float,
   ) extends WorkoutStep {
@@ -85,13 +91,13 @@ object WorkoutStep {
   object Warmup {
     implicit val xmlEncoder: XmlEncoder[Warmup] = step =>
       <Warmup
-        Duration={step.durationSeconds.toString}
+        Duration={step.duration.asXml}
         PowerLow={step.ftpRatioStart.toString}
         PowerHigh={step.ftpRatioEnd.toString} />
   }
 
   case class Cooldown(
-    durationSeconds: Int,
+    duration: Time,
     ftpRatioStart: Float,
     ftpRatioEnd: Float,
   ) extends WorkoutStep {
@@ -111,7 +117,7 @@ object WorkoutStep {
   object Cooldown {
     implicit val xmlEncoder: XmlEncoder[Cooldown] = step =>
       <Cooldown
-        Duration={step.durationSeconds.toString}
+        Duration={step.duration.asXml}
         PowerLow={step.ftpRatioStart.toString}
         PowerHigh={step.ftpRatioEnd.toString} />
   }

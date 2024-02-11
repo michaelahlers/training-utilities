@@ -13,8 +13,6 @@ sealed trait StepList {
 
 object StepList {
 
-
-
   sealed trait Phase
   object Phase {
     object First extends Phase
@@ -47,7 +45,7 @@ object StepList {
     def from(start: WorkoutData, end: WorkoutData): Slope with Defined =
       Slope {
         (end.ftpPercent - start.ftpPercent) /
-          (end.milliseconds - start.milliseconds)
+          (end.offset - start.offset).millis
       }
 
     def from(workouts: Seq[WorkoutData]): Slope =
@@ -61,10 +59,10 @@ object StepList {
     def tail: StepList
     def slope: Slope
 
-    final val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
+    final val duration: Time = tail.start.offset - start.offset
 
-    final val phase:Phase = {
-      val isFirst = start.milliseconds == 0
+    final val phase: Phase = {
+      val isFirst =  start.offset.millis == 0
 
       val isLast = tail match {
         case _: StepList.Empty => true

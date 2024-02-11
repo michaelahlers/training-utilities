@@ -5,6 +5,7 @@ import cats.data.NonEmptyList
 import cats.data.Validated
 import cats.syntax.validated._
 import scala.annotation.tailrec
+import squants.time.Time
 import trainerroad.schema.web.WorkoutData
 import trainerroad.view.StepList
 import trainerroad.view.StepList.Phase
@@ -20,8 +21,7 @@ private[toZwift] object ToWorkoutSteps {
   def from(
     stepList: StepList.Head,
   ): WorkoutStep = {
-    val durationSeconds: Int = stepList.duration.toSeconds.toInt
-
+    val duration: Time = stepList.duration
     val phase: Phase = stepList.phase
     val slope: Slope = stepList.slope
 
@@ -43,21 +43,21 @@ private[toZwift] object ToWorkoutSteps {
 
       case (Phase.First, _) =>
         Warmup(
-          durationSeconds = durationSeconds,
+          duration = duration,
           ftpRatioStart = ftpRatioStart,
           ftpRatioEnd = ftpRatioEnd,
         )
 
       case (Phase.Interior, Slope.Positive(_) | Slope.Negative(_)) =>
         Ramp(
-          durationSeconds = durationSeconds,
+          duration = duration,
           ftpRatioStart = ftpRatioStart,
           ftpRatioEnd = ftpRatioEnd,
         )
 
       case (Phase.Interior, Slope.Undefined | Slope.Zero) =>
         SteadyState(
-          durationSeconds = durationSeconds,
+          duration = duration,
           ftpRatio = ftpRatioStart,
         )
 
@@ -66,7 +66,7 @@ private[toZwift] object ToWorkoutSteps {
         val ftpRatioEnd = ftpPercentEnd / 100f
 
         Cooldown(
-          durationSeconds = durationSeconds,
+          duration = duration,
           ftpRatioStart = ftpRatioStart,
           ftpRatioEnd = ftpRatioEnd,
         )
