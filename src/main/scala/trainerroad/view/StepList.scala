@@ -62,10 +62,8 @@ object StepList {
   }
 
   case class Empty(
-    end: WorkoutData,
-  ) extends Step {
-    override val start: WorkoutData = end
-  }
+    start: WorkoutData,
+  ) extends StepList
 
   case class Head(
     interval: NonEmptyList[WorkoutData],
