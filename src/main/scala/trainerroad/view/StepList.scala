@@ -22,12 +22,16 @@ object StepList {
   sealed trait Slope
   object Slope {
 
+    /** No slope exists for an instantaneous point (''i.e.'', an [[Inflection]]). */
     case object Undefined extends Slope
 
+    /** Slope ''is'' defined (over a [[Range]]). */
     sealed trait Defined
 
+    /** [[Range.start]] and [[Range.end]] have identical [[WorkoutData.ftpPercent]]. */
     case object Zero extends Slope with Defined
 
+    /** [[Range.start]] and [[Range.end]] are not the same [[WorkoutData.ftpPercent]]. */
     sealed trait NonZero {
       def ratio: Float
     }
@@ -53,7 +57,11 @@ object StepList {
       else if (value < 0) Negative(value)
       else Zero
 
-    def from(start: WorkoutData, end: WorkoutData): Slope with Defined =
+    /**
+     * The [[Slope]] between two [[WorkoutData]] with different [[WorkoutData.offset]] is inherently [[Defined]].
+     * @todo Return [[cats.data.Validated.Invalid]] when the [[WorkoutData.offset]] values are the same.
+     */
+    def from(start: WorkoutData, end: WorkoutData): Slope with Slope.Defined =
       Slope {
         (end.ftpPercent - start.ftpPercent) /
           (end.offset - start.offset).millis
