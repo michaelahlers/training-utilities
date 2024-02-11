@@ -1,6 +1,6 @@
 package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
-import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.NoWorkoutsForStep
+import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.NoIntervalsInWorkout
 import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.diffx.instances._
 import cats.data.NonEmptyList
 import cats.data.Validated.Invalid
@@ -39,15 +39,12 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
 
   "Valid workout steps" in {
 
-      forAll(sizeRange(3)) { steps: NonEmptyList[WorkoutStep] =>
-        val workouts = toWorkoutData(steps)
+    forAll(sizeRange(3)) { steps: NonEmptyList[WorkoutStep] =>
+      val workouts = toWorkoutData(steps)
 
-        ToWorkoutSteps
-          .from(
-            workouts = workouts,
-          )
-          .shouldMatchTo(Valid(steps))
-      }
+      ToWorkoutSteps
+        .from2(workouts)
+        .shouldMatchTo(Valid(steps))
     }
 
   }
