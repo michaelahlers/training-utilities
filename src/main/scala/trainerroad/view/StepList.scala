@@ -89,20 +89,41 @@ object StepList {
     start: WorkoutData,
   ) extends StepList
 
-  case class Instant(
+  case class Inflection(
     start: WorkoutData,
     tail: StepList,
   ) extends StepList with Head {
-    override val slope: Slope.Undefined.type = Slope.Undefined
+    final override val slope: Slope.Undefined.type = Slope.Undefined
   }
 
-  case class Range(
+  sealed trait Range extends Head {
+    def end: WorkoutData
+    def tail: StepList
+
+    final override val slope: Slope with Slope.Defined = Slope.from(start, end)
+  }
+
+  object Range {
+    def apply(
+      start: WorkoutData,
+      end: WorkoutData,
+      tail: StepList,
+    ): StepList with Range =
+      if (Slope.from(start, end) == Slope.Zero) Flat(start, end, tail)
+      else Ramp(start, end, tail)
+  }
+
+  case class Flat(
     start: WorkoutData,
     end: WorkoutData,
     tail: StepList,
-  ) extends StepList with Head {
-    override val slope: Slope with Slope.Defined = Slope.from(start, end)
-  }
+  ) extends StepList with Range
+
+  case class Ramp(
+    start: WorkoutData,
+    end: WorkoutData,
+    tail: StepList,
+  ) extends StepList with Range
 
   def apply(
     start: WorkoutData,
@@ -111,7 +132,7 @@ object StepList {
   def apply(
     start: WorkoutData,
     tail: StepList,
-  ): StepList = Instant(start, tail)
+  ): StepList = Inflection(start, tail)
 
   def apply(
     start: WorkoutData,
