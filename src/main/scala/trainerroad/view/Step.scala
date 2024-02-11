@@ -1,14 +1,28 @@
 package trainerroad.view
 
-import cats.Now
 import cats.data.NonEmptyList
 import org.scalactic.Tolerance._
 import org.scalactic.TripleEquals._
 import scala.annotation.tailrec
+import squants.time.Milliseconds
+import squants.time.Time
 import trainerroad.schema.web.WorkoutData
+import trainerroad.view.Step.Empty
+import trainerroad.view.Step.Head
 
-sealed trait Step {
+sealed trait Step { self =>
   def start: WorkoutData
+
+  /** @todo Remove temporary debugging support (implement as [[cats.Foldable]]). */
+  @tailrec
+  final def foreach[A](f: Step => A): Unit =
+    self match {
+      case step: Empty => f(step)
+      case step: Head =>
+        f(step)
+        step.tail.foreach(f)
+    }
+
 }
 
 object Step {
@@ -58,7 +72,8 @@ object Step {
     tail: Step,
   ) extends Step {
     override val start: WorkoutData = interval.head
-    val slope = Slope.from(start, tail.start)
+    val slope: Slope with Slope.Defined = Slope.from(start, tail.start)
+    val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
   }
 
   object Head {
