@@ -7,15 +7,15 @@ import scala.annotation.tailrec
 import squants.time.Milliseconds
 import squants.time.Time
 import trainerroad.schema.web.WorkoutData
-import trainerroad.view.Step.Empty
-import trainerroad.view.Step.Head
+import trainerroad.view.StepList.Empty
+import trainerroad.view.StepList.Head
 
-sealed trait Step { self =>
+sealed trait StepList { self =>
   def start: WorkoutData
 
   /** @todo Remove temporary debugging support (implement as [[cats.Foldable]]). */
   @tailrec
-  final def foreach[A](f: Step => A): Unit =
+  final def foreach[A](f: StepList => A): Unit =
     self match {
       case step: Empty => f(step)
       case step: Head =>
@@ -25,7 +25,7 @@ sealed trait Step { self =>
 
 }
 
-object Step {
+object StepList {
 
   sealed trait Slope
   object Slope {
@@ -69,8 +69,8 @@ object Step {
 
   case class Head(
     interval: NonEmptyList[WorkoutData],
-    tail: Step,
-  ) extends Step {
+    tail: StepList,
+  ) extends StepList {
     override val start: WorkoutData = interval.head
     val slope: Slope with Slope.Defined = Slope.from(start, tail.start)
     val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
@@ -79,7 +79,7 @@ object Step {
   object Head {
     def apply(
       interval: WorkoutData,
-      tail: Step,
+      tail: StepList,
     ): Head = Head(
       interval = NonEmptyList.one(interval),
       tail = tail,
@@ -88,13 +88,13 @@ object Step {
 
   def from(
     workouts: NonEmptyList[WorkoutData],
-  ): Step = {
+  ): StepList = {
 
     @tailrec
     def loop(
       queue: List[WorkoutData],
-      acc: Step,
-    ): Step =
+      acc: StepList,
+    ): StepList =
       (queue, acc) match {
 
         case (Nil, acc) => acc

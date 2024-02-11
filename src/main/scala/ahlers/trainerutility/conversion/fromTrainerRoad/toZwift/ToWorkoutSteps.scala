@@ -10,7 +10,7 @@ import org.scalactic.Tolerance._
 import org.scalactic.TripleEquals._
 import scala.annotation.tailrec
 import trainerroad.schema.web.WorkoutData
-import trainerroad.view.Step.Slope
+import trainerroad.view.StepList.Slope
 import zwift.schema.desktop.WorkoutFile
 import zwift.schema.desktop.WorkoutStep
 import zwift.schema.desktop.WorkoutStep.Cooldown
