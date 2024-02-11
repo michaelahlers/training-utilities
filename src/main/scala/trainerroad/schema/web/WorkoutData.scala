@@ -1,12 +1,14 @@
 package trainerroad.schema.web
 
 import io.circe.Decoder
+import squants.time.Milliseconds
+import squants.time.Time
 
 /**
  * @param milliseconds In serialization, the field field is misnamed compared to [[IntervalData.start]].
  */
 case class WorkoutData(
-  milliseconds: Int,
+  offset: Time,
   memberFtpPercent: Float,
   ftpPercent: Float,
 )
@@ -19,7 +21,7 @@ object WorkoutData {
       memberFtpPercent <- cursor.downField("memberFtpPercent").as[Float]
       ftpPercent <- cursor.downField("ftpPercent").as[Float]
     } yield WorkoutData(
-      milliseconds = seconds,
+      offset = Milliseconds(seconds),
       memberFtpPercent = memberFtpPercent,
       ftpPercent = ftpPercent,
     )

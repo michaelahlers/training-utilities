@@ -11,6 +11,8 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks._
+import squants.Seconds
+import squants.time.Time
 import trainerroad.schema.web.Workout
 import trainerroad.schema.web.WorkoutData
 import zwift.schema.desktop.WorkoutStep
@@ -28,7 +30,7 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
   "Invalid workout steps" when {
 
     "no intervals in given workout" in {
-      val workouts: NonEmptyList[WorkoutData] = NonEmptyList.one(WorkoutData(0, 0, 0))
+      val workouts: NonEmptyList[WorkoutData] = NonEmptyList.one(WorkoutData(null, 0, 0))
 
       ToWorkoutSteps
         .from(workouts)
@@ -81,7 +83,7 @@ object ToWorkoutStepsSpec {
 
   def toWorkoutData(
     step: WorkoutStep,
-    offsetSeconds: Int,
+    offset: Time,
     isLast: Boolean,
   ): NonEmptyList[WorkoutData] = {
     val ratios: NonEmptyList[Float] = toFtpRatios(
@@ -93,7 +95,7 @@ object ToWorkoutStepsSpec {
       .zipWithIndex
       .map { case (ftpRatio, slice) =>
         WorkoutData(
-          milliseconds = (offsetSeconds + slice) * 1000,
+          offset = offset + Seconds(slice),
           memberFtpPercent = 0,
           ftpPercent = ftpRatio * 100,
         )
@@ -102,7 +104,7 @@ object ToWorkoutStepsSpec {
 
   def toWorkoutData(
     steps: NonEmptyList[WorkoutStep],
-    offsetSeconds: Int,
+    offset: Time,
   ): NonEmptyList[WorkoutData] = {
     val lastIndex = steps.size - 1
 
@@ -121,7 +123,7 @@ object ToWorkoutStepsSpec {
       .zipWithIndex
       .map { case (ftpRatio, slice) =>
         WorkoutData(
-          milliseconds = (offsetSeconds + slice) * 1000,
+          offset = offset + Seconds(slice),
           memberFtpPercent = 0,
           ftpPercent = ftpRatio * 100,
         )
@@ -133,7 +135,7 @@ object ToWorkoutStepsSpec {
   ): NonEmptyList[WorkoutData] =
     toWorkoutData(
       steps = steps,
-      offsetSeconds = 0,
+      offset = Seconds(0),
     )
 
   /**
