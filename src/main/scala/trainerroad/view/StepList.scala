@@ -85,6 +85,21 @@ object StepList {
     val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
   }
 
+  def apply(
+    start: WorkoutData,
+  ): StepList = Empty(start)
+
+  def apply(
+    start: WorkoutData,
+    tail: StepList,
+  ): StepList = Instant(start, tail)
+
+  def apply(
+    start: WorkoutData,
+    end: WorkoutData,
+    tail: StepList,
+  ): StepList = Range(start, end, tail)
+
   def from(
     workouts: NonEmptyList[WorkoutData],
   ): StepList = {
