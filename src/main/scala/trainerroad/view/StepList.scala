@@ -8,7 +8,8 @@ import squants.time.Milliseconds
 import squants.time.Time
 import trainerroad.schema.web.WorkoutData
 import trainerroad.view.StepList.Empty
-import trainerroad.view.StepList.Head
+import trainerroad.view.StepList.Instant
+import trainerroad.view.StepList.Range
 
 sealed trait StepList { self =>
   def start: WorkoutData
@@ -18,7 +19,10 @@ sealed trait StepList { self =>
   final def foreach[A](f: StepList => A): Unit =
     self match {
       case step: Empty => f(step)
-      case step: Head =>
+      case step: Instant =>
+        f(step)
+        step.tail.foreach(f)
+      case step: Range =>
         f(step)
         step.tail.foreach(f)
     }
@@ -65,24 +69,40 @@ object StepList {
     start: WorkoutData,
   ) extends StepList
 
-  case class Head(
-    interval: NonEmptyList[WorkoutData],
+  case class Instant(
+    start: WorkoutData,
     tail: StepList,
   ) extends StepList {
-    override val start: WorkoutData = interval.head
+    val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
+  }
+
+  case class Range(
+    start: WorkoutData,
+    end: WorkoutData,
+    tail: StepList,
+  ) extends StepList {
     val slope: Slope with Slope.Defined = Slope.from(start, tail.start)
     val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
   }
 
-  object Head {
-    def apply(
-      interval: WorkoutData,
-      tail: StepList,
-    ): Head = Head(
-      interval = NonEmptyList.one(interval),
-      tail = tail,
-    )
-  }
+//case class Head(
+//  interval: NonEmptyList[WorkoutData],
+//  tail: StepList,
+//) extends StepList {
+//  override val start: WorkoutData = interval.head
+//  val slope: Slope with Slope.Defined = Slope.from(start, tail.start)
+//  val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
+//}
+
+//object Head {
+//  def apply(
+//    interval: WorkoutData,
+//    tail: StepList,
+//  ): Head = Head(
+//    interval = NonEmptyList.one(interval),
+//    tail = tail,
+//  )
+//}
 
   def from(
     workouts: NonEmptyList[WorkoutData],
@@ -95,12 +115,11 @@ object StepList {
     ): StepList = {
 
       def isContinuous(
-        slope: Slope with Slope.Defined,
-        last: WorkoutData,
+        step: Range,
         next: WorkoutData,
       ): Boolean =
-        last.ftpPercent === next.ftpPercent ||
-          slope.ratio === Slope.from(last, next).ratio +- 0.0001f
+        step.start.ftpPercent === next.ftpPercent ||
+          step.slope.ratio === Slope.from(step.start, next).ratio +- 0.0001f
 
       (queue, acc) match {
 
@@ -109,26 +128,36 @@ object StepList {
         case (head :: tail, acc: Empty) =>
           loop(
             queue = tail,
-            acc = Head(
-              interval = head,
+            acc = Instant(
+              start = head,
               tail = acc,
             ),
           )
 
-        case (head :: tail, acc: Head) if isContinuous(acc.slope, acc.start, head) =>
+        case (head :: tail, acc: Instant) =>
           loop(
             queue = tail,
-            acc = Head(
-              interval = head :: acc.interval,
-              tail = acc.tail,
+            acc = Range(
+              start = head,
+              end = acc.start,
+              tail = acc,
             ),
           )
 
-        case (head :: tail, acc: Head) =>
+        case (head :: tail, acc: Range) if isContinuous(acc, head) =>
           loop(
             queue = tail,
-            acc = Head(
-              interval = head,
+            acc = acc.copy(
+              start = head,
+            ),
+          )
+
+        /** Inflection point. */
+        case (head :: tail, acc: Range) =>
+          loop(
+            queue = tail,
+            acc = Instant(
+              start = head,
               tail = acc,
             ),
           )
