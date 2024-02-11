@@ -25,17 +25,29 @@ object StepList {
 
     case object Undefined extends Slope
 
-    sealed trait Defined {
+    sealed trait Defined
+
+    case object Zero extends Slope with Defined
+
+    sealed trait NonZero {
       def ratio: Float
     }
 
-    case object Zero extends Slope with Defined {
-      override val ratio: Float = 0
+    object NonZero {
+      def unapply(slope: NonZero): Option[Float] =
+        slope match {
+          case slope: NonZero => Some(slope.ratio)
+          case _ => None
+        }
     }
 
-    case class Positive(ratio: Float) extends Slope with Defined
+    case class Positive(
+      ratio: Float,
+    ) extends Slope with Defined with NonZero
 
-    case class Negative(ratio: Float) extends Slope with Defined
+    case class Negative(
+      ratio: Float,
+    ) extends Slope with Defined with NonZero
 
     def apply(value: Float): Slope with Defined =
       if (value > 0) Positive(value)
@@ -47,10 +59,6 @@ object StepList {
         (end.ftpPercent - start.ftpPercent) /
           (end.offset - start.offset).millis
       }
-
-    def from(workouts: Seq[WorkoutData]): Slope =
-      if (workouts.size > 1) from(workouts.head, workouts.last)
-      else Undefined
 
   }
 
