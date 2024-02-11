@@ -36,7 +36,7 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
           .from(
             workouts = workouts,
           )
-          .shouldMatchTo(Valid(steps.toList))
+          .shouldMatchTo(Valid(steps))
       }
     }
 
