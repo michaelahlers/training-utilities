@@ -13,6 +13,15 @@ sealed trait StepList {
 
 object StepList {
 
+
+
+  sealed trait Phase
+  object Phase {
+    object First extends Phase
+    object Interior extends Phase
+    object Last extends Phase
+  }
+
   sealed trait Slope
   object Slope {
 
@@ -47,6 +56,29 @@ object StepList {
 
   }
 
+  sealed trait Head {
+    def start: WorkoutData
+    def tail: StepList
+    def slope: Slope
+
+    final val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
+
+    final val phase:Phase = {
+      val isFirst = start.milliseconds == 0
+
+      val isLast = tail match {
+        case _: StepList.Empty => true
+        case _ => false
+      }
+
+      /** Accommodates a special case where the given [[StepList.Head]] is alone. */
+      if (isFirst && isLast) Phase.Interior
+      else if (isFirst) Phase.First
+      else if (isLast) Phase.Last
+      else Phase.Interior
+    }
+  }
+
   case class Empty(
     start: WorkoutData,
   ) extends StepList
@@ -54,17 +86,16 @@ object StepList {
   case class Instant(
     start: WorkoutData,
     tail: StepList,
-  ) extends StepList {
-    val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
+  ) extends StepList with Head {
+    override val slope: Slope.Undefined.type = Slope.Undefined
   }
 
   case class Range(
     start: WorkoutData,
     end: WorkoutData,
     tail: StepList,
-  ) extends StepList {
-    val slope: Slope with Slope.Defined = Slope.from(start, end)
-    val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
+  ) extends StepList with Head {
+    override val slope: Slope with Slope.Defined = Slope.from(start, end)
   }
 
   def apply(
