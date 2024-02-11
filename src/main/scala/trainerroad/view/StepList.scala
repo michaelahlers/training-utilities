@@ -136,7 +136,7 @@ object StepList {
       }
 
     loop(
-      queue = workouts.reverse.init,
+      queue = workouts.init.reverse,
       acc = Empty(workouts.last),
     )
   }
