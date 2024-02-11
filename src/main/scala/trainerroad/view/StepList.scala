@@ -118,9 +118,12 @@ object StepList {
     def isContinuous(
       last: Range,
       next: WorkoutData,
-    ): Boolean =
-      last.start.ftpPercent === next.ftpPercent ||
-        last.slope.ratio === Slope.from(last.start, next).ratio +- 0.0001f
+    ): Boolean = {
+      val sameFtp = last.start.ftpPercent === next.ftpPercent
+      val sameSlope = last.slope.ratio === Slope.from(last.start, next).ratio +- 0.0001f
+
+      sameFtp || sameSlope
+    }
 
     workouts.init.foldRight(StepList(workouts.last)) {
 
