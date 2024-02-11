@@ -31,7 +31,7 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
       val workouts: NonEmptyList[WorkoutData] = NonEmptyList.one(WorkoutData(0, 0, 0))
 
       ToWorkoutSteps
-        .from2(workouts)
+        .from(workouts)
         .shouldMatchTo(Invalid(NoIntervalsInWorkout(workouts)))
     }
 
@@ -43,7 +43,7 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
       val workouts = toWorkoutData(steps)
 
       ToWorkoutSteps
-        .from2(workouts)
+        .from(workouts)
         .shouldMatchTo(Valid(steps))
     }
 
