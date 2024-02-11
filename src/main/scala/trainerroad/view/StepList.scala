@@ -4,6 +4,7 @@ import cats.data.NonEmptyList
 import org.scalactic.Tolerance._
 import org.scalactic.TripleEquals._
 import squants.time.Time
+import trainerroad.schema.web.Workout
 import trainerroad.schema.web.WorkoutData
 
 sealed trait StepList {
@@ -69,10 +70,19 @@ object StepList {
 
   }
 
-  sealed trait Head {
+  /**
+   * Given [[WorkoutData.offset]] is zero-indexed, [[Workout.workoutData.last]] is a special case that should start a new interval, but does inform the last interval of a workout, including it's [[Phase]], [[Cons.duration]], and so on.
+   */
+  case class End(
+    start: WorkoutData,
+  ) extends StepList
+
+  /**
+   * Represents an internal element of a [[StepList]].
+   */
+  sealed trait Cons {
     def start: WorkoutData
     def tail: StepList
-    def slope: Slope
 
     final val duration: Time = tail.start.offset - start.offset
 
@@ -80,11 +90,11 @@ object StepList {
       val isFirst = start.offset.millis == 0
 
       val isLast = tail match {
-        case _: StepList.Empty => true
+        case _: StepList.End => true
         case _ => false
       }
 
-      /** Accommodates a special case where the given [[StepList.Head]] is alone. */
+      /** Accommodates a special case where the given [[StepList.Cons]] is alone. */
       if (isFirst && isLast) Phase.Interior
       else if (isFirst) Phase.First
       else if (isLast) Phase.Last
@@ -92,22 +102,16 @@ object StepList {
     }
   }
 
-  case class Empty(
-    start: WorkoutData,
-  ) extends StepList
-
   case class Inflection(
     start: WorkoutData,
     tail: StepList,
-  ) extends StepList with Head {
-    final override val slope: Slope.Undefined.type = Slope.Undefined
-  }
+  ) extends StepList with Cons
 
-  sealed trait Range extends Head {
+  sealed trait Range {
+    def start: WorkoutData
     def end: WorkoutData
-    def tail: StepList
 
-    final override val slope: Slope with Slope.Defined = Slope.from(start, end)
+    final val slope: Slope with Slope.Defined = Slope.from(start, end)
   }
 
   object Range {
@@ -124,17 +128,17 @@ object StepList {
     start: WorkoutData,
     end: WorkoutData,
     tail: StepList,
-  ) extends StepList with Range
+  ) extends StepList with Cons with Range
 
   case class Ramp(
     start: WorkoutData,
     end: WorkoutData,
     tail: StepList,
-  ) extends StepList with Range
+  ) extends StepList with Cons with Range
 
   def apply(
     start: WorkoutData,
-  ): StepList = Empty(start)
+  ): StepList = End(start)
 
   def apply(
     start: WorkoutData,
@@ -151,15 +155,23 @@ object StepList {
     workouts: NonEmptyList[WorkoutData],
   ): StepList = {
 
+    /**
+     * @return `true` ''iff'' the [[WorkoutData.ftpPercent]] of `last` and `next` are the same.
+     */
     def isSamePower(
       last: Flat,
       next: WorkoutData,
     ): Boolean = {
       val lastFtpPercent = last.start.ftpPercent
       val nextFtpPercent = next.ftpPercent
+
       lastFtpPercent === nextFtpPercent
     }
 
+    /**
+     * @return `true` ''iff'' the [[Slope]] of `last` and `next` are either both [[Slope.Zero]] ''or'' their [[Slope.NonZero.ratio]] are within a small tolerance.
+     * @todo Make tolerance configurable.
+     */
     def isSameSlope(
       last: Ramp,
       next: WorkoutData,
@@ -169,14 +181,14 @@ object StepList {
 
       (lastSlope, nextSlope) match {
         case (Slope.Zero, Slope.Zero) => true
-        case (Slope.NonZero(lastRatio), Slope.NonZero(nextRatio)) => lastRatio === nextRatio +- 0.0000001f
+        case (Slope.NonZero(lastRatio), Slope.NonZero(nextRatio)) => lastRatio === nextRatio +- 0.001f
         case _ => false
       }
     }
 
     workouts.init.foldRight(StepList(workouts.last)) {
 
-      case (head, acc: Empty) =>
+      case (head, acc: End) =>
         Inflection(
           start = head,
           tail = acc,

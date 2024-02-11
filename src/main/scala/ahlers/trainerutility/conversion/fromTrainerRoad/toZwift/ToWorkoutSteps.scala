@@ -19,11 +19,14 @@ import zwift.schema.desktop.WorkoutStep.Warmup
 private[toZwift] object ToWorkoutSteps {
 
   def from(
-    stepList: StepList.Head,
+    stepList: StepList.Cons,
   ): WorkoutStep = {
     val duration: Time = stepList.duration
     val phase: Phase = stepList.phase
-    val slope: Slope = stepList.slope
+    val slope: Slope = stepList match {
+      case _: StepList.Inflection => Slope.Undefined
+      case stepList: StepList.Range => stepList.slope
+    }
 
     val ftpPercentStart = stepList.start.ftpPercent
     val ftpPercentEnd = stepList match {
@@ -86,13 +89,13 @@ private[toZwift] object ToWorkoutSteps {
       acc: Vector[WorkoutStep],
     ): Validated[Error, NonEmptyList[WorkoutStep]] = queue match {
 
-      case head: StepList.Empty =>
+      case head: StepList.End =>
         NonEmptyList
           .fromFoldable(acc)
           .map(_.valid)
           .getOrElse(NoIntervalsInWorkout(workouts).invalid)
 
-      case head: StepList.Head =>
+      case head: StepList.Cons =>
         val step = from(head)
 
         loop(
