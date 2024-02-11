@@ -81,7 +81,7 @@ object StepList {
     end: WorkoutData,
     tail: StepList,
   ) extends StepList {
-    val slope: Slope with Slope.Defined = Slope.from(start, tail.start)
+    val slope: Slope with Slope.Defined = Slope.from(start, end)
     val duration: Time = Milliseconds(tail.start.milliseconds - start.milliseconds)
   }
 
