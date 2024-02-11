@@ -1,6 +1,7 @@
 package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
 
 import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.NoWorkoutsForStep
+import cats.data.NonEmptyList
 import cats.data.Validated
 import cats.data.Validated.Invalid
 import cats.data.Validated.Valid
@@ -194,12 +195,12 @@ private[toZwift] object ToWorkoutSteps {
   }
 
   def from(
-    workouts: Seq[WorkoutData],
+    workouts: NonEmptyList[WorkoutData],
   ): Validated[Error, Seq[WorkoutStep]] = {
 
     @tailrec
     def take(
-      remainder: List[WorkoutData],
+      remainder: Seq[WorkoutData],
       steps: Vector[WorkoutStep],
     ): Validated[Error, Seq[WorkoutStep]] =
       from1(remainder) match {
@@ -207,7 +208,7 @@ private[toZwift] object ToWorkoutSteps {
         case Invalid(_) => steps.valid
         case Valid((step, remainder)) =>
           take(
-            remainder = remainder.toList,
+            remainder = remainder,
             steps = steps :+ step,
           )
       }

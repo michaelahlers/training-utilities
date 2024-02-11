@@ -25,25 +25,12 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
   import ToWorkoutStepsSpec.arbSteps
   import ToWorkoutStepsSpec.toWorkoutData
 
-  "Invalid" when {
-
-    "workouts are empty" in {
-
-      ToWorkoutSteps
-        .from(
-          workouts = Seq.empty,
-        )
-        .shouldMatchTo(Invalid(NoWorkoutsForStep))
-    }
-
-  }
-
   "Valid" when {
 
     "first interval" in {
 
       forAll(sizeRange(3)) { steps: NonEmptyList[WorkoutStep] =>
-        val workouts = toWorkoutData(steps).toList
+        val workouts = toWorkoutData(steps)
 
         ToWorkoutSteps
           .from(
