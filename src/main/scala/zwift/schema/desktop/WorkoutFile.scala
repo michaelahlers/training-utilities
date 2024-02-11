@@ -1,8 +1,8 @@
 package zwift.schema.desktop
 
 import cats.data.NonEmptyList
-
 import scala.xml.encoding.XmlEncoder
+import scala.xml.encoding.instances._
 import scala.xml.encoding.syntax._
 import zwift.schema.desktop.WorkoutFile.Tag
 
@@ -29,8 +29,8 @@ object WorkoutFile {
       <name>{file.name}</name>
       <description>{file.description}</description>
       <sportType>{file.sportType}</sportType>
-      <tags>{file.tags.map(_.asXml)}</tags>
-      <workout>{file.workout.map(_.asXml)}</workout>
+      <tags>{file.tags.asXml}</tags>
+      <workout>{file.workout.asXml}</workout>
     </workout_file>
 
 }
