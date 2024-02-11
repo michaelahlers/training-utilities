@@ -3,7 +3,6 @@ package trainerroad.view
 import cats.data.NonEmptyList
 import org.scalactic.Tolerance._
 import org.scalactic.TripleEquals._
-import squants.time.Milliseconds
 import squants.time.Time
 import trainerroad.schema.web.WorkoutData
 
