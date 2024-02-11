@@ -62,7 +62,7 @@ object StepList {
     final val duration: Time = tail.start.offset - start.offset
 
     final val phase: Phase = {
-      val isFirst =  start.offset.millis == 0
+      val isFirst = start.offset.millis == 0
 
       val isLast = tail match {
         case _: StepList.Empty => true
@@ -116,11 +116,11 @@ object StepList {
   ): StepList = {
 
     def isContinuous(
-      step: Range,
+      last: Range,
       next: WorkoutData,
     ): Boolean =
-      step.start.ftpPercent === next.ftpPercent ||
-        step.slope.ratio === Slope.from(step.start, next).ratio +- 0.0001f
+      last.start.ftpPercent === next.ftpPercent ||
+        last.slope.ratio === Slope.from(last.start, next).ratio +- 0.0001f
 
     workouts.init.foldRight(StepList(workouts.last)) {
 
