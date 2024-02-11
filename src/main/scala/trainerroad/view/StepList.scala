@@ -104,67 +104,41 @@ object StepList {
     workouts: NonEmptyList[WorkoutData],
   ): StepList = {
 
-    @tailrec
-    def loop(
-      queue: List[WorkoutData],
-      acc: StepList,
-    ): StepList = {
+    def isContinuous(
+      step: Range,
+      next: WorkoutData,
+    ): Boolean =
+      step.start.ftpPercent === next.ftpPercent ||
+        step.slope.ratio === Slope.from(step.start, next).ratio +- 0.0001f
 
-      def isContinuous(
-        step: Range,
-        next: WorkoutData,
-      ): Boolean =
-        step.start.ftpPercent === next.ftpPercent ||
-          step.slope.ratio === Slope.from(step.start, next).ratio +- 0.0001f
+    workouts.init.foldRight(StepList(workouts.last)) {
 
-      (queue, acc) match {
+      case (head, acc: Empty) =>
+        Instant(
+          start = head,
+          tail = acc,
+        )
 
-        case (Nil, acc) => acc
+      case (head, acc: Instant) =>
+        Range(
+          start = head,
+          end = acc.start,
+          tail = acc.tail,
+        )
 
-        case (head :: tail, acc: Empty) =>
-          loop(
-            queue = tail,
-            acc = Instant(
-              start = head,
-              tail = acc,
-            ),
-          )
+      case (head, acc: Range) if isContinuous(acc, head) =>
+        acc.copy(
+          start = head,
+        )
 
-        case (head :: tail, acc: Instant) =>
-          loop(
-            queue = tail,
-            acc = Range(
-              start = head,
-              end = acc.start,
-              tail = acc.tail,
-            ),
-          )
+      /** Inflection point. */
+      case (head, acc: Range) =>
+        Instant(
+          start = head,
+          tail = acc,
+        )
 
-        case (head :: tail, acc: Range) if isContinuous(acc, head) =>
-          loop(
-            queue = tail,
-            acc = acc.copy(
-              start = head,
-            ),
-          )
-
-        /** Inflection point. */
-        case (head :: tail, acc: Range) =>
-          loop(
-            queue = tail,
-            acc = Instant(
-              start = head,
-              tail = acc,
-            ),
-          )
-
-      }
     }
-
-    loop(
-      queue = workouts.init.reverse,
-      acc = Empty(workouts.last),
-    )
   }
 
 }
