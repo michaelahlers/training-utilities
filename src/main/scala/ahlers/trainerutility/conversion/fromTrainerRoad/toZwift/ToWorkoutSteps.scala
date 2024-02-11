@@ -151,7 +151,7 @@ private[toZwift] object ToWorkoutSteps {
           ftpRatioEnd = ftpRatioEnd,
         )
 
-      case (Phase.Interior, Slope.Zero) =>
+      case (Phase.Interior, Slope.Undefined | Slope.Zero) =>
         val ftpPercent = start.ftpPercent
         val ftpRatio = ftpPercent / 100f
 
