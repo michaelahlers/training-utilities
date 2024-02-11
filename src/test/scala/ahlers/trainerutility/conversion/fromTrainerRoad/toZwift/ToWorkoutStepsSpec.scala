@@ -13,7 +13,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks._
 import trainerroad.schema.web.Workout
 import trainerroad.schema.web.WorkoutData
-import trainerroad.schema.web.diffx.instances._
 import zwift.schema.desktop.WorkoutStep
 import zwift.schema.desktop.diffx.instances._
 import zwift.schema.desktop.scalacheck.instances._

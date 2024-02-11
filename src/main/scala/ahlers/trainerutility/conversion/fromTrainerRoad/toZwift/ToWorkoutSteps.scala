@@ -4,15 +4,10 @@ import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.NoWorkouts
 import cats.data.Validated
 import cats.data.Validated.Invalid
 import cats.data.Validated.Valid
-import cats.instances.tuple._
-import cats.syntax.applicative._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
 import cats.syntax.validated._
 import org.scalactic.Tolerance._
 import org.scalactic.TripleEquals._
 import scala.annotation.tailrec
-import trainerroad.schema.web.IntervalData
 import trainerroad.schema.web.WorkoutData
 import zwift.schema.desktop.WorkoutFile
 import zwift.schema.desktop.WorkoutStep
