@@ -119,10 +119,10 @@ object StepList {
       last: Range,
       next: WorkoutData,
     ): Boolean = {
-      val sameFtp = last.start.ftpPercent === next.ftpPercent
+      val samePower = last.start.ftpPercent === next.ftpPercent
       val sameSlope = last.slope.ratio === Slope.from(last.start, next).ratio +- 0.0001f
 
-      sameFtp || sameSlope
+      samePower || sameSlope
     }
 
     workouts.init.foldRight(StepList(workouts.last)) {
