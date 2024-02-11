@@ -143,39 +143,56 @@ object StepList {
     workouts: NonEmptyList[WorkoutData],
   ): StepList = {
 
-    def isContinuous(
-      last: Range,
+    def isSamePower(
+      last: Flat,
       next: WorkoutData,
     ): Boolean = {
-      val samePower = last.start.ftpPercent === next.ftpPercent
-      val sameSlope = last.slope.ratio === Slope.from(last.start, next).ratio +- 0.0001f
+      val lastFtpPercent = last.start.ftpPercent
+      val nextFtpPercent = next.ftpPercent
+      lastFtpPercent === nextFtpPercent
+    }
 
-      samePower || sameSlope
+    def isSameSlope(
+      last: Ramp,
+      next: WorkoutData,
+    ): Boolean = {
+      val lastSlope = last.slope
+      val nextSlope = Slope.from(last.start, next)
+
+      (lastSlope, nextSlope) match {
+        case (Slope.Zero, Slope.Zero) => true
+        case (Slope.NonZero(lastRatio), Slope.NonZero(nextRatio)) => lastRatio === nextRatio +- 0.0000001f
+        case _ => false
+      }
     }
 
     workouts.init.foldRight(StepList(workouts.last)) {
 
       case (head, acc: Empty) =>
-        Instant(
+        Inflection(
           start = head,
           tail = acc,
         )
 
-      case (head, acc: Instant) =>
+      case (head, acc: Inflection) =>
         Range(
           start = head,
           end = acc.start,
           tail = acc.tail,
         )
 
-      case (head, acc: Range) if isContinuous(acc, head) =>
+      case (head, acc: Flat) if isSamePower(acc, head) =>
         acc.copy(
           start = head,
         )
 
-      /** Inflection point. */
+      case (head, acc: Ramp) if isSameSlope(acc, head) =>
+        acc.copy(
+          start = head,
+        )
+
       case (head, acc: Range) =>
-        Instant(
+        Inflection(
           start = head,
           tail = acc,
         )
