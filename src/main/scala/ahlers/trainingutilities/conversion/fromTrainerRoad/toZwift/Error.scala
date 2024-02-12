@@ -1,4 +1,4 @@
-package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
+package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift
 
 import cats.data.NonEmptyList
 import trainerroad.schema.web.WorkoutData

@@ -1,7 +1,7 @@
-package ahlers.trainerutility.conversion.fromTrainerRoad.toZwift
+package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift
 
-import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.Error.NoIntervalsInWorkout
-import ahlers.trainerutility.conversion.fromTrainerRoad.toZwift.diffx.instances._
+import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.Error.NoIntervalsInWorkout
+import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.diffx.instances._
 import cats.data.NonEmptyList
 import cats.data.Validated.Invalid
 import cats.data.Validated.Valid
