@@ -84,6 +84,13 @@ libraryDependencies +=
 libraryDependencies +=
   "org.scalactic" %% "scalactic" % "3.2.17"
 
+libraryDependencies ++=
+  "dev.zio" %% "zio-config" % "4.0.1" ::
+    "dev.zio" %% "zio-config-magnolia" % "4.0.1" ::
+    "dev.zio" %% "zio-config-typesafe" % "4.0.1" ::
+    "dev.zio" %% "zio-config-yaml" % "4.0.1" ::
+    Nil
+
 /**
  * ScalaTest is the most flexible and most popular testing tool in the Scala ecosystem.
  * @see [[https://www.scalatest.org/]]
