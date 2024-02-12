@@ -129,3 +129,9 @@ libraryDependencies ++=
     "com.softwaremill.diffx" %% "diffx-scalatest-must" % "0.9.0" % Test ::
     "com.softwaremill.diffx" %% "diffx-scalatest-should" % "0.9.0" % Test ::
     Nil
+
+libraryDependencies ++=
+  "dev.zio" %% "zio-test" % "2.1-RC1" % Test ::
+    "dev.zio" %% "zio-test-sbt" % "2.1-RC1" % Test ::
+    "dev.zio" %% "zio-test-magnolia" % "2.1-RC1" % Test ::
+    Nil
