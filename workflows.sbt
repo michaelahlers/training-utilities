@@ -3,3 +3,5 @@ ThisBuild / githubWorkflowJavaVersions :=
     Nil
 
 ThisBuild / githubWorkflowPublishTargetBranches := Nil
+
+ThisBuild / githubWorkflowOSes += "windows-latest"
