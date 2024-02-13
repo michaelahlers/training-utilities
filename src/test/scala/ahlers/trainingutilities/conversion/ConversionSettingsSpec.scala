@@ -43,5 +43,6 @@ object ConversionSettingsSpec extends ZIOSpecDefault {
 
   override val spec = suite("ConversionSettings")(
     forMacOS,
+    forWindows,
   )
 }
