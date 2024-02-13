@@ -1,5 +1,3 @@
-scalaVersion := "2.13.12"
-
 /**
  * Cats is a library which provides abstractions for functional programming in the Scala programming language.
  * @see [[https://typelevel.org/cats/]]
