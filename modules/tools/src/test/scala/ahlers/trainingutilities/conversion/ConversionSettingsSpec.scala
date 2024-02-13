@@ -11,11 +11,8 @@ object ConversionSettingsSpec extends ZIOSpecDefault {
     } yield assertTrue {
       settings == ConversionSettings(
         environment = ConversionSettings.Environment(
-          macOS = ConversionSettings.Environment.MacOS(
-            home = Some(File.home.pathAsString),
-          ),
+          home = File.home.pathAsString,
           windows = ConversionSettings.Environment.Windows(
-            home = None,
             oneDrive = None,
           ),
         ),
@@ -29,11 +26,8 @@ object ConversionSettingsSpec extends ZIOSpecDefault {
     } yield assertTrue {
       settings == ConversionSettings(
         environment = ConversionSettings.Environment(
-          macOS = ConversionSettings.Environment.MacOS(
-            home = None,
-          ),
+          home = File.home.pathAsString,
           windows = ConversionSettings.Environment.Windows(
-            home = Some(File.home.pathAsString),
             oneDrive = None,
           ),
         ),

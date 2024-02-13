@@ -13,18 +13,13 @@ case class ConversionSettings(
 object ConversionSettings {
 
   case class Environment(
-    macOS: Environment.MacOS,
+    home: String,
     windows: Environment.Windows,
   )
 
   object Environment {
 
-    case class MacOS(
-      home: Option[String],
-    )
-
     case class Windows(
-      home: Option[String],
       oneDrive: Option[String],
     )
 
