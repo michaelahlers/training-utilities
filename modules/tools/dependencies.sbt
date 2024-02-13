@@ -1,4 +1,4 @@
-ThisBuild / scalaVersion := "2.13.12"
+scalaVersion := "2.13.12"
 
 /**
  * Cats is a library which provides abstractions for functional programming in the Scala programming language.
@@ -11,7 +11,7 @@ libraryDependencies +=
  * A JSON library for Scala powered by Cats.
  * @see [[https://circe.github.io/circe/]]
  */
-ThisBuild / libraryDependencies ++=
+libraryDependencies ++=
   "io.circe" %% "circe-core" % "0.13.0" ::
     "io.circe" %% "circe-generic" % "0.13.0" ::
     "io.circe" %% "circe-generic-extras" % "0.13.0" ::
