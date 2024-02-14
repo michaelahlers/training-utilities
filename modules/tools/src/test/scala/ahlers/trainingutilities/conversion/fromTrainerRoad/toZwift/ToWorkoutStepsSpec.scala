@@ -58,7 +58,14 @@ object ToWorkoutStepsSpec {
     step: WorkoutStep,
     isLast: Boolean,
   ): NonEmptyList[Float] = {
-    import step.{ftpPercentEnd, ftpPercentStart}
+    val ftpPercentStart = step match {
+      case step: WorkoutStep.SteadyState => step.ftpPercent
+      case step: WorkoutStep.Range => step.ftpPercentStart
+    }
+    val ftpPercentEnd = step match {
+      case step: WorkoutStep.SteadyState => step.ftpPercent
+      case step: WorkoutStep.Range => step.ftpPercentEnd
+    }
 
     /**
      * The number of step slices (each [[WorkoutData]] is equal to the duration in seconds of [[step]].

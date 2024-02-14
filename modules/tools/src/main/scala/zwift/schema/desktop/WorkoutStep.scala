@@ -8,11 +8,14 @@ import squants.time.Time
 
 sealed trait WorkoutStep {
   def duration: Time
-  def ftpPercentStart: Float
-  def ftpPercentEnd: Float
 }
 
 object WorkoutStep {
+
+  sealed trait Range {
+    def ftpPercentStart: Float
+    def ftpPercentEnd: Float
+  }
 
   implicit private val xmlEncoderTime: XmlEncoder[Time] = time =>
     Text(time.toSeconds.toInt.toString)
@@ -21,9 +24,6 @@ object WorkoutStep {
     duration: Time,
     ftpPercent: Float,
   ) extends WorkoutStep {
-
-    override val ftpPercentStart: Float = ftpPercent
-    override val ftpPercentEnd: Float = ftpPercent
 
     require(
       duration >= Seconds(0),
@@ -48,7 +48,7 @@ object WorkoutStep {
     duration: Time,
     ftpPercentStart: Float,
     ftpPercentEnd: Float,
-  ) extends WorkoutStep {
+  ) extends WorkoutStep with Range {
 
     require(
       ftpPercentStart >= 0,
@@ -74,7 +74,7 @@ object WorkoutStep {
     duration: Time,
     ftpPercentStart: Float,
     ftpPercentEnd: Float,
-  ) extends WorkoutStep {
+  ) extends WorkoutStep with Range {
 
     require(
       ftpPercentStart >= 0,
@@ -100,7 +100,7 @@ object WorkoutStep {
     duration: Time,
     ftpPercentStart: Float,
     ftpPercentEnd: Float,
-  ) extends WorkoutStep {
+  ) extends WorkoutStep with Range {
 
     require(
       ftpPercentStart >= 0,
