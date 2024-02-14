@@ -19,10 +19,10 @@ object WorkoutStep {
 
   case class SteadyState(
     duration: Time,
-    ftpRatio: Float,
+    ftpRatioStart: Float,
   ) extends WorkoutStep {
 
-    override val ftpRatioStart: Float = ftpRatio
+    val ftpRatio: Float = ftpRatioStart
     override val ftpRatioEnd: Float = ftpRatio
 
     require(

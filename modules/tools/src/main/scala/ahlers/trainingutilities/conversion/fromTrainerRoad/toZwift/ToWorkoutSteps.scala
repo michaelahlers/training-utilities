@@ -61,7 +61,7 @@ private[toZwift] object ToWorkoutSteps {
       case (Phase.Interior, Slope.Undefined | Slope.Zero) =>
         SteadyState(
           duration = duration,
-          ftpRatio = ftpRatioStart,
+          ftpRatioStart = ftpRatioStart,
         )
 
       case (Phase.Last, _) =>
