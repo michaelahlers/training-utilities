@@ -11,15 +11,13 @@ import zwift.schema.desktop.WorkoutStep.Warmup
 
 object instances {
 
+  implicit private val diffFloat: Diff[Float] = Diff.approximate[Float](0.1f)
+
   implicit val diffWorkoutStepWarmup: Diff[WorkoutStep.Warmup] = Diff.summon
   implicit val diffWorkoutStepSteadyState: Diff[WorkoutStep.SteadyState] = Diff.summon
   implicit val diffWorkoutStepRamp: Diff[WorkoutStep.Ramp] = Diff.summon
   implicit val diffWorkoutStepCooldown: Diff[WorkoutStep.Cooldown] = Diff.summon
 
   implicit val diffWorkoutStep: Diff[WorkoutStep] = Diff.summon[WorkoutStep]
-//.modify(_.ftpRatioStart)
-//.setTo(Diff.approximate(1f))
-//.modify(_.ftpRatioEnd)
-//.setTo(Diff.approximate(1f))
 
 }
