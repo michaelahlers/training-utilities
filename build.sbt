@@ -2,7 +2,7 @@ val `tools` =
   project in file("modules") / "tools"
 
 val `zio-diffx` =
-  RootProject(uri("https://github.com/bbarker/zio-diffx.git"))
+  project in file("modules") / "zio-diffx"
 
 val `trainerroad-utilities` =
   (project in file("."))
