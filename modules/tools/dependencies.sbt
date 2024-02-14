@@ -62,6 +62,13 @@ libraryDependencies +=
   "com.softwaremill.quicklens" %% "quicklens" % "1.9.6"
 
 /**
+ * Tag instances with arbitrary types. Useful if you'd like to differentiate between instances on the type level without runtime overhead.
+ * @see [[https://github.com/softwaremill/scala-common]]
+ */
+libraryDependencies +=
+  "com.softwaremill.common" %% "tagging" % "2.3.4"
+
+/**
  * A Scala library to pretty-print values and types.
  * @see [[https://github.com/com-lihaoyi/PPrint]]
  */
