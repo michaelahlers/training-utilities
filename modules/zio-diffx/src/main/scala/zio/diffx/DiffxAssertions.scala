@@ -5,13 +5,16 @@ import zio.test._
 
 trait DiffxAssertions {
 
-  def matchesTo[A: Diff](expected: A): TestArrow[A, Boolean] =
-    TestArrow
-      .make[A, Boolean] { actual =>
-        val result = Diff.compare(expected, actual)
-        if (result.isIdentical) TestTrace.succeed(true)
-        else TestTrace.fail(result.show())
-      }
+  def matchesTo[A: Diff](expected: A): Assertion[A] =
+    Assertion {
+      TestArrow
+        .make[A, Boolean] { actual =>
+          val result = Diff.compare(expected, actual)
+          TestTrace.boolean(result.isIdentical) {
+            ErrorMessage.text(result.show())
+          }
+        }
+    }
 
 }
 
