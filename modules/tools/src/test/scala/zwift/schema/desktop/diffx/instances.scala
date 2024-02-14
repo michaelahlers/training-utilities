@@ -17,9 +17,9 @@ object instances {
   implicit val diffWorkoutStepCooldown: Diff[WorkoutStep.Cooldown] = Diff.summon
 
   implicit val diffWorkoutStep: Diff[WorkoutStep] = Diff.summon[WorkoutStep]
-    .modify(_.ftpRatioStart)
-    .setTo(Diff.approximate(0.01f))
-    .modify(_.ftpRatioEnd)
-    .setTo(Diff.approximate(0.01f))
+//.modify(_.ftpRatioStart)
+//.setTo(Diff.approximate(1f))
+//.modify(_.ftpRatioEnd)
+//.setTo(Diff.approximate(1f))
 
 }

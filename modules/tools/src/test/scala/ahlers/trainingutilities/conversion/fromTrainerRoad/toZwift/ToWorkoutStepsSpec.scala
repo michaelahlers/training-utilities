@@ -41,26 +41,24 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
   }
 
   "Valid workout steps" in {
-
-    forAll(minSuccessful(100), sizeRange(5)) { steps: NonEmptyList[WorkoutStep] =>
+    forAll(minSuccessful(100)) { steps: NonEmptyList[WorkoutStep] =>
       val workouts = toWorkoutData(steps)
 
       ToWorkoutSteps
         .from(workouts)
         .shouldMatchTo(Valid(steps))
     }
-
   }
 
 }
 
 object ToWorkoutStepsSpec {
 
-  def toFtpRatios(
+  def toftpPercents(
     step: WorkoutStep,
     isLast: Boolean,
   ): NonEmptyList[Float] = {
-    import step.{ftpRatioEnd, ftpRatioStart}
+    import step.{ftpPercentEnd, ftpPercentStart}
 
     /**
      * The number of step slices (each [[WorkoutData]] is equal to the duration in seconds of [[step]].
@@ -70,13 +68,13 @@ object ToWorkoutStepsSpec {
       if (isLast) 0 to step.duration.toSeconds.toInt
       else 0 until step.duration.toSeconds.toInt
 
-    val ftpDelta: Float = ftpRatioEnd - ftpRatioStart
+    val ftpDelta: Float = ftpPercentEnd - ftpPercentStart
     val ftpStep: Float =
       if (slices.size < 2) ftpDelta
       else ftpDelta / (slices.size - 1)
 
     val ratios = slices.map { slice =>
-      ftpRatioStart + ftpStep * slice
+      ftpPercentStart + ftpStep * slice
     }
 
     NonEmptyList.fromListUnsafe(ratios.toList)
@@ -87,18 +85,18 @@ object ToWorkoutStepsSpec {
     offset: Time,
     isLast: Boolean,
   ): NonEmptyList[WorkoutData] = {
-    val ratios: NonEmptyList[Float] = toFtpRatios(
+    val ratios: NonEmptyList[Float] = toftpPercents(
       step = step,
       isLast = isLast,
     )
 
     ratios
       .zipWithIndex
-      .map { case (ftpRatio, slice) =>
+      .map { case (ftpPercent, slice) =>
         WorkoutData(
           offset = offset + Seconds(slice),
           memberFtpPercent = 0,
-          ftpPercent = ftpRatio * 100,
+          ftpPercent = ftpPercent,
         )
       }
   }
@@ -114,7 +112,7 @@ object ToWorkoutStepsSpec {
       .zipWithIndex
       .flatMap { case (step, index) =>
         val isLast = lastIndex == index
-        toFtpRatios(
+        toftpPercents(
           step = step,
           isLast = isLast,
         )
@@ -122,11 +120,11 @@ object ToWorkoutStepsSpec {
 
     ratios
       .zipWithIndex
-      .map { case (ftpRatio, slice) =>
+      .map { case (ftpPercent, slice) =>
         WorkoutData(
           offset = offset + Seconds(slice),
           memberFtpPercent = 0,
-          ftpPercent = ftpRatio * 100,
+          ftpPercent = ftpPercent,
         )
       }
   }
@@ -157,27 +155,41 @@ object ToWorkoutStepsSpec {
       interior <- Gen.listOf(genInterior)
       cooldown <- genCooldown
     } yield NonEmptyList.fromListUnsafe {
+
+      /**
+       * Guarantee a dramatic discontinuity between steps to ensure no ambiguity in the reified [[WorkoutData]] values.
+       * Without this, it's prior for two steps to have a slope within provided tolerance.
+       */
       (warmup +: interior :+ cooldown)
-        .sliding(2)
-        .flatMap {
+        .zipWithIndex
+        .map { case (step, index) =>
+          val ftpPercentDelta = index * 100
 
-          /**
-           * Guarantee a dramatic discontinuity between steps to ensure no ambiguity in the reified [[WorkoutData]] values.
-           * Without this, it's prior for two steps to have a slope within provided tolerance.
-           */
-          case Seq(last, next) =>
-            Seq(
-              last,
-              next
-                .modify(_.ftpRatioStart)
-                .setTo(last.ftpRatioEnd + 1f),
-            )
-
-          /** Cannot happen, but handle gracefully regardless.. */
-          case steps => steps
-
+          step match {
+            case step: WorkoutStep.Warmup =>
+              step
+                .modify(_.ftpPercentStart)
+                .using(_ + ftpPercentDelta)
+                .modify(_.ftpPercentEnd)
+                .using(_ + ftpPercentDelta)
+            case step: WorkoutStep.SteadyState =>
+              step
+                .modify(_.ftpPercent)
+                .using(_ + ftpPercentDelta)
+            case step: WorkoutStep.Ramp =>
+              step
+                .modify(_.ftpPercentStart)
+                .using(_ + ftpPercentDelta)
+                .modify(_.ftpPercentEnd)
+                .using(_ + ftpPercentDelta)
+            case step: WorkoutStep.Cooldown =>
+              step
+                .modify(_.ftpPercentStart)
+                .using(_ + ftpPercentDelta)
+                .modify(_.ftpPercentEnd)
+                .using(_ + ftpPercentDelta)
+          }
         }
-        .distinct
         .toList
     }
   }

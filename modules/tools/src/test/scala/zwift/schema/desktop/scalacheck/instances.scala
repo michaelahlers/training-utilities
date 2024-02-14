@@ -29,9 +29,7 @@ object instances {
       ftpPercentDelta <- Gen.choose(0, 50)
     } yield {
       val ftpPercentEnd = ftpPercentStart + ftpPercentDelta
-      val ftpRatioStart = ftpPercentStart / 100f
-      val ftpRatioEnd = ftpPercentEnd / 100f
-      Warmup(duration, ftpRatioStart, ftpRatioEnd)
+      Warmup(duration, ftpPercentStart, ftpPercentDelta)
     }
 
   implicit val arbWarmup: Arbitrary[Warmup] =
@@ -40,11 +38,8 @@ object instances {
   val genSteadyState: Gen[SteadyState] =
     for {
       duration <- arbitrary[Time]
-      ftpPercent <- Gen.choose(75, 125)
-    } yield {
-      val ftpRatio = ftpPercent / 100f
-      SteadyState(duration, ftpRatio)
-    }
+      ftpPercentStart <- Gen.choose(75, 125)
+    } yield SteadyState(duration, ftpPercentStart)
 
   implicit val arbSteadyState: Arbitrary[SteadyState] =
     Arbitrary(genSteadyState)
@@ -56,9 +51,7 @@ object instances {
       ftpPercentDelta <- Gen.choose(25, 50)
     } yield {
       val ftpPercentEnd = ftpPercentStart + ftpPercentDelta
-      val ftpRatioStart = ftpPercentStart / 100f
-      val ftpRatioEnd = ftpPercentEnd / 100f
-      Ramp(duration, ftpRatioStart, ftpRatioEnd)
+      Ramp(duration, ftpPercentStart, ftpPercentEnd)
     }
 
   val genRampDecreasing: Gen[Ramp] =
@@ -68,9 +61,7 @@ object instances {
       ftpPercentEnd <- Gen.choose(50, 75)
     } yield {
       val ftpPercentStart = ftpPercentDelta + ftpPercentEnd
-      val ftpRatioStart = ftpPercentStart / 100f
-      val ftpRatioEnd = ftpPercentEnd / 100f
-      Ramp(duration, ftpRatioStart, ftpRatioEnd)
+      Ramp(duration, ftpPercentStart, ftpPercentEnd)
     }
 
   /** Increasing or decreasing, but never steady-state. */
@@ -92,9 +83,7 @@ object instances {
       ftpPercentEnd <- Gen.posNum[Int]
     } yield {
       val ftpPercentStart = ftpPercentDelta + ftpPercentEnd
-      val ftpRatioStart = ftpPercentStart / 100f
-      val ftpRatioEnd = ftpPercentEnd / 100f
-      Cooldown(duration, ftpRatioStart, ftpRatioEnd)
+      Cooldown(duration, ftpPercentStart, ftpPercentEnd)
     }
 
   implicit val arbCooldown: Arbitrary[Cooldown] =

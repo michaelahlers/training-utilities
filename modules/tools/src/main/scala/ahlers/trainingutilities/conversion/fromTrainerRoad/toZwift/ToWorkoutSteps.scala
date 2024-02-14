@@ -39,39 +39,33 @@ private[toZwift] object ToWorkoutSteps {
         }
     }
 
-    val ftpRatioStart = ftpPercentStart / 100f
-    val ftpRatioEnd = ftpPercentEnd / 100f
-
     val step: WorkoutStep = (phase, slope) match {
 
       case (Phase.First, _) =>
         Warmup(
           duration = duration,
-          ftpRatioStart = ftpRatioStart,
-          ftpRatioEnd = ftpRatioEnd,
+          ftpPercentStart = ftpPercentStart,
+          ftpPercentEnd = ftpPercentEnd,
         )
 
       case (Phase.Interior, Slope.Positive(_) | Slope.Negative(_)) =>
         Ramp(
           duration = duration,
-          ftpRatioStart = ftpRatioStart,
-          ftpRatioEnd = ftpRatioEnd,
+          ftpPercentStart = ftpPercentStart,
+          ftpPercentEnd = ftpPercentEnd,
         )
 
       case (Phase.Interior, Slope.Undefined | Slope.Zero) =>
         SteadyState(
           duration = duration,
-          ftpRatioStart = ftpRatioStart,
+          ftpPercent = ftpPercentStart,
         )
 
       case (Phase.Last, _) =>
-        val ftpRatioStart = ftpPercentStart / 100f
-        val ftpRatioEnd = ftpPercentEnd / 100f
-
         Cooldown(
           duration = duration,
-          ftpRatioStart = ftpRatioStart,
-          ftpRatioEnd = ftpRatioEnd,
+          ftpPercentStart = ftpPercentStart,
+          ftpPercentEnd = ftpPercentEnd,
         )
 
     }
