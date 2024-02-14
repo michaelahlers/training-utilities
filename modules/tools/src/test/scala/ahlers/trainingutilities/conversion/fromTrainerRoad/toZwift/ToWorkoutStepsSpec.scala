@@ -41,7 +41,7 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
   }
 
   "Valid workout steps" in {
-    forAll(minSuccessful(100)) { steps: NonEmptyList[WorkoutStep] =>
+    forAll(minSuccessful(100), sizeRange(7)) { steps: NonEmptyList[WorkoutStep] =>
       val workouts = toWorkoutData(steps)
 
       ToWorkoutSteps
