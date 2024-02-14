@@ -7,6 +7,7 @@ import cats.data.Validated.Invalid
 import cats.data.Validated.Valid
 import cats.data.diffx.instances._
 import com.softwaremill.diffx.scalatest.DiffShouldMatcher._
+import com.softwaremill.quicklens._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
 import org.scalatest.wordspec.AnyWordSpec
@@ -41,7 +42,7 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
 
   "Valid workout steps" in {
 
-    forAll(sizeRange(3)) { steps: NonEmptyList[WorkoutStep] =>
+    forAll(minSuccessful(100), sizeRange(5)) { steps: NonEmptyList[WorkoutStep] =>
       val workouts = toWorkoutData(steps)
 
       ToWorkoutSteps
@@ -155,7 +156,30 @@ object ToWorkoutStepsSpec {
       warmup <- genWarmup
       interior <- Gen.listOf(genInterior)
       cooldown <- genCooldown
-    } yield NonEmptyList.one(warmup) ++ interior :+ cooldown
+    } yield NonEmptyList.fromListUnsafe {
+      (warmup +: interior :+ cooldown)
+        .sliding(2)
+        .flatMap {
+
+          /**
+           * Guarantee a dramatic discontinuity between steps to ensure no ambiguity in the reified [[WorkoutData]] values.
+           * Without this, it's prior for two steps to have a slope within provided tolerance.
+           */
+          case Seq(last, next) =>
+            Seq(
+              last,
+              next
+                .modify(_.ftpRatioStart)
+                .setTo(last.ftpRatioEnd + 1f),
+            )
+
+          /** Cannot happen, but handle gracefully regardless.. */
+          case steps => steps
+
+        }
+        .distinct
+        .toList
+    }
   }
 
 }
