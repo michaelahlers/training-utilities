@@ -2,7 +2,7 @@ package ahlers.trainingutilities.conversion
 
 import zio._
 
-object ConversionApp extends ZIOAppDefault {
+object ConversionCliApp extends ZIOAppDefault {
 
   val run =
     for {
