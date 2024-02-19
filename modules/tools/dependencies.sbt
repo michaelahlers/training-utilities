@@ -89,6 +89,13 @@ libraryDependencies +=
 libraryDependencies +=
   "org.scalactic" %% "scalactic" % "3.2.17"
 
+/**
+ * Rapidly build powerful command-line applications powered by ZIO.
+ * @see [[https://github.com/zio/zio-cli]]
+ */
+libraryDependencies +=
+  "dev.zio" %% "zio-cli" % "0.5.0"
+
 libraryDependencies ++=
   "dev.zio" %% "zio-config" % "4.0.1" ::
     "dev.zio" %% "zio-config-magnolia" % "4.0.1" ::
