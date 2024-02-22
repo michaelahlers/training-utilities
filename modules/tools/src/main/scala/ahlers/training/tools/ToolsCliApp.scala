@@ -2,7 +2,6 @@ package ahlers.training.tools
 
 import ahlers.training.tools.conversion.ConversionToolsTask
 import ahlers.trainingutilities.tools.BuildInfo
-import zio.Console.printLine
 import zio._
 import zio.cli.HelpDoc.Span.text
 import zio.cli._
