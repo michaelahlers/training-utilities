@@ -6,6 +6,6 @@ import com.softwaremill.diffx.generic.auto._
 
 object instances {
 
-  implicit val diffConversionSettings:Diff[ConversionSettings] = Diff.summon
+  implicit val diffConversionSettings: Diff[ConversionSettings] = Diff.summon
 
 }
