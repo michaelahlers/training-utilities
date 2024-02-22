@@ -1,5 +1,6 @@
 package ahlers.training.tools
 
+import ahlers.training.tools.conversion.ConversionApp
 import ahlers.training.tools.conversion.ConversionToolsTask
 import ahlers.trainingutilities.tools.BuildInfo
 import zio._
@@ -23,8 +24,9 @@ object ToolsCliApp extends ZIOCliDefault {
     version = BuildInfo.version,
     summary = text("Tools for working with training data."),
     command = command,
-  ) { command =>
+  ) { case command: ConversionToolsTask =>
     ZIO.logInfo(s"$command")
+    ConversionApp(command).run
   }
 
 }

@@ -22,20 +22,20 @@ private[toZwift] object ToWorkoutSteps {
     stepList: StepList.Cons,
   ): WorkoutStep = {
     val duration: Time = stepList.duration
-    val phase: Phase = stepList.phase
+    val phase: Phase   = stepList.phase
     val slope: Slope = stepList match {
-      case _: StepList.Inflection => Slope.Undefined
+      case _: StepList.Inflection   => Slope.Undefined
       case stepList: StepList.Range => stepList.slope
     }
 
     val ftpPercentStart = stepList.start.ftpPercent
     val ftpPercentEnd = stepList match {
       case step: StepList.Inflection => step.start.ftpPercent
-      case step: StepList.Range =>
+      case step: StepList.Range      =>
         /** The "terminating" [[WorkoutData.ftpPercent]] is included with the final interval. */
         phase match {
           case Phase.First | Phase.Interior => step.end.ftpPercent
-          case Phase.Last => step.tail.start.ftpPercent
+          case Phase.Last                   => step.tail.start.ftpPercent
         }
     }
 

@@ -60,11 +60,11 @@ object ToWorkoutStepsSpec {
   ): NonEmptyList[Float] = {
     val ftpPercentStart = step match {
       case step: WorkoutStep.SteadyState => step.ftpPercent
-      case step: WorkoutStep.Range => step.ftpPercentStart
+      case step: WorkoutStep.Range       => step.ftpPercentStart
     }
     val ftpPercentEnd = step match {
       case step: WorkoutStep.SteadyState => step.ftpPercent
-      case step: WorkoutStep.Range => step.ftpPercentEnd
+      case step: WorkoutStep.Range       => step.ftpPercentEnd
     }
 
     /**
@@ -158,7 +158,7 @@ object ToWorkoutStepsSpec {
     )
 
     for {
-      warmup <- genWarmup
+      warmup   <- genWarmup
       interior <- Gen.listOf(genInterior)
       cooldown <- genCooldown
     } yield NonEmptyList.fromListUnsafe {

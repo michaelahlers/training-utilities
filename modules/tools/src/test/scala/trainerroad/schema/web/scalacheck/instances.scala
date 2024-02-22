@@ -11,10 +11,10 @@ object instances {
 
   /** Arbitrary within valid and reasonable limits. */
   implicit val arbIntervalData: Arbitrary[IntervalData] = Arbitrary(for {
-    name <- Gen.identifier
-    start <- Gen.posNum[Int]
-    end <- Gen.posNum[Int].map(_ + start)
-    isFake <- arbitrary[Boolean]
+    name                    <- Gen.identifier
+    start                   <- Gen.posNum[Int]
+    end                     <- Gen.posNum[Int].map(_ + start)
+    isFake                  <- arbitrary[Boolean]
     startTargetPowerPercent <- Gen.choose(0.0f, 100.0f)
   } yield IntervalData(
     name = name,
@@ -26,9 +26,9 @@ object instances {
 
   /** Arbitrary within valid and reasonable limits. */
   implicit val arbWorkoutData: Arbitrary[WorkoutData] = Arbitrary(for {
-    seconds <- Gen.posNum[Int]
+    seconds          <- Gen.posNum[Int]
     memberFtpPercent <- Gen.choose(0.0f, 100.0f)
-    ftpPercent <- Gen.choose(0.0f, 100.0f)
+    ftpPercent       <- Gen.choose(0.0f, 100.0f)
   } yield WorkoutData(
     offset = Seconds(seconds),
     memberFtpPercent = memberFtpPercent,

@@ -13,7 +13,7 @@ object ToolsTask {
     val options: Options[DryRun] = Options
       .boolean("dry-run").alias("n")
       .map {
-        case true => IsDry
+        case true  => IsDry
         case false => IsWet
       }
 

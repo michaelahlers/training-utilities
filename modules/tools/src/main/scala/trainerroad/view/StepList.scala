@@ -15,9 +15,9 @@ object StepList {
 
   sealed trait Phase
   object Phase {
-    object First extends Phase
+    object First    extends Phase
     object Interior extends Phase
-    object Last extends Phase
+    object Last     extends Phase
   }
 
   sealed trait Slope
@@ -41,7 +41,7 @@ object StepList {
       def unapply(slope: NonZero): Option[Float] =
         slope match {
           case slope: NonZero => Some(slope.ratio)
-          case _ => None
+          case _              => None
         }
     }
 
@@ -91,7 +91,7 @@ object StepList {
 
       val isLast = tail match {
         case _: StepList.End => true
-        case _ => false
+        case _               => false
       }
 
       /** Accommodates a special case where the given [[StepList.Cons]] is alone. */
@@ -180,9 +180,9 @@ object StepList {
       val nextSlope = Slope.from(last.start, next)
 
       (lastSlope, nextSlope) match {
-        case (Slope.Zero, Slope.Zero) => true
+        case (Slope.Zero, Slope.Zero)                             => true
         case (Slope.NonZero(lastRatio), Slope.NonZero(nextRatio)) => lastRatio === nextRatio +- 0.001f
-        case _ => false
+        case _                                                    => false
       }
     }
 

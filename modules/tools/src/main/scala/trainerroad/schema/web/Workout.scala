@@ -13,8 +13,8 @@ object Workout {
 
   implicit val decoder: Decoder[Workout] = cursor =>
     for {
-      details <- cursor.downField("Details").as[Details]
-      workoutData <- cursor.downField("workoutData").as[NonEmptyList[WorkoutData]]
+      details      <- cursor.downField("Details").as[Details]
+      workoutData  <- cursor.downField("workoutData").as[NonEmptyList[WorkoutData]]
       intervalData <- cursor.downField("intervalData").as[NonEmptyList[IntervalData]]
     } yield Workout(
       details = details,
