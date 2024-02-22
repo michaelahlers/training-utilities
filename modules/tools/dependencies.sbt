@@ -90,6 +90,13 @@ libraryDependencies +=
   "org.scalactic" %% "scalactic" % "3.2.17"
 
 /**
+ * Simple logging for ZIO.
+ * @see [[https://github.com/zio/zio-logging]]
+ */
+libraryDependencies +=
+  "dev.zio" %% "zio-logging" % "2.2.1"
+
+/**
  * Rapidly build powerful command-line applications powered by ZIO.
  * @see [[https://github.com/zio/zio-cli]]
  */
