@@ -3,6 +3,7 @@ package ahlers.training.tools.conversion
 import ahlers.training.tools.DryRunFlag
 import ahlers.training.tools.ToolsTask
 import java.net.URI
+import scala.util.Try
 import scala.util.control.NonFatal
 import zio.cli.Args
 import zio.cli.Command
@@ -22,11 +23,8 @@ object ConversionToolsTask extends ToolsTask {
     val args: Args[Input] = Args
       .text("input")
       .mapOrFail { location =>
-        try Right(new URI(location))
-        catch {
-          case NonFatal(_) =>
-            Left(HelpDoc.p(s"""Can't parse input location, "$location", as a URI."""))
-        }
+        Try(Right(new URI(location)))
+          .getOrElse(Left(HelpDoc.p(s"""Can't parse input location, "$location", as a URI.""")))
       }
       .map(Input(_))
   }
@@ -36,11 +34,8 @@ object ConversionToolsTask extends ToolsTask {
     val args: Args[Output] = Args
       .text("output")
       .mapOrFail { location =>
-        try Right(new URI(location))
-        catch {
-          case NonFatal(_) =>
-            Left(HelpDoc.p(s"""Can't parse output location, "$location", as a URI."""))
-        }
+        Try(Right(new URI(location)))
+          .getOrElse(Left(HelpDoc.p(s"""Can't parse output location, "$location", as a URI.""")))
       }
       .map(Output(_))
   }
