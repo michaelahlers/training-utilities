@@ -36,10 +36,9 @@ object ConvertApp {
 
     case object TrainerRoadWorkout extends InputFormat
 
-    val options: Options[InputFormat] = (Options
-      .text("input-format") ?? """Source format (e.g., "trainer-road-workout").""")
-      .map {
-        case "trainer-road-workout" => TrainerRoadWorkout
+    val options: Options[InputFormat] = Options
+      .enumeration("input-format") {
+        "trainer-road-workout" -> TrainerRoadWorkout
       }
 
   }
@@ -49,10 +48,9 @@ object ConvertApp {
 
     case object ZwiftWorkout extends OutputFormat
 
-    val options: Options[OutputFormat] = (Options
-      .text("output-format") ?? """Target format (e.g., "zwift-workout").""")
-      .map {
-        case "zwift-workout" => ZwiftWorkout
+    val options: Options[OutputFormat] = Options
+      .enumeration("output-format") {
+        "zwift-workout" -> ZwiftWorkout
       }
 
   }
