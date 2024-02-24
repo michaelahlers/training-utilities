@@ -16,7 +16,7 @@ case class ConversionApp(
 ) extends ZIOAppDefault { self =>
 
   val run = for {
-    _ <- ZIO.logInfo(s"Bear: $self")
+    _ <- ZIO.logInfo(s"Performing $dryRun conversion of $input to $output.")
   } yield ()
 
 }
