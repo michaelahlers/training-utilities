@@ -168,3 +168,10 @@ libraryDependencies ++=
     "dev.zio" %% "zio-test-sbt"      % "2.1-RC1" % Test ::
     "dev.zio" %% "zio-test-magnolia" % "2.1-RC1" % Test ::
     Nil
+
+/**
+ * ScalaTest bindings for Cats.
+ * @see [[https://github.com/IronCoreLabs/cats-scalatest]]
+ */
+libraryDependencies +=
+  "com.ironcorelabs" %% "cats-scalatest" % "3.0.5" % Test
