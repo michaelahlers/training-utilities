@@ -2,6 +2,7 @@ package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift
 
 import cats.data.Validated
 import trainerroad.schema.web.Workout
+import trainerroad.schema.web.WorkoutDetails
 import zwift.schema.desktop.WorkoutFile
 
 object ToWorkoutFile {
@@ -17,5 +18,8 @@ object ToWorkoutFile {
       tags = workout.tags.map(WorkoutFile.Tag(_)),
       workout = steps,
     )
+
+  def from(workout: WorkoutDetails): Validated[Throwable, WorkoutFile] =
+    from(workout.workout)
 
 }
