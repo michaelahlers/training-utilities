@@ -1,17 +1,21 @@
 package trainerroad.schema.web
 
 import cats.data.NonEmptyList
+import cats.data.zio.json.instances._
 import io.circe.Decoder
+import zio.json.DeriveJsonDecoder
+import zio.json.JsonDecoder
+import zio.json.jsonField
 
 case class Workout(
-  details: Details,
+  @jsonField("Details") details: Details,
   workoutData: NonEmptyList[WorkoutData],
   intervalData: NonEmptyList[IntervalData],
 )
 
 object Workout {
 
-  implicit val decoder: Decoder[Workout] = cursor =>
+  implicit val circeDecoder: Decoder[Workout] = cursor =>
     for {
       details      <- cursor.downField("Details").as[Details]
       workoutData  <- cursor.downField("workoutData").as[NonEmptyList[WorkoutData]]
@@ -21,4 +25,8 @@ object Workout {
       workoutData = workoutData,
       intervalData = intervalData,
     )
+
+  implicit val zioDecoder: JsonDecoder[Workout] =
+    DeriveJsonDecoder.gen[Workout]
+
 }

@@ -1,11 +1,14 @@
 package trainerroad.schema.web
 
 import io.circe.Decoder
+import zio.json.DeriveJsonDecoder
+import zio.json.JsonDecoder
+import zio.json.jsonField
 
 case class Details(
-  id: Int,
-  workoutName: String,
-  workoutDescription: String,
+  @jsonField("Id") id: Int,
+  @jsonField("WorkoutName") workoutName: String,
+  @jsonField("WorkoutDescription") workoutDescription: String,
 )
 
 object Details {
@@ -20,5 +23,8 @@ object Details {
       workoutName = name,
       workoutDescription = description,
     )
+
+  implicit val zioDecoder: JsonDecoder[Details] =
+    DeriveJsonDecoder.gen[Details]
 
 }
