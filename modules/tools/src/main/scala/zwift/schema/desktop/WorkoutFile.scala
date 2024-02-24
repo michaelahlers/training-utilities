@@ -19,10 +19,17 @@ object WorkoutFile {
 
   case class Tag(name: String)
   object Tag {
+
+    /**
+     * @see [[https://github.com/h4l/zwift-workout-file-reference/blob/master/zwift_workout_file_tag_reference.md#element-tag]]
+     */
     implicit val xmlEncoder: XmlEncoder[Tag] = tag =>
       <tag name={tag.name} />
   }
 
+  /**
+   * @see [[https://github.com/h4l/zwift-workout-file-reference/blob/master/zwift_workout_file_tag_reference.md#element-workout_file]]
+   */
   implicit val xmlEncoder: XmlEncoder[WorkoutFile] = file =>
     <workout_file>
       <author>{file.author}</author>
