@@ -10,10 +10,10 @@ libraryDependencies +=
  * @see [[https://circe.github.io/circe/]]
  */
 libraryDependencies ++=
-  "io.circe" %% "circe-core" % "0.13.0" ::
-    "io.circe" %% "circe-generic" % "0.13.0" ::
+  "io.circe"   %% "circe-core"           % "0.13.0" ::
+    "io.circe" %% "circe-generic"        % "0.13.0" ::
     "io.circe" %% "circe-generic-extras" % "0.13.0" ::
-    "io.circe" %% "circe-parser" % "0.13.0" ::
+    "io.circe" %% "circe-parser"         % "0.13.0" ::
     Nil
 
 libraryDependencies +=
@@ -90,6 +90,55 @@ libraryDependencies +=
   "org.scalactic" %% "scalactic" % "3.2.17"
 
 /**
+ * A fast and secure JSON library with tight ZIO integration.
+ * @see [[https://zio.dev/zio-json]]
+ */
+libraryDependencies +=
+  "dev.zio" %% "zio-json" % "0.6.2"
+
+/**
+ * Simple logging for ZIO.
+ * @see [[https://github.com/zio/zio-logging]]
+ */
+libraryDependencies +=
+  "dev.zio" %% "zio-streams" % "2.0.21"
+
+/**
+ * Simple logging for ZIO.
+ * @see [[https://github.com/zio/zio-logging]]
+ */
+libraryDependencies +=
+  "dev.zio" %% "zio-logging" % "2.2.1"
+
+/**
+ * Rapidly build powerful command-line applications powered by ZIO.
+ * @see [[https://github.com/zio/zio-cli]]
+ */
+libraryDependencies +=
+  "dev.zio" %% "zio-cli" % "0.5.0"
+
+libraryDependencies ++=
+  "dev.zio"   %% "zio-config"          % "4.0.1" ::
+    "dev.zio" %% "zio-config-magnolia" % "4.0.1" ::
+    "dev.zio" %% "zio-config-typesafe" % "4.0.1" ::
+    "dev.zio" %% "zio-config-yaml"     % "4.0.1" ::
+    Nil
+
+/**
+ * Provides non-blocking parsers, writers and filters for handling streaming XML in the zio Scala framework, specifically as ZStream.
+ * @see [[https://github.com/jypma/zio-xml]]
+ */
+libraryDependencies +=
+  "net.ypmania.zioxml" %% "zio-xml" % "0.2.0"
+
+/**
+ * Simplifies working with real-world HTML and XML.
+ * @see [[https://jsoup.org]]
+ */
+libraryDependencies +=
+  "org.jsoup" % "jsoup" % "1.17.2"
+
+/**
  * ScalaTest is the most flexible and most popular testing tool in the Scala ecosystem.
  * @see [[https://www.scalatest.org/]]
  */
@@ -105,9 +154,9 @@ libraryDependencies +=
  * @see [[https://github.com/spotify/magnolify]]
  */
 libraryDependencies ++=
-  "org.scalacheck" %% "scalacheck" % "1.14.1" % Test ::
-    "org.scalatestplus" %% "scalacheck-1-17" % "3.2.17.0" % Test ::
-    "com.spotify" %% "magnolify-scalacheck" % "0.7.0" % Test ::
+  "org.scalacheck"      %% "scalacheck"           % "1.14.1"   % Test ::
+    "org.scalatestplus" %% "scalacheck-1-17"      % "3.2.17.0" % Test ::
+    "com.spotify"       %% "magnolify-scalacheck" % "0.7.0"    % Test ::
     Nil
 
 /**
@@ -123,7 +172,20 @@ libraryDependencies ++=
  * @see [[https://github.com/softwaremill/diffx]]
  */
 libraryDependencies ++=
-  "com.softwaremill.diffx" %% "diffx-cats" % "0.9.0" % Test ::
-    "com.softwaremill.diffx" %% "diffx-scalatest-must" % "0.9.0" % Test ::
+  "com.softwaremill.diffx"   %% "diffx-cats"             % "0.9.0" % Test ::
+    "com.softwaremill.diffx" %% "diffx-scalatest-must"   % "0.9.0" % Test ::
     "com.softwaremill.diffx" %% "diffx-scalatest-should" % "0.9.0" % Test ::
     Nil
+
+libraryDependencies ++=
+  "dev.zio"   %% "zio-test"          % "2.1-RC1" % Test ::
+    "dev.zio" %% "zio-test-sbt"      % "2.1-RC1" % Test ::
+    "dev.zio" %% "zio-test-magnolia" % "2.1-RC1" % Test ::
+    Nil
+
+/**
+ * ScalaTest bindings for Cats.
+ * @see [[https://github.com/IronCoreLabs/cats-scalatest]]
+ */
+libraryDependencies +=
+  "com.ironcorelabs" %% "cats-scalatest" % "3.0.5" % Test

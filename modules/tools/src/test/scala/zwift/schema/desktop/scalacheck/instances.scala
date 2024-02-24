@@ -24,7 +24,7 @@ object instances {
    */
   val genWarmup: Gen[Warmup] =
     for {
-      duration <- arbitrary[Time]
+      duration        <- arbitrary[Time]
       ftpPercentStart <- Gen.choose(45, 65)
       ftpPercentDelta <- Gen.choose(0, 50)
     } yield {
@@ -37,7 +37,7 @@ object instances {
 
   val genSteadyState: Gen[SteadyState] =
     for {
-      duration <- arbitrary[Time]
+      duration        <- arbitrary[Time]
       ftpPercentStart <- Gen.choose(75, 125)
     } yield SteadyState(duration, ftpPercentStart)
 
@@ -46,7 +46,7 @@ object instances {
 
   val genRampIncreasing: Gen[Ramp] =
     for {
-      duration <- arbitrary[Time]
+      duration        <- arbitrary[Time]
       ftpPercentStart <- Gen.choose(50, 75)
       ftpPercentDelta <- Gen.choose(25, 50)
     } yield {
@@ -56,9 +56,9 @@ object instances {
 
   val genRampDecreasing: Gen[Ramp] =
     for {
-      duration <- arbitrary[Time]
+      duration        <- arbitrary[Time]
       ftpPercentDelta <- Gen.choose(25, 50)
-      ftpPercentEnd <- Gen.choose(50, 75)
+      ftpPercentEnd   <- Gen.choose(50, 75)
     } yield {
       val ftpPercentStart = ftpPercentDelta + ftpPercentEnd
       Ramp(duration, ftpPercentStart, ftpPercentEnd)
@@ -78,9 +78,9 @@ object instances {
    */
   val genCooldown: Gen[Cooldown] =
     for {
-      duration <- arbitrary[Time]
+      duration        <- arbitrary[Time]
       ftpPercentDelta <- Gen.choose(45, 65)
-      ftpPercentEnd <- Gen.posNum[Int]
+      ftpPercentEnd   <- Gen.posNum[Int]
     } yield {
       val ftpPercentStart = ftpPercentDelta + ftpPercentEnd
       Cooldown(duration, ftpPercentStart, ftpPercentEnd)

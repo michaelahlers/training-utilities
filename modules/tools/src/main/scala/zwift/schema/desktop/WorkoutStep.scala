@@ -38,10 +38,15 @@ object WorkoutStep {
   }
 
   object SteadyState {
+
+    /**
+     * @see [[https://github.com/h4l/zwift-workout-file-reference/blob/master/zwift_workout_file_tag_reference.md#element-SteadyState]]
+     */
     implicit val xmlEncoder: XmlEncoder[SteadyState] = step =>
       <SteadyState
         Duration={step.duration.asXml}
         Power={(step.ftpPercent / 100f).toString} />
+
   }
 
   case class Ramp(
@@ -63,11 +68,16 @@ object WorkoutStep {
   }
 
   object Ramp {
+
+    /**
+     * @see [[https://github.com/h4l/zwift-workout-file-reference/blob/master/zwift_workout_file_tag_reference.md#element-Ramp]]
+     */
     implicit val xmlEncoder: XmlEncoder[Ramp] = step =>
       <Ramp
         Duration={step.duration.asXml}
         PowerLow={(step.ftpPercentStart / 100f).toString}
         PowerHigh={(step.ftpPercentEnd / 100f).toString} />
+
   }
 
   case class Warmup(
@@ -89,11 +99,16 @@ object WorkoutStep {
   }
 
   object Warmup {
+
+    /**
+     * @see [[https://github.com/h4l/zwift-workout-file-reference/blob/master/zwift_workout_file_tag_reference.md#element-Warmup]]
+     */
     implicit val xmlEncoder: XmlEncoder[Warmup] = step =>
       <Warmup
         Duration={step.duration.asXml}
         PowerLow={(step.ftpPercentStart / 100f).toString}
         PowerHigh={(step.ftpPercentEnd / 100f).toString} />
+
   }
 
   case class Cooldown(
@@ -115,18 +130,23 @@ object WorkoutStep {
   }
 
   object Cooldown {
+
+    /**
+     * @see [[https://github.com/h4l/zwift-workout-file-reference/blob/master/zwift_workout_file_tag_reference.md#element-Cooldown]]
+     */
     implicit val xmlEncoder: XmlEncoder[Cooldown] = step =>
       <Cooldown
         Duration={step.duration.asXml}
         PowerLow={(step.ftpPercentStart / 100f).toString}
         PowerHigh={(step.ftpPercentEnd / 100f).toString} />
+
   }
 
   implicit val xmlEncoder: XmlEncoder[WorkoutStep] = {
-    case step: Warmup => step.asXml
+    case step: Warmup      => step.asXml
     case step: SteadyState => step.asXml
-    case step: Ramp => step.asXml
-    case step: Cooldown => step.asXml
+    case step: Ramp        => step.asXml
+    case step: Cooldown    => step.asXml
   }
 
 }

@@ -1,13 +1,18 @@
 package trainerroad.schema.web
 
 import io.circe.Decoder
+import squants.time.Milliseconds
+import squants.time.Time
+import zio.json.DeriveJsonDecoder
+import zio.json.JsonDecoder
+import zio.json.jsonField
 
 case class IntervalData(
-  name: String,
-  start: Int,
-  end: Int,
-  isFake: Boolean,
-  startTargetPowerPercent: Float,
+  @jsonField("Name") name: String,
+  @jsonField("Start") start: Int,
+  @jsonField("End") end: Int,
+  @jsonField("IsFake") isFake: Boolean,
+  @jsonField("StartTargetPowerPercent") startTargetPowerPercent: Float,
 ) {
 
   require(
@@ -19,12 +24,12 @@ case class IntervalData(
 
 object IntervalData {
 
-  implicit val decoder: Decoder[IntervalData] = cursor =>
+  implicit val circeDecoder: Decoder[IntervalData] = cursor =>
     for {
-      name <- cursor.downField("Name").as[String]
-      start <- cursor.downField("Start").as[Int]
-      end <- cursor.downField("End").as[Int]
-      isFake <- cursor.downField("IsFake").as[Boolean]
+      name                    <- cursor.downField("Name").as[String]
+      start                   <- cursor.downField("Start").as[Int]
+      end                     <- cursor.downField("End").as[Int]
+      isFake                  <- cursor.downField("IsFake").as[Boolean]
       startTargetPowerPercent <- cursor.downField("StartTargetPowerPercent").as[Float]
     } yield IntervalData(
       name = name,
@@ -33,5 +38,8 @@ object IntervalData {
       isFake = isFake,
       startTargetPowerPercent = startTargetPowerPercent,
     )
+
+  implicit val zioDecoder: JsonDecoder[IntervalData] =
+    DeriveJsonDecoder.gen[IntervalData]
 
 }

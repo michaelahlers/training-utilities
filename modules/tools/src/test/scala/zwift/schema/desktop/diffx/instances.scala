@@ -13,10 +13,10 @@ object instances {
 
   implicit private val diffFloat: Diff[Float] = Diff.approximate[Float](0.1f)
 
-  implicit val diffWorkoutStepWarmup: Diff[WorkoutStep.Warmup] = Diff.summon
+  implicit val diffWorkoutStepWarmup: Diff[WorkoutStep.Warmup]           = Diff.summon
   implicit val diffWorkoutStepSteadyState: Diff[WorkoutStep.SteadyState] = Diff.summon
-  implicit val diffWorkoutStepRamp: Diff[WorkoutStep.Ramp] = Diff.summon
-  implicit val diffWorkoutStepCooldown: Diff[WorkoutStep.Cooldown] = Diff.summon
+  implicit val diffWorkoutStepRamp: Diff[WorkoutStep.Ramp]               = Diff.summon
+  implicit val diffWorkoutStepCooldown: Diff[WorkoutStep.Cooldown]       = Diff.summon
 
   implicit val diffWorkoutStep: Diff[WorkoutStep] = Diff.summon[WorkoutStep]
 

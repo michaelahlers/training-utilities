@@ -1,6 +1,6 @@
 package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift
 
-import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.Error.NoIntervalsInWorkout
+import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.NoIntervalsInWorkoutException
 import cats.data.NonEmptyList
 import cats.data.Validated
 import cats.syntax.validated._
@@ -22,20 +22,20 @@ private[toZwift] object ToWorkoutSteps {
     stepList: StepList.Cons,
   ): WorkoutStep = {
     val duration: Time = stepList.duration
-    val phase: Phase = stepList.phase
+    val phase: Phase   = stepList.phase
     val slope: Slope = stepList match {
-      case _: StepList.Inflection => Slope.Undefined
+      case _: StepList.Inflection   => Slope.Undefined
       case stepList: StepList.Range => stepList.slope
     }
 
     val ftpPercentStart = stepList.start.ftpPercent
     val ftpPercentEnd = stepList match {
       case step: StepList.Inflection => step.start.ftpPercent
-      case step: StepList.Range =>
+      case step: StepList.Range      =>
         /** The "terminating" [[WorkoutData.ftpPercent]] is included with the final interval. */
         phase match {
           case Phase.First | Phase.Interior => step.end.ftpPercent
-          case Phase.Last => step.tail.start.ftpPercent
+          case Phase.Last                   => step.tail.start.ftpPercent
         }
     }
 
@@ -75,19 +75,19 @@ private[toZwift] object ToWorkoutSteps {
 
   def from(
     workouts: NonEmptyList[WorkoutData],
-  ): Validated[Error, NonEmptyList[WorkoutStep]] = {
+  ): Validated[Throwable, NonEmptyList[WorkoutStep]] = {
 
     @tailrec
     def loop(
       queue: StepList,
       acc: Vector[WorkoutStep],
-    ): Validated[Error, NonEmptyList[WorkoutStep]] = queue match {
+    ): Validated[Throwable, NonEmptyList[WorkoutStep]] = queue match {
 
       case head: StepList.End =>
         NonEmptyList
           .fromFoldable(acc)
           .map(_.valid)
-          .getOrElse(NoIntervalsInWorkout(workouts).invalid)
+          .getOrElse(NoIntervalsInWorkoutException(workouts).invalid)
 
       case head: StepList.Cons =>
         val step = from(head)

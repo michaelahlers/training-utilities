@@ -12,8 +12,8 @@ import com.softwaremill.diffx.generic.auto._
  */
 object instances extends DiffCatsInstances {
 
-  implicit def diffValid[A: Diff]: Diff[Valid[A]] = Diff.summon
-  implicit def diffInvalid[E: Diff]: Diff[Invalid[E]] = Diff.summon
+  implicit def diffValid[A: Diff]: Diff[Valid[A]]                     = Diff.summon
+  implicit def diffInvalid[E: Diff]: Diff[Invalid[E]]                 = Diff.summon
   implicit def diffValidated[E: Diff, A: Diff]: Diff[Validated[E, A]] = Diff.summon
 
 }
