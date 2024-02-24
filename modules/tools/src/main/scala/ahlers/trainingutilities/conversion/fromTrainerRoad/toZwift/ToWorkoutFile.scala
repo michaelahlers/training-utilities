@@ -34,16 +34,22 @@ object ToWorkoutFile {
       .toValidatedNel
 
     (stepsF, nameF, descriptionF)
-      .mapN((steps, name, description) =>
+      .mapN { (steps, name, description) =>
+        val tags =
+          workout
+            .tags
+            .map(WorkoutFile.Tag(_)) :+
+            WorkoutFile.Tag(workout.profileName)
+
         WorkoutFile(
           author = "TrainerRoad",
           name = name,
           description = description,
           sportType = "bike",
-          tags = workout.tags.map(WorkoutFile.Tag(_)),
+          tags = tags,
           workout = steps,
-        ),
-      )
+        )
+      }
       .leftMap(_
         .foldLeft(new IllegalArgumentException("Couldn't convert TrainerRoad workout to Zwift workout.") with NoStackTrace) { (error, next) =>
           error.addSuppressed(next)
