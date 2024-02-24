@@ -6,7 +6,7 @@ import zwift.schema.desktop.WorkoutFile
 
 object ToWorkoutFile {
 
-  def from(workout: Workout): Validated[Exception, WorkoutFile] =
+  def from(workout: Workout): Validated[Throwable, WorkoutFile] =
     for {
       steps <- ToWorkoutSteps.from(workout.workoutData)
     } yield WorkoutFile(

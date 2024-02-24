@@ -75,13 +75,13 @@ private[toZwift] object ToWorkoutSteps {
 
   def from(
     workouts: NonEmptyList[WorkoutData],
-  ): Validated[Exception, NonEmptyList[WorkoutStep]] = {
+  ): Validated[Throwable, NonEmptyList[WorkoutStep]] = {
 
     @tailrec
     def loop(
       queue: StepList,
       acc: Vector[WorkoutStep],
-    ): Validated[Exception, NonEmptyList[WorkoutStep]] = queue match {
+    ): Validated[Throwable, NonEmptyList[WorkoutStep]] = queue match {
 
       case head: StepList.End =>
         NonEmptyList
