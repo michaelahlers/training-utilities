@@ -22,13 +22,15 @@ object ToWorkoutFile {
     val nameF: Validated[NonEmptyList[Throwable], String] = Validated.catchNonFatal(Jsoup
       .parse(workout.details.workoutName)
       .root()
-      .text())
+      .text()
+      .trim)
       .toValidatedNel
 
     val descriptionF: Validated[NonEmptyList[Throwable], String] = Validated.catchNonFatal(Jsoup
       .parse(workout.details.workoutDescription)
       .root()
-      .text())
+      .text()
+      .trim)
       .toValidatedNel
 
     (stepsF, nameF, descriptionF)
