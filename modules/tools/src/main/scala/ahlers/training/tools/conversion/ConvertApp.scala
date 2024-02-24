@@ -36,8 +36,8 @@ object ConvertApp {
 
     case object TrainerRoadWorkout extends InputFormat
 
-    val options: Options[InputFormat] = Options
-      .text("input-format")
+    val options: Options[InputFormat] = (Options
+      .text("input-format") ?? """Source format (e.g., "trainer-road-workout").""")
       .map {
         case "trainer-road-workout" => TrainerRoadWorkout
       }
@@ -49,8 +49,8 @@ object ConvertApp {
 
     case object ZwiftWorkout extends OutputFormat
 
-    val options: Options[OutputFormat] = Options
-      .text("output-format")
+    val options: Options[OutputFormat] = (Options
+      .text("output-format") ?? """Target format (e.g., "zwift-workout").""")
       .map {
         case "zwift-workout" => ZwiftWorkout
       }
@@ -62,8 +62,8 @@ object ConvertApp {
   }
 
   object InputLocation {
-    val args: Args[InputLocation] = Args
-      .text("input-location")
+    val args: Args[InputLocation] = (Args
+      .text("input-location") ?? """URI indication from where input should be loaded.""")
       .mapOrFail { location =>
         Try(Right(new URI(location)))
           .getOrElse(Left(HelpDoc.p(s"""Can't parse input location, "$location", as a URI.""")))
@@ -76,8 +76,8 @@ object ConvertApp {
   }
 
   object OutputLocation {
-    val args: Args[OutputLocation] = Args
-      .text("output-location")
+    val args: Args[OutputLocation] = (Args
+      .text("output-location") ?? """URI indication to where output should be stored.""")
       .mapOrFail { location =>
         Try(Right(new URI(location)))
           .getOrElse(Left(HelpDoc.p(s"""Can't parse output location, "$location", as a URI.""")))
