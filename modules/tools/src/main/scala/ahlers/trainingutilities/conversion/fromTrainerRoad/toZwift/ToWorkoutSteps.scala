@@ -1,6 +1,6 @@
 package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift
 
-import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.Error.NoIntervalsInWorkout
+import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.NoIntervalsInWorkoutException
 import cats.data.NonEmptyList
 import cats.data.Validated
 import cats.syntax.validated._
@@ -75,19 +75,19 @@ private[toZwift] object ToWorkoutSteps {
 
   def from(
     workouts: NonEmptyList[WorkoutData],
-  ): Validated[Error, NonEmptyList[WorkoutStep]] = {
+  ): Validated[Exception, NonEmptyList[WorkoutStep]] = {
 
     @tailrec
     def loop(
       queue: StepList,
       acc: Vector[WorkoutStep],
-    ): Validated[Error, NonEmptyList[WorkoutStep]] = queue match {
+    ): Validated[Exception, NonEmptyList[WorkoutStep]] = queue match {
 
       case head: StepList.End =>
         NonEmptyList
           .fromFoldable(acc)
           .map(_.valid)
-          .getOrElse(NoIntervalsInWorkout(workouts).invalid)
+          .getOrElse(NoIntervalsInWorkoutException(workouts).invalid)
 
       case head: StepList.Cons =>
         val step = from(head)

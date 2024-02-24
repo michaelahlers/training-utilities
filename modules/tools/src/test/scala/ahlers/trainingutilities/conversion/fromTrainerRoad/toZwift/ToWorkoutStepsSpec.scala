@@ -1,15 +1,14 @@
 package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift
 
-import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.Error.NoIntervalsInWorkout
 import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.diffx.instances._
 import cats.data.NonEmptyList
-import cats.data.Validated.Invalid
-import cats.data.Validated.Valid
 import cats.data.diffx.instances._
+import cats.scalatest.ValidatedValues._
 import com.softwaremill.diffx.scalatest.DiffShouldMatcher._
 import com.softwaremill.quicklens._
 import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
+import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks._
 import squants.Seconds
@@ -33,9 +32,13 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
     "no intervals in given workout" in {
       val workouts: NonEmptyList[WorkoutData] = NonEmptyList.one(WorkoutData(null, 0, 0))
 
-      ToWorkoutSteps
-        .from(workouts)
-        .shouldMatchTo(Invalid(NoIntervalsInWorkout(workouts)))
+      the[NoIntervalsInWorkoutException]
+        .thrownBy {
+          throw ToWorkoutSteps
+            .from(workouts)
+            .invalidValue
+        }
+        .shouldMatchTo(NoIntervalsInWorkoutException(workouts))
     }
 
   }
@@ -46,7 +49,8 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
 
       ToWorkoutSteps
         .from(workouts)
-        .shouldMatchTo(Valid(steps))
+        .valid.value
+        .shouldMatchTo(steps)
     }
   }
 
@@ -54,7 +58,7 @@ class ToWorkoutStepsSpec extends AnyWordSpec {
 
 object ToWorkoutStepsSpec {
 
-  def toftpPercents(
+  def toFtpPercents(
     step: WorkoutStep,
     isLast: Boolean,
   ): NonEmptyList[Float] = {
@@ -92,7 +96,7 @@ object ToWorkoutStepsSpec {
     offset: Time,
     isLast: Boolean,
   ): NonEmptyList[WorkoutData] = {
-    val ratios: NonEmptyList[Float] = toftpPercents(
+    val ratios: NonEmptyList[Float] = toFtpPercents(
       step = step,
       isLast = isLast,
     )
@@ -119,7 +123,7 @@ object ToWorkoutStepsSpec {
       .zipWithIndex
       .flatMap { case (step, index) =>
         val isLast = lastIndex == index
-        toftpPercents(
+        toFtpPercents(
           step = step,
           isLast = isLast,
         )
