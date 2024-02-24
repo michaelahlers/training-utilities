@@ -132,6 +132,13 @@ libraryDependencies +=
   "net.ypmania.zioxml" %% "zio-xml" % "0.2.0"
 
 /**
+ * Simplifies working with real-world HTML and XML.
+ * @see [[https://jsoup.org]]
+ */
+libraryDependencies +=
+  "org.jsoup" % "jsoup" % "1.17.2"
+
+/**
  * ScalaTest is the most flexible and most popular testing tool in the Scala ecosystem.
  * @see [[https://www.scalatest.org/]]
  */
