@@ -2,21 +2,29 @@ package ahlers.training.tools.conversion
 
 import ahlers.training.tools.ToolsApp
 import java.net.URI
+import java.net.URL
 import scala.util.Try
 import zio._
 import zio.cli.Args
 import zio.cli.Command
 import zio.cli.HelpDoc
 import zio.cli.Options
+import zio.stream.ZSink
+import zio.stream.ZStream
 
 case class ConversionApp(
   dryRun: ToolsApp.DryRun,
   input: ConversionApp.Input,
   output: ConversionApp.Output,
+  conversion: Conversion,
 ) extends ZIOAppDefault { self =>
 
+  private val inputF: ZStream[Any, Throwable, Byte]            = ZStream.fromFileURI(input.location.toUri)
+  private val outputF: ZSink[Any, Throwable, Byte, Byte, Long] = ZSink.fromFileURI(output.location.toUri)
+
   val run = for {
-    _ <- ZIO.logInfo(s"Performing $dryRun conversion of $input to $output.")
+    _ <- ZIO.logInfo(s"Performing $dryRun conversion of $input to $output using $conversion.")
+    _ <- inputF.via(conversion.total).run(outputF)
   } yield ()
 
 }
@@ -49,7 +57,10 @@ object ConversionApp {
 
   }
 
-  case class InputLocation(toUri: URI)
+  case class InputLocation(toUri: URI) {
+    def toUrl: URL = toUri.toURL
+  }
+
   object InputLocation {
     val args: Args[InputLocation] = Args
       .text("input-location")
@@ -60,7 +71,10 @@ object ConversionApp {
       .map(InputLocation(_))
   }
 
-  case class OutputLocation(toUri: URI)
+  case class OutputLocation(toUri: URI) {
+    def toUrl: URL = toUri.toURL
+  }
+
   object OutputLocation {
     val args: Args[OutputLocation] = Args
       .text("output-location")
@@ -72,12 +86,10 @@ object ConversionApp {
   }
 
   case class Input(
-    format: InputFormat,
     location: InputLocation,
   )
 
   case class Output(
-    format: OutputFormat,
     location: OutputLocation,
   )
 
@@ -93,17 +105,16 @@ object ConversionApp {
   val helpDoc: HelpDoc = HelpDoc.p("Converts given workout or activity into a different format.")
 
   val command: Command[ConversionApp] = Command("convert", options, args).withHelp(helpDoc).map {
-    case ((dryRun, inputFormat, outputFormat), (inputLocation, outputLocation)) =>
+    case ((dryRun, InputFormat.TrainerRoadWorkout, OutputFormat.ZwiftWorkout), (inputLocation, outputLocation)) =>
       ConversionApp(
         dryRun = dryRun,
         input = Input(
-          format = inputFormat,
           location = inputLocation,
         ),
         output = Output(
-          format = outputFormat,
           location = outputLocation,
         ),
+        conversion = Conversion.FromTrainerRoadWorkoutToZwiftWorkout,
       )
   }
 
