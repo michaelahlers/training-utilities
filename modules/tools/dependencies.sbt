@@ -125,6 +125,13 @@ libraryDependencies ++=
     Nil
 
 /**
+ * Provides non-blocking parsers, writers and filters for handling streaming XML in the zio Scala framework, specifically as ZStream.
+ * @see [[https://github.com/jypma/zio-xml]]
+ */
+libraryDependencies +=
+  "net.ypmania.zioxml" %% "zio-xml" % "0.2.0"
+
+/**
  * ScalaTest is the most flexible and most popular testing tool in the Scala ecosystem.
  * @see [[https://www.scalatest.org/]]
  */
