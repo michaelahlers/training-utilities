@@ -12,10 +12,10 @@ import zio.cli.Options
 import zio.stream.ZSink
 import zio.stream.ZStream
 
-case class ConversionApp(
+case class ConvertApp(
   dryRun: ToolsApp.DryRun,
-  input: ConversionApp.Input,
-  output: ConversionApp.Output,
+  input: ConvertApp.Input,
+  output: ConvertApp.Output,
   conversion: Conversion,
 ) extends ZIOAppDefault { self =>
 
@@ -29,7 +29,7 @@ case class ConversionApp(
 
 }
 
-object ConversionApp {
+object ConvertApp {
 
   sealed trait InputFormat
   object InputFormat {
@@ -104,9 +104,9 @@ object ConversionApp {
 
   val helpDoc: HelpDoc = HelpDoc.p("Converts given workout or activity into a different format.")
 
-  val command: Command[ConversionApp] = Command("convert", options, args).withHelp(helpDoc).map {
+  val command: Command[ConvertApp] = Command("convert", options, args).withHelp(helpDoc).map {
     case ((dryRun, InputFormat.TrainerRoadWorkout, OutputFormat.ZwiftWorkout), (inputLocation, outputLocation)) =>
-      ConversionApp(
+      ConvertApp(
         dryRun = dryRun,
         input = Input(
           location = inputLocation,

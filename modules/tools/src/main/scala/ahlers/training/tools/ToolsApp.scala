@@ -1,6 +1,6 @@
 package ahlers.training.tools
 
-import ahlers.training.tools.conversion.ConversionApp
+import ahlers.training.tools.conversion.ConvertApp
 import ahlers.trainingutilities.tools.BuildInfo
 import zio._
 import zio.cli.HelpDoc.Span.text
@@ -29,7 +29,7 @@ object ToolsApp extends ZIOCliDefault {
   val helpDoc: HelpDoc = HelpDoc.p("Converts given workout into a different format.")
 
   val command: Command[ZIOApp] = Command("tools", Options.none, Args.none)
-    .subcommands(ConversionApp.command)
+    .subcommands(ConvertApp.command)
     .withHelp(helpDoc)
 
   override val cliApp = CliApp.make(
@@ -38,7 +38,7 @@ object ToolsApp extends ZIOCliDefault {
     summary = text("Tools for working with training data."),
     command = command,
   ) {
-    case app: ConversionApp =>
+    case app: ConvertApp =>
       for {
         _ <- ZIO.logDebug(s"$app")
         _ <- app.run
