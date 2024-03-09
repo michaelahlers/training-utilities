@@ -7,7 +7,7 @@ lazy val `tools` =
 lazy val `zio-diffx` =
   project in file("modules") / "zio-diffx"
 
-val `trainerroad-utilities` =
+val `training-utilities` =
   (project in file("."))
     .aggregate(
       `tools`,
