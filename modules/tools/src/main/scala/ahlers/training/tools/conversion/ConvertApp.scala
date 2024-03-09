@@ -4,10 +4,10 @@ import zio._
 import zio.logging.consoleLogger
 
 /**
- * @todo Maybe parameterize [[conversion]]?
+ * @todo Maybe parameterize [[delegate]]?
  */
 case class ConvertApp(
-  conversion: ZIOAppDefault,
+  delegate: ZIOAppDefault,
 ) extends ZIOAppDefault { self =>
 
   override val bootstrap =
@@ -15,8 +15,8 @@ case class ConvertApp(
       consoleLogger()
 
   val run = for {
-    _ <- ZIO.logInfo(s"Performing $conversion conversion.")
-    _ <- conversion.run
+    _ <- ZIO.logInfo(s"Performing $delegate conversion.")
+    _ <- delegate.run
   } yield ()
 
 }

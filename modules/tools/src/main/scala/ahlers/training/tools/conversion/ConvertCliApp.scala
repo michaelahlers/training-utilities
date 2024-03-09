@@ -22,9 +22,9 @@ object ConvertCliApp extends ZIOCliDefault {
   val command: Command[ConvertApp] = Command("convert", options, args)
     .subcommands(TrainerRoadWorkoutZwiftWorkoutCliApp.command)
     .withHelp(helpDoc)
-    .map { conversion =>
+    .map { delegate =>
       ConvertApp(
-        conversion = conversion,
+        delegate = delegate,
       )
     }
 
