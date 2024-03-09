@@ -8,6 +8,7 @@ import trainerroad.schema.web.WorkoutData
 object instances {
 
   implicit val diffIntervalData: Diff[IntervalData] = Diff.summon
-  implicit val diffWorkoutData: Diff[WorkoutData]   = Diff.summon
+
+  implicit val diffWorkoutData: Diff[WorkoutData] = Diff.summon
 
 }
