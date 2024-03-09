@@ -37,7 +37,7 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
       .map((TrainerRoadWorkoutZwiftWorkoutApp.apply _).tupled)
 
   override val cliApp = CliApp.make(
-    name = s"""${BuildInfo.name}: TrainerRoad / Workout""",
+    name = s"""${BuildInfo.name}: TrainerRoad Workout / Zwift Workout""",
     version = BuildInfo.version,
     summary = text("Converts a TrainerRoad workout into a Zwift workout."),
     command = command,
