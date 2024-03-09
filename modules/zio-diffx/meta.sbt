@@ -1,1 +1,2 @@
-name := "zio-diffx"
+name           := "ZIO diffx"
+normalizedName := "zio-diffx"
