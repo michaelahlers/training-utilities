@@ -7,10 +7,12 @@ import scala.xml.NodeSeq
 import scala.xml.PrettyPrinter
 import scala.xml.encoding.syntax.XmlEncoderOps
 import trainerroad.schema.web.WorkoutDetails
+import zio.Runtime
 import zio.ZIO
 import zio.ZIOAppDefault
 import zio.json.JsonDecoder
 import zio.json.JsonStreamDelimiter
+import zio.logging.consoleLogger
 import zio.stream.ZPipeline
 import zio.stream.ZSink
 import zio.stream.ZStream
@@ -20,6 +22,10 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
   inputLocation: TrainerRoadWorkoutZwiftWorkoutApp.InputLocation,
   outputLocation: TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation,
 ) extends ZIOAppDefault { self =>
+
+  override val bootstrap =
+    Runtime.removeDefaultLoggers >>>
+      consoleLogger()
 
   type From = trainerroad.schema.web.WorkoutDetails
   type To   = zwift.schema.desktop.WorkoutFile

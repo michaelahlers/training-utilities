@@ -4,12 +4,19 @@ import ahlers.training.tools.ToolsApp
 import ahlers.training.tools.conversion.TrainerRoadWorkoutZwiftWorkoutApp.InputLocation
 import ahlers.training.tools.conversion.TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation
 import ahlers.trainingutilities.tools.BuildInfo
+import zio.Runtime
 import zio.cli.HelpDoc.Span.text
 import zio.cli._
 import zio.cli.extensions._
 import zio.cli.figlet.FigFont
+import ahlers.training.tools.ToolsCliApp.DryRunTypeOps
+import zio.logging.consoleLogger
 
 object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
+
+  override val bootstrap =
+    Runtime.removeDefaultLoggers >>>
+      consoleLogger()
 
   implicit class InputLocationOps(private val self: InputLocation.type) extends AnyVal {
     def options: Options[InputLocation] =
