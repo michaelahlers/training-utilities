@@ -32,7 +32,7 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
     Args.Empty
 
   val command: Command[TrainerRoadWorkoutZwiftWorkoutApp] =
-    Command("trainer-road-workout-zwift-workout", options, args)
+    Command("trainer-road-workout:zwift-workout", options, args)
       .withHelp(HelpDoc.p("Converts a TrainerRoad workout into a Zwift workout."))
       .map((TrainerRoadWorkoutZwiftWorkoutApp.apply _).tupled)
 
