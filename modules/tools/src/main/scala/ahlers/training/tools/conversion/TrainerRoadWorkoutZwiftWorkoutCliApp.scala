@@ -1,6 +1,7 @@
 package ahlers.training.tools.conversion
 
 import ahlers.training.tools.ToolsApp
+import ahlers.training.tools.ToolsApp.DryRun
 import ahlers.training.tools.conversion.TrainerRoadWorkoutZwiftWorkoutApp.InputLocation
 import ahlers.training.tools.conversion.TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation
 import ahlers.trainingutilities.tools.BuildInfo
@@ -30,8 +31,8 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
         .map(OutputLocation)
   }
 
-  val options: Options[(ToolsApp.DryRun, InputLocation, OutputLocation)] =
-    ToolsApp.DryRun.options ++
+  val options: Options[(DryRun, InputLocation, OutputLocation)] =
+    DryRun.options ++
       InputLocation.options ++
       OutputLocation.options
 
