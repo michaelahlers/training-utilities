@@ -1,4 +1,4 @@
-package ahlers.training.tools.conversion
+package ahlers.training.tools.convert
 
 import ahlers.training.tools.ToolsApp
 import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.ToWorkoutFile

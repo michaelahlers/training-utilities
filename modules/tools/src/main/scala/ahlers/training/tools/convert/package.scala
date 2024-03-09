@@ -1,6 +1,6 @@
 package ahlers.training.tools
 
-package object conversion {
+package object convert {
 
   type TrainerRoadWorkout = trainerroad.schema.web.WorkoutDetails
   val TrainerRoadWorkout = trainerroad.schema.web.WorkoutDetails

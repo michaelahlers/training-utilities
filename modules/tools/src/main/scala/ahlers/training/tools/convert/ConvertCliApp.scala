@@ -1,4 +1,4 @@
-package ahlers.training.tools.conversion
+package ahlers.training.tools.convert
 
 import ahlers.trainingutilities.tools.BuildInfo
 import zio.Runtime

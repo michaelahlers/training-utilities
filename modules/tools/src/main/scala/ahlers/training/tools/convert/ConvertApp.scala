@@ -1,4 +1,4 @@
-package ahlers.training.tools.conversion
+package ahlers.training.tools.convert
 
 import zio._
 import zio.logging.consoleLogger

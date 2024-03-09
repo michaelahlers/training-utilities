@@ -1,4 +1,4 @@
-package ahlers.training.tools.conversion
+package ahlers.training.tools.convert
 
 import scala.xml.encoding.syntax._
 import zio.ZIO
