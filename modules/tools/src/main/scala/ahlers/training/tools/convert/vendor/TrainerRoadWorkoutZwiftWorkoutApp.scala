@@ -18,6 +18,7 @@ import zio.stream.ZSink
 import zio.stream.ZStream
 
 case class TrainerRoadWorkoutZwiftWorkoutApp(
+  settings: TrainerRoadWorkoutZwiftWorkoutApp.Settings,
   dryRun: ToolsApp.DryRun,
   inputLocation: TrainerRoadWorkoutZwiftWorkoutApp.InputLocation,
   outputLocation: TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation,
@@ -70,6 +71,43 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
 }
 
 object TrainerRoadWorkoutZwiftWorkoutApp {
+
+  import better.files.Resource
+  import com.typesafe.config.ConfigFactory
+  import zio._
+  import zio.config.magnolia._
+  import zio.config.typesafe._
+
+  case class Settings(
+    environment: Settings.Environment,
+  )
+
+  object Settings {
+
+    case class Environment(
+      home: String,
+      windows: Environment.Windows,
+    )
+
+    object Environment {
+
+      case class Windows(
+        oneDrive: Option[String],
+      )
+
+    }
+
+    val load: ZIO[Any, Throwable, Settings] =
+      ZIO.attempt(ConfigFactory
+        .parseURL(Resource.my.getUrl("TrainerRoadWorkoutZwiftWorkoutApp.conf"))
+        .resolve())
+        .flatMap(ConfigProvider
+          .fromTypesafeConfig(_)
+          .load(deriveConfig[Settings]))
+
+  }
+
   case class InputLocation(toUri: URI)
   case class OutputLocation(toUri: URI)
+
 }

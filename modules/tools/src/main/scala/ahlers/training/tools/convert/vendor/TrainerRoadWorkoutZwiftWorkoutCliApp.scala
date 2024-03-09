@@ -4,6 +4,7 @@ import ahlers.training.tools.ToolsApp.DryRun
 import ahlers.training.tools.ToolsCliApp.DryRunTypeOps
 import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp.InputLocation
 import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation
+import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp.Settings
 import ahlers.trainingutilities.tools.BuildInfo
 import zio.Runtime
 import zio.cli.HelpDoc.Span.text
@@ -49,6 +50,11 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
     summary = text("Converts a TrainerRoad workout into a Zwift workout."),
     command = command,
     figFont = FigFont.Default,
-  )(_.run)
+  ) { command =>
+    for {
+      _ <- Settings.load
+      _ <- command.run
+    } yield ()
+  }
 
 }

@@ -1,20 +1,21 @@
-package ahlers.trainingutilities.conversion
+package ahlers.training.tools.convert.vendor
 
-import ahlers.trainingutilities.conversion.diffx.instances._
+import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp.Settings
 import better.files.File
+import diffx.instances._
 import zio.diffx.DiffxAssertions._
 import zio.test._
 
-object ConversionSettingsSpec extends ZIOSpecDefault {
+object TrainerRoadWorkoutZwiftWorkoutAppSpec extends ZIOSpecDefault {
 
   val forMacOS = test("for macOS") {
     for {
-      settings <- ConversionSettings.load
+      settings <- Settings.load
     } yield assert(settings)(matchesTo {
-      ConversionSettings(
-        environment = ConversionSettings.Environment(
+      Settings(
+        environment = Settings.Environment(
           home = File.home.pathAsString,
-          windows = ConversionSettings.Environment.Windows(
+          windows = Settings.Environment.Windows(
             oneDrive = None,
           ),
         ),
@@ -24,12 +25,12 @@ object ConversionSettingsSpec extends ZIOSpecDefault {
 
   val forWindows = test("for Windows") {
     for {
-      settings <- ConversionSettings.load
+      settings <- Settings.load
     } yield assert(settings)(matchesTo {
-      ConversionSettings(
-        environment = ConversionSettings.Environment(
+      Settings(
+        environment = Settings.Environment(
           home = File.home.pathAsString,
-          windows = ConversionSettings.Environment.Windows(
+          windows = Settings.Environment.Windows(
             oneDrive = None,
           ),
         ),
