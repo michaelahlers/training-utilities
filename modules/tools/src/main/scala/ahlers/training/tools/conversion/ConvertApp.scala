@@ -2,8 +2,11 @@ package ahlers.training.tools.conversion
 
 import zio._
 
+/**
+ * @todo Maybe parameterize [[conversion]]?
+ */
 case class ConvertApp(
-  conversion: ZIOApp,
+  conversion: ZIOAppDefault,
 ) extends ZIOAppDefault { self =>
 
   val run = for {
