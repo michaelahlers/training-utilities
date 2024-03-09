@@ -1,39 +1,26 @@
 package ahlers.training.tools.conversion
 
 import ahlers.training.tools.ToolsApp
-import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.ToWorkoutFile
+import ahlers.training.tools.conversion.TrainerRoadWorkoutZwiftWorkoutApp.InputLocation
+import ahlers.training.tools.conversion.TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation
 import ahlers.trainingutilities.tools.BuildInfo
-import java.net.URI
-import scala.xml.NodeSeq
-import scala.xml.PrettyPrinter
-import scala.xml.encoding.syntax.XmlEncoderOps
-import trainerroad.schema.web.WorkoutDetails
-import zio.ZIO
-import zio.ZIOAppDefault
 import zio.cli.HelpDoc.Span.text
 import zio.cli._
 import zio.cli.extensions._
 import zio.cli.figlet.FigFont
-import zio.json.JsonDecoder
-import zio.json.JsonStreamDelimiter
-import zio.stream.ZPipeline
-import zio.stream.ZSink
-import zio.stream.ZStream
 
 object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
 
-  case class InputLocation(toUri: URI)
-  object InputLocation {
-    val options: Options[InputLocation] =
+  implicit class InputLocationOps(private val self: InputLocation.type) extends AnyVal {
+    def options: Options[InputLocation] =
       (Options.uri("input-uri") ?? """Where to find the TrainerRoad workout for conversion.""")
-        .map(InputLocation(_))
+        .map(InputLocation)
   }
 
-  case class OutputLocation(toUri: URI)
-  object OutputLocation {
-    val options: Options[OutputLocation] =
+  implicit class OutputLocationOps(private val self: OutputLocation.type) extends AnyVal {
+    def options: Options[OutputLocation] =
       (Options.uri("output-uri") ?? """Where to save converted Zwift workout; if not specified, will attempt to guess.""")
-        .map(OutputLocation(_))
+        .map(OutputLocation)
   }
 
   val options: Options[(ToolsApp.DryRun, InputLocation, OutputLocation)] =
@@ -56,53 +43,5 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
     command = command,
     figFont = FigFont.Default,
   )(_.run)
-
-}
-
-case class TrainerRoadWorkoutZwiftWorkoutApp(
-  dryRun: ToolsApp.DryRun,
-  inputLocation: TrainerRoadWorkoutZwiftWorkoutCliApp.InputLocation,
-  outputLocation: TrainerRoadWorkoutZwiftWorkoutCliApp.OutputLocation,
-) extends ZIOAppDefault { self =>
-
-  type From = trainerroad.schema.web.WorkoutDetails
-  type To   = zwift.schema.desktop.WorkoutFile
-
-  val input: ZStream[Any, Throwable, Byte] =
-    ZStream.fromFileURI(inputLocation.toUri)
-
-  val decode: ZPipeline[Any, Throwable, Byte, From] =
-    ZPipeline.utf8Decode >>>
-      ZPipeline[String].mapChunks(_.flatMap(_.toCharArray)) >>>
-      JsonDecoder[WorkoutDetails].decodeJsonPipeline(JsonStreamDelimiter.Newline)
-
-  val convert: ZPipeline[Any, Throwable, From, To] =
-    ZPipeline.mapZIO(ToWorkoutFile
-      .from(_)
-      .map(ZIO.succeed(_))
-      .valueOr(ZIO.fail(_)))
-
-  val encode: ZPipeline[Any, Throwable, To, Byte] = {
-    val printer = new PrettyPrinter(160, 2)
-
-    ZPipeline[To].map(_.asXml) >>>
-      ZPipeline[NodeSeq].map(printer.formatNodes(_)) >>>
-      ZPipeline[String].mapChunks(_.flatMap(_.getBytes))
-  }
-
-  val output: ZSink[Any, Throwable, Byte, Byte, Long] =
-    ZSink.fromFileURI(outputLocation.toUri)
-
-  val total: ZIO[Any, Throwable, Long] =
-    input >>>
-      decode >>>
-      convert >>>
-      encode >>>
-      output
-
-  override val run = for {
-    _ <- ZIO.logInfo(s"Performing $dryRun conversion of $inputLocation to $outputLocation.")
-    _ <- total
-  } yield ()
 
 }
