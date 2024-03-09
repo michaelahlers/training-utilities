@@ -2,12 +2,7 @@ package zwift.schema.desktop.diffx
 
 import com.softwaremill.diffx.Diff
 import com.softwaremill.diffx.generic.auto._
-import zwift.schema.desktop
 import zwift.schema.desktop.WorkoutStep
-import zwift.schema.desktop.WorkoutStep.Cooldown
-import zwift.schema.desktop.WorkoutStep.Ramp
-import zwift.schema.desktop.WorkoutStep.SteadyState
-import zwift.schema.desktop.WorkoutStep.Warmup
 
 object instances {
 

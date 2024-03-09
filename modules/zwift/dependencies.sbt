@@ -11,3 +11,23 @@ libraryDependencies +=
  */
 libraryDependencies +=
   "org.typelevel" %% "squants" % "1.8.3"
+
+/**
+ * Readable deltas for Scala case classes.
+ * @see [[https://github.com/softwaremill/diffx]]
+ */
+libraryDependencies +=
+  "com.softwaremill.diffx" %% "diffx-cats" % "0.9.0" % Test
+
+/**
+ * Property-based testing for Scala, with support for ScalaTest.
+ * Also includes support for automatic derivation of ScalaCheck instances.
+ *
+ * @see [[https://scalacheck.org]]
+ * @see [[https://scalatest.org/plus/scalacheck]]
+ * @see [[https://github.com/spotify/magnolify]]
+ */
+libraryDependencies ++=
+  "org.scalacheck" %% "scalacheck"           % "1.14.1" % Test ::
+    "com.spotify"  %% "magnolify-scalacheck" % "0.7.0"  % Test ::
+    Nil
