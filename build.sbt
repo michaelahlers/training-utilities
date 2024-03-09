@@ -8,7 +8,7 @@ lazy val `tools` =
 lazy val `trainer-road` =
   (project in file("modules") / "trainer-road")
     .dependsOn(
-      `zio-diffx` % Test,
+      `zio-json`,
     )
 
 lazy val `zio-diffx` =
