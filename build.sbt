@@ -2,8 +2,10 @@ lazy val `tools` =
   (project in file("modules") / "tools")
     .dependsOn(
       `trainer-road`,
+      `trainer-road` % "test->test",
       `zio-cli`,
       `zwift`,
+      `zwift`     % "test->test",
       `zio-diffx` % Test,
     )
 
