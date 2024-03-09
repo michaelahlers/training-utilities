@@ -12,17 +12,6 @@ libraryDependencies +=
 libraryDependencies +=
   "org.typelevel" %% "cats-core" % "2.10.0"
 
-///**
-// * A JSON library for Scala powered by Cats.
-// * @see [[https://circe.github.io/circe/]]
-// */
-//libraryDependencies ++=
-//  "io.circe"   %% "circe-core"           % "0.13.0" ::
-//    "io.circe" %% "circe-generic"        % "0.13.0" ::
-//    "io.circe" %% "circe-generic-extras" % "0.13.0" ::
-//    "io.circe" %% "circe-parser"         % "0.13.0" ::
-//    Nil
-
 //libraryDependencies +=
 //  "org.xerial" % "sqlite-jdbc" % "3.44.1.0"
 
@@ -33,17 +22,17 @@ libraryDependencies +=
 libraryDependencies +=
   "com.github.pathikrit" %% "better-files" % "3.9.2"
 
-///**
-// * @todo Might not be needed; consider removing.
-// */
-//libraryDependencies +=
-//  "com.lihaoyi" %% "requests" % "0.8.0"
+/**
+ * @todo Might not be needed; consider removing.
+ */
+libraryDependencies +=
+  "com.lihaoyi" %% "requests" % "0.8.0"
 
-///**
-// * @todo Might not be needed; consider removing.
-// */
-//libraryDependencies +=
-//  "com.lihaoyi" %% "scalatags" % "0.12.0"
+/**
+ * @todo Might not be needed; consider removing.
+ */
+libraryDependencies +=
+  "com.lihaoyi" %% "scalatags" % "0.12.0"
 
 /**
  * Garmin's SDK for the Flexible and Interoperable Data Transfer (FIT) protocol, designed specifically for the storing and sharing of data that originates from sport, fitness and health devices.
@@ -61,40 +50,12 @@ libraryDependencies +=
 libraryDependencies +=
   "com.softwaremill.quicklens" %% "quicklens" % "1.9.6"
 
-///**
-// * Tag instances with arbitrary types. Useful if you'd like to differentiate between instances on the type level without runtime overhead.
-// * @see [[https://github.com/softwaremill/scala-common]]
-// */
-//libraryDependencies +=
-//  "com.softwaremill.common" %% "tagging" % "2.3.4"
-
 /**
  * A Scala library to pretty-print values and types.
  * @see [[https://github.com/com-lihaoyi/PPrint]]
  */
 libraryDependencies +=
   "com.lihaoyi" %% "pprint" % "0.8.1"
-
-///**
-// * Squants is a framework of data types and a domain specific language (DSL) for representing Quantities, their Units of Measure, and their Dimensional relationships.
-// * @see [[https://squants.com]]
-// */
-//libraryDependencies +=
-//  "org.typelevel" %% "squants" % "1.8.3"
-
-///**
-// * Scalactic provides constructs related to quality that are useful in both production code and tests.
-// * @see [[https://www.scalactic.org/]]
-// */
-//libraryDependencies +=
-//  "org.scalactic" %% "scalactic" % "3.2.17"
-
-///**
-// * A fast and secure JSON library with tight ZIO integration.
-// * @see [[https://zio.dev/zio-json]]
-// */
-//libraryDependencies +=
-//  "dev.zio" %% "zio-json" % "0.6.2"
 
 /**
  * Simple logging for ZIO.
@@ -116,13 +77,6 @@ libraryDependencies ++=
     "dev.zio" %% "zio-config-typesafe" % "4.0.1" ::
     "dev.zio" %% "zio-config-yaml"     % "4.0.1" ::
     Nil
-
-///**
-// * Provides non-blocking parsers, writers and filters for handling streaming XML in the zio Scala framework, specifically as ZStream.
-// * @see [[https://github.com/jypma/zio-xml]]
-// */
-//libraryDependencies +=
-//  "net.ypmania.zioxml" %% "zio-xml" % "0.2.0"
 
 /**
  * Simplifies working with real-world HTML and XML.
