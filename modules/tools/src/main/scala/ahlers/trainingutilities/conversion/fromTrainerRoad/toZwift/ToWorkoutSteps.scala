@@ -1,6 +1,5 @@
 package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift
 
-import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.NoIntervalsInWorkoutException
 import cats.data.NonEmptyList
 import cats.data.Validated
 import cats.syntax.validated._

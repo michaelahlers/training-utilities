@@ -1,11 +1,6 @@
 package ahlers.training.tools
 
-import ahlers.training.tools.convert.ConvertApp
-import ahlers.training.tools.convert.ConvertCliApp
-import ahlers.trainingutilities.tools.BuildInfo
 import zio._
-import zio.cli.HelpDoc.Span.text
-import zio.cli._
 import zio.logging.consoleLogger
 
 /**
