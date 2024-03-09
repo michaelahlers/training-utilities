@@ -14,10 +14,14 @@ lazy val `trainer-road` =
 lazy val `zio-diffx` =
   project in file("modules") / "zio-diffx"
 
+lazy val `zio-json` =
+  project in file("modules") / "zio-json"
+
 val `training-utilities` =
   (project in file("."))
     .aggregate(
       `tools`,
       `trainer-road`,
       `zio-diffx`,
+      `zio-json`,
     )
