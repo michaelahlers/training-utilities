@@ -3,8 +3,12 @@ lazy val `tools` =
     .dependsOn(
       `trainer-road`,
       `zio-cli`,
+      `zwift`,
       `zio-diffx` % Test,
     )
+
+lazy val `scala-xml` =
+  project in file("modules") / "scala-xml"
 
 lazy val `trainer-road` =
   (project in file("modules") / "trainer-road")
@@ -21,12 +25,20 @@ lazy val `zio-diffx` =
 lazy val `zio-json` =
   project in file("modules") / "zio-json"
 
+lazy val `zwift` =
+  (project in file("modules") / "zwift")
+    .dependsOn(
+      `scala-xml`,
+    )
+
 val `training-utilities` =
   (project in file("."))
     .aggregate(
       `tools`,
+      `scala-xml`,
       `trainer-road`,
       `zio-cli`,
       `zio-diffx`,
       `zio-json`,
+      `zwift`,
     )
