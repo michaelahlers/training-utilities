@@ -1,2 +1,2 @@
-name           := "ZIO Json"
+name           := "ZIO JSON"
 normalizedName := "zio-json"
