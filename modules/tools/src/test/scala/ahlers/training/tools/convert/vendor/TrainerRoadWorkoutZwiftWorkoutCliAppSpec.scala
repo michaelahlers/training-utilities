@@ -4,7 +4,6 @@ import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp
 import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp.WithSettings
 import ahlers.training.tools.convert.vendor.diffx.instances._
 import better.files.File
-import zio.Scope
 import zio.ZIO
 import zio.diffx.DiffxAssertions._
 import zio.test._
@@ -52,4 +51,5 @@ object TrainerRoadWorkoutZwiftWorkoutCliAppSpec extends ZIOSpecDefault {
   override val spec = suite("TrainerRoadWorkoutZwiftWorkoutCliApp")(
     WithSettingsSpec.spec,
   )
+
 }
