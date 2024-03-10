@@ -7,12 +7,10 @@ import scala.xml.NodeSeq
 import scala.xml.PrettyPrinter
 import scala.xml.encoding.syntax.XmlEncoderOps
 import trainerroad.schema.web.WorkoutDetails
-import zio.Runtime
 import zio.ZIO
 import zio.ZIOAppDefault
 import zio.json.JsonDecoder
 import zio.json.JsonStreamDelimiter
-import zio.logging.consoleLogger
 import zio.stream.ZPipeline
 import zio.stream.ZSink
 import zio.stream.ZStream
@@ -23,28 +21,32 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
   outputLocation: TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation,
 ) extends ZIOAppDefault { self =>
 
-  override val bootstrap =
-    Runtime.removeDefaultLoggers >>>
-      consoleLogger()
+  case class WithParameters(
+    dryRun: ToolsApp.DryRun,
+    inputLocation: TrainerRoadWorkoutZwiftWorkoutApp.InputLocation,
+    outputLocation: TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation,
+  )
+
+  override type Environment = WithParameters
 
   type From = trainerroad.schema.web.WorkoutDetails
   type To   = zwift.schema.desktop.WorkoutFile
 
-  val input: ZStream[Any, Throwable, Byte] =
+  val input: ZStream[Environment, Throwable, Byte] =
     ZStream.fromFileURI(inputLocation.toUri)
 
-  val decode: ZPipeline[Any, Throwable, Byte, From] =
+  val decode: ZPipeline[Environment, Throwable, Byte, From] =
     ZPipeline.utf8Decode >>>
       ZPipeline[String].mapChunks(_.flatMap(_.toCharArray)) >>>
       JsonDecoder[WorkoutDetails].decodeJsonPipeline(JsonStreamDelimiter.Newline)
 
-  val convert: ZPipeline[Any, Throwable, From, To] =
+  val convert: ZPipeline[Environment, Throwable, From, To] =
     ZPipeline.mapZIO(ToWorkoutFile
       .from(_)
       .map(ZIO.succeed(_))
       .valueOr(ZIO.fail(_)))
 
-  val encode: ZPipeline[Any, Throwable, To, Byte] = {
+  val encode: ZPipeline[Environment, Throwable, To, Byte] = {
     val printer = new PrettyPrinter(160, 2)
 
     ZPipeline[To].map(_.asXml) >>>
@@ -52,17 +54,17 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
       ZPipeline[String].mapChunks(_.flatMap(_.getBytes))
   }
 
-  val output: ZSink[Any, Throwable, Byte, Byte, Long] =
+  val output: ZSink[Environment, Throwable, Byte, Byte, Long] =
     ZSink.fromFileURI(outputLocation.toUri)
 
-  val total: ZIO[Any, Throwable, Long] =
+  val total: ZIO[Environment, Throwable, Long] =
     input >>>
       decode >>>
       convert >>>
       encode >>>
       output
 
-  override val run = for {
+  override val run: ZIO[Environment, Throwable, Unit] = for {
     _ <- ZIO.logInfo(s"Performing $dryRun conversion of $inputLocation to $outputLocation.")
     _ <- total
   } yield ()
