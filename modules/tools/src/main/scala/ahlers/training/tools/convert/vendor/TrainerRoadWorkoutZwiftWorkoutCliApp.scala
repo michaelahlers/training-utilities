@@ -68,6 +68,10 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
 
     val homeFolder: ZIO[Any, Throwable, File] = ZIO
       .attempt {
+
+        /**
+         * If the `OneDrive` environment variable is set, then running on Windows and the logged in user (and, by extension, Zwift) stores documents there.
+         */
         sys.props.get("OneDrive") match {
           case None           => File.home
           case Some(oneDrive) => File(oneDrive)
