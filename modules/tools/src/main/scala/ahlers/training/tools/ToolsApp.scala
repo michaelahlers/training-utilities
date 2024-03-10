@@ -1,24 +1,13 @@
 package ahlers.training.tools
 
+import ahlers.training.tools.convert.ConvertApp
 import zio._
 import zio.logging.consoleLogger
 
-/**
- * @todo Maybe parameterize [[delegate]]?
- */
-case class ToolsApp(
-  delegate: ZIOAppDefault,
-) extends ZIOAppDefault { self =>
-
+sealed trait ToolsApp extends ZIOAppDefault {
   override val bootstrap =
     Runtime.removeDefaultLoggers >>>
       consoleLogger()
-
-  val run = for {
-    _ <- ZIO.logInfo(s"Running tool $delegate.")
-    _ <- delegate.run
-  } yield ()
-
 }
 
 object ToolsApp {
@@ -28,5 +17,19 @@ object ToolsApp {
     case object IsDry extends DryRun
     case object IsWet extends DryRun
   }
+
+  case class DoConversion(
+    delegate: ConvertApp,
+  ) extends ToolsApp {
+
+    val run = for {
+      _ <- ZIO.logInfo(s"Running tool $delegate.")
+      _ <- delegate.run
+    } yield ()
+  }
+
+  def apply(
+    delegate: ConvertApp,
+  ): ToolsApp = DoConversion(delegate)
 
 }
