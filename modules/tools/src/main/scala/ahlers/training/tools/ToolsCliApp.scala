@@ -25,8 +25,8 @@ object ToolsCliApp extends ZIOCliDefault {
 
   val helpDoc: HelpDoc = HelpDoc.p("Converts given workout into a different format.")
 
-  val command: Command[ZIOAppDefault] = Command("tools", Options.none, Args.none)
-    .subcommands(ConvertCliApp.command)
+  val command: Command[ToolsApp] = Command("tools", Options.none, Args.none)
+    .subcommands(ConvertCliApp.command.map(ToolsApp(_)))
     .withHelp(helpDoc)
 
   override val cliApp = CliApp.make(
