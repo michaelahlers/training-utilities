@@ -51,6 +51,22 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
       .valueOr(ZIO.fail(_)))
 
   val to: ZSink[Any, Throwable, To, Byte, Long] = {
+    val outputLocations: ZStream[Any, Throwable, OutputLocation] = outputLocation
+      .map(ZStream.succeed(_))
+      .getOrElse {
+
+        ZStream.fromZIO(WithZwiftWorkoutsFolders.zwiftWorkoutsFolders)
+          .map(_.toNonEmptyChunk.toChunk)
+          .flattenChunks
+          .mapZIO { workoutFolder =>
+            val trainerRoadFolder = workoutFolder / "TrainerRoad"
+            ZIO.attempt(trainerRoadFolder.createIfNotExists(
+              asDirectory = true,
+              createParents = false,
+            ).path.toUri)
+          }
+          .map(OutputLocation)
+      }
 
     val encode: ZPipeline[Any, Throwable, To, Byte] = {
       val printer = new PrettyPrinter(160, 2)
