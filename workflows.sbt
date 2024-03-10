@@ -6,5 +6,6 @@ ThisBuild / githubWorkflowPublishTargetBranches := Nil
 
 ThisBuild / githubWorkflowOSes :=
   "macos-latest" ::
+    "ubuntu-latest" ::
     "windows-latest" ::
     Nil
