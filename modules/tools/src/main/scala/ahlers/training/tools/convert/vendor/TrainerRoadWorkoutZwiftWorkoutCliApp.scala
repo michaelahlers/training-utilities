@@ -79,23 +79,25 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
       }
       .tap { folder =>
         if (folder.exists && folder.isDirectory) ZIO.unit
-        else ZIO.fail(new IllegalStateException(s"""Home folder "$folder" does not exist."""))
+        else ZIO.fail(new IllegalStateException(s"""Couldn't find home folder "$folder"."""))
       }
 
     val documentsFolder: ZIO[Any, Throwable, File] = homeFolder
       .map(_ / "Documents")
       .tap { folder =>
         if (folder.exists && folder.isDirectory) ZIO.unit
-        else ZIO.fail(new IllegalStateException(s"""Documents folder "$folder" does not exist."""))
+        else ZIO.fail(new IllegalStateException(s"""Couldn't find documents folder "$folder"."""))
       }
 
     val live: ZLayer[Any, Throwable, WithDocumentsFolder] = ZLayer.fromZIO {
       documentsFolder.map(WithDocumentsFolder(_))
     }
+
   }
 
   override val bootstrap =
     (Runtime.removeDefaultLoggers >>> consoleLogger()) >>>
+      WithDocumentsFolder.live >>>
       WithSettings.live
 
   implicit class InputLocationOps(private val self: TrainerRoadWorkoutZwiftWorkoutApp.InputLocation.type) extends AnyVal {
