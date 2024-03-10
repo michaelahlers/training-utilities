@@ -59,6 +59,7 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
     val live: ZLayer[Any, Throwable, WithSettings] = ZLayer.fromZIO {
       settings.map(WithSettings(_))
     }
+
   }
 
   override val bootstrap =
@@ -86,7 +87,7 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
   val args: Args[Unit] =
     Args.Empty
 
-  val command: Command[TrainerRoadWorkoutZwiftWorkoutApp] =
+  def command: Command[TrainerRoadWorkoutZwiftWorkoutApp] =
     Command("trainer-road-workout:zwift-workout", options, args)
       .withHelp(HelpDoc.p("Converts a TrainerRoad workout into a Zwift workout."))
       .map((TrainerRoadWorkoutZwiftWorkoutApp.apply _).tupled)
