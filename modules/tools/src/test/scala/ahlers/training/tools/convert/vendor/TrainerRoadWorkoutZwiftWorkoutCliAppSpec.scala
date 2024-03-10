@@ -6,7 +6,7 @@ import better.files.File
 import zio.diffx.DiffxAssertions._
 import zio.test._
 
-object TrainerRoadWorkoutZwiftWorkoutAppSpec extends ZIOSpecDefault {
+object TrainerRoadWorkoutZwiftWorkoutCliAppSpec extends ZIOSpecDefault {
 
   val forMacOS = test("for macOS") {
     for {
