@@ -20,7 +20,7 @@ import zio.stream.ZStream
 case class TrainerRoadWorkoutZwiftWorkoutApp(
   dryRun: ToolsApp.DryRun,
   inputLocation: TrainerRoadWorkoutZwiftWorkoutApp.InputLocation,
-  outputLocation: TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation,
+  outputLocation: Option[TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation],
 ) extends ZIOAppDefault { self =>
 
   override val bootstrap =
@@ -52,7 +52,7 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
   }
 
   val output: ZSink[Any, Throwable, Byte, Byte, Long] =
-    ZSink.fromFileURI(outputLocation.toUri)
+    ZSink.fromFileURI(outputLocation.getOrElse(???).toUri)
 
   val total: ZIO[Any, Throwable, Long] =
     input >>>

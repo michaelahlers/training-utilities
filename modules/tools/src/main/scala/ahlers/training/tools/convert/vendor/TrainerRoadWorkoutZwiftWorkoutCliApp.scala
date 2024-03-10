@@ -78,10 +78,10 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
         .map(TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation)
   }
 
-  val options: Options[(DryRun, TrainerRoadWorkoutZwiftWorkoutApp.InputLocation, TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation)] =
+  val options: Options[(DryRun, TrainerRoadWorkoutZwiftWorkoutApp.InputLocation, Option[TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation])] =
     ToolsApp.DryRun.options ++
       TrainerRoadWorkoutZwiftWorkoutApp.InputLocation.options ++
-      TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation.options
+      TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation.options.optional
 
   val args: Args[Unit] =
     Args.Empty
