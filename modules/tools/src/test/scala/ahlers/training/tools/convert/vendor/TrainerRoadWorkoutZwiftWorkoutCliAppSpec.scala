@@ -1,22 +1,14 @@
 package ahlers.training.tools.convert.vendor
 
 import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp.Settings
-import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp.WithHomeFolder
 import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp.WithSettings
 import ahlers.training.tools.convert.vendor.diffx.instances._
 import better.files.File
 import zio.ZIO
 import zio.diffx.DiffxAssertions._
-import zio.test.Assertion.equalTo
 import zio.test._
 
 object TrainerRoadWorkoutZwiftWorkoutCliAppSpec extends ZIOSpecDefault {
-
-  val withHomeFolderSpec: Spec[Any, Throwable] = test("withHomeFolder") {
-    for {
-      live <- ZIO.service[WithHomeFolder]
-    } yield assert(live.homeFolder)(equalTo(File.home))
-  } provide WithHomeFolder.live
 
   object WithSettingsSpec extends ZIOSpecDefault {
 
@@ -58,7 +50,6 @@ object TrainerRoadWorkoutZwiftWorkoutCliAppSpec extends ZIOSpecDefault {
   }
 
   override val spec = suite("TrainerRoadWorkoutZwiftWorkoutCliApp")(
-    withHomeFolderSpec,
     WithSettingsSpec.spec,
   )
 

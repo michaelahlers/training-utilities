@@ -3,6 +3,7 @@ package ahlers.training.tools.convert.vendor
 import ahlers.training.tools.ToolsApp
 import ahlers.training.tools.ToolsApp.DryRun
 import ahlers.training.tools.ToolsCliApp.DryRunTypeOps
+import ahlers.training.tools.WithHomeFolder
 import ahlers.trainingutilities.tools.BuildInfo
 import better.files.File
 import better.files.Resource
@@ -58,34 +59,6 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
     val live: ZLayer[Any, Throwable, WithSettings] = ZLayer.fromZIO {
       settings.map(WithSettings(_))
     }
-  }
-
-  case class WithHomeFolder(
-    homeFolder: File,
-  )
-
-  object WithHomeFolder {
-
-    val homeFolder: ZIO[Any, Throwable, File] = ZIO
-      .attempt {
-
-        /**
-         * If the `OneDrive` environment variable is set, then running on Windows and the logged in user (and, by extension, Zwift) stores documents there.
-         */
-        sys.props.get("OneDrive") match {
-          case None           => File.home
-          case Some(oneDrive) => File(oneDrive)
-        }
-      }
-      .tap { folder =>
-        if (folder.exists && folder.isDirectory) ZIO.unit
-        else ZIO.fail(new IllegalStateException(s"""Couldn't find home folder "$folder"."""))
-      }
-
-    val live: ZLayer[Any, Throwable, WithHomeFolder] = ZLayer
-      .fromZIO(homeFolder
-        .map(WithHomeFolder(_)))
-
   }
 
   override val bootstrap =
