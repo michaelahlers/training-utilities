@@ -9,6 +9,7 @@ import com.typesafe.config.ConfigFactory
 import zio.ConfigProvider
 import zio.Runtime
 import zio.ZIO
+import zio.ZLayer
 import zio.cli.HelpDoc.Span.text
 import zio.cli._
 import zio.cli.extensions._
@@ -38,23 +39,27 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
 
     }
 
-    val load: ZIO[Any, Throwable, Settings] =
-      ZIO.attempt(ConfigFactory
-        .parseURL(Resource.my.getUrl("TrainerRoadWorkoutZwiftWorkoutApp.conf"))
-        .resolve())
-        .flatMap(ConfigProvider
-          .fromTypesafeConfig(_)
-          .load(deriveConfig[Settings]))
-
   }
 
   case class WithSettings(
     settings: Settings,
   )
 
+  object WithSettings {
+    val live: ZLayer[Any, Throwable, WithSettings] = ZLayer.fromZIO {
+      ZIO.attempt(ConfigFactory
+        .parseURL(Resource.my.getUrl("TrainerRoadWorkoutZwiftWorkoutCliApp.conf"))
+        .resolve())
+        .flatMap(ConfigProvider
+          .fromTypesafeConfig(_)
+          .load(deriveConfig[Settings]))
+        .map(WithSettings(_))
+    }
+  }
+
   override val bootstrap =
-    Runtime.removeDefaultLoggers >>>
-      consoleLogger()
+    (Runtime.removeDefaultLoggers >>> consoleLogger()) >>>
+      WithSettings.live
 
   implicit class InputLocationOps(private val self: TrainerRoadWorkoutZwiftWorkoutApp.InputLocation.type) extends AnyVal {
     def options: Options[TrainerRoadWorkoutZwiftWorkoutApp.InputLocation] =
@@ -89,7 +94,6 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
     figFont = FigFont.Default,
   ) { command =>
     for {
-      _ <- Settings.load
       _ <- command.run
     } yield ()
   }
