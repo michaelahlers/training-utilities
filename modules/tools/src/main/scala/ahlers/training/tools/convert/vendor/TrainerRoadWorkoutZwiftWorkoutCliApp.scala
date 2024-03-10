@@ -4,6 +4,7 @@ import ahlers.training.tools.ToolsApp
 import ahlers.training.tools.ToolsApp.DryRun
 import ahlers.training.tools.ToolsCliApp.DryRunTypeOps
 import ahlers.trainingutilities.tools.BuildInfo
+import better.files.File
 import better.files.Resource
 import com.typesafe.config.ConfigFactory
 import zio.ConfigProvider
@@ -46,14 +47,46 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
   )
 
   object WithSettings {
+
+    val settings: ZIO[Any, Throwable, Settings] = ZIO.attempt(ConfigFactory
+      .parseURL(Resource.my.getUrl("TrainerRoadWorkoutZwiftWorkoutCliApp.conf"))
+      .resolve())
+      .flatMap(ConfigProvider
+        .fromTypesafeConfig(_)
+        .load(deriveConfig[Settings]))
+
     val live: ZLayer[Any, Throwable, WithSettings] = ZLayer.fromZIO {
-      ZIO.attempt(ConfigFactory
-        .parseURL(Resource.my.getUrl("TrainerRoadWorkoutZwiftWorkoutCliApp.conf"))
-        .resolve())
-        .flatMap(ConfigProvider
-          .fromTypesafeConfig(_)
-          .load(deriveConfig[Settings]))
-        .map(WithSettings(_))
+      settings.map(WithSettings(_))
+    }
+  }
+
+  case class WithDocumentsFolder(
+    documentsFolder: File,
+  )
+
+  object WithDocumentsFolder {
+
+    val homeFolder: ZIO[Any, Throwable, File] = ZIO
+      .attempt {
+        sys.props.get("OneDrive") match {
+          case None           => File.home
+          case Some(oneDrive) => File(oneDrive)
+        }
+      }
+      .tap { folder =>
+        if (folder.exists && folder.isDirectory) ZIO.unit
+        else ZIO.fail(new IllegalStateException(s"""Home folder "$folder" does not exist."""))
+      }
+
+    val documentsFolder: ZIO[Any, Throwable, File] = homeFolder
+      .map(_ / "Documents")
+      .tap { folder =>
+        if (folder.exists && folder.isDirectory) ZIO.unit
+        else ZIO.fail(new IllegalStateException(s"""Documents folder "$folder" does not exist."""))
+      }
+
+    val live: ZLayer[Any, Throwable, WithDocumentsFolder] = ZLayer.fromZIO {
+      documentsFolder.map(WithDocumentsFolder(_))
     }
   }
 
