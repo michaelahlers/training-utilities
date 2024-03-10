@@ -11,7 +11,7 @@ case class WithZwiftWorkoutsFolders(
 
 object WithZwiftWorkoutsFolders {
 
-  val zwiftDocumentsFolders: ZIO[Any, Throwable, NonEmptyList[File]] = WithZwiftDocumentsFolder
+  val zwiftWorkoutsFolders: ZIO[Any, Throwable, NonEmptyList[File]] = WithZwiftDocumentsFolder
     .zwiftDocumentsFolder
     .map(_ / "Workouts")
     .tap { folder =>
@@ -27,7 +27,7 @@ object WithZwiftWorkoutsFolders {
     }
 
   val live: ZLayer[Any, Throwable, WithZwiftWorkoutsFolders] = ZLayer
-    .fromZIO(zwiftDocumentsFolders
+    .fromZIO(zwiftWorkoutsFolders
       .map(WithZwiftWorkoutsFolders(_)))
 
 }
