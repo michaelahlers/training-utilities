@@ -1,22 +1,32 @@
 package ahlers.training.tools.convert
 
+import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp
 import zio._
 import zio.logging.consoleLogger
 
-/**
- * @todo Maybe parameterize [[delegate]]?
- */
-case class ConvertApp(
-  delegate: ZIOAppDefault,
-) extends ZIOAppDefault { self =>
+sealed trait ConvertApp extends ZIOAppDefault {
 
   override val bootstrap =
     Runtime.removeDefaultLoggers >>>
       consoleLogger()
 
-  val run = for {
-    _ <- ZIO.logInfo(s"Performing $delegate conversion.")
-    _ <- delegate.run
-  } yield ()
+}
+
+object ConvertApp {
+
+  case class FromTrainerRoadWorkoutToZwiftWorkout(
+    delegate: TrainerRoadWorkoutZwiftWorkoutApp,
+  ) extends ConvertApp {
+
+    override val run = for {
+      _ <- ZIO.logInfo(s"Running tool $delegate.")
+      _ <- delegate.run
+    } yield ()
+
+  }
+
+  def apply(
+    delegate: TrainerRoadWorkoutZwiftWorkoutApp,
+  ): ConvertApp = FromTrainerRoadWorkoutToZwiftWorkout(delegate)
 
 }
