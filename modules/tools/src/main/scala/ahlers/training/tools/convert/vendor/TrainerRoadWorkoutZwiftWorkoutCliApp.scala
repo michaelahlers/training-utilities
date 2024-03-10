@@ -60,11 +60,11 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
     }
   }
 
-  case class WithDocumentsFolder(
-    documentsFolder: File,
+  case class WithHomeFolder(
+    homeFolder: File,
   )
 
-  object WithDocumentsFolder {
+  object WithHomeFolder {
 
     val homeFolder: ZIO[Any, Throwable, File] = ZIO
       .attempt {
@@ -82,14 +82,26 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
         else ZIO.fail(new IllegalStateException(s"""Couldn't find home folder "$folder"."""))
       }
 
-    val documentsFolder: ZIO[Any, Throwable, File] = homeFolder
-      .map(_ / "Documents")
+    val live: ZLayer[Any, Throwable, WithHomeFolder] = ZLayer
+      .fromZIO(homeFolder
+        .map(WithHomeFolder(_)))
+
+  }
+
+  case class WithDocumentsFolder(
+    documentsFolder: File,
+  )
+
+  object WithDocumentsFolder {
+
+    val documentsFolder: ZIO[WithHomeFolder, Throwable, File] = ZIO.service[WithHomeFolder]
+      .map(_.homeFolder / "Documents")
       .tap { folder =>
         if (folder.exists && folder.isDirectory) ZIO.unit
         else ZIO.fail(new IllegalStateException(s"""Couldn't find documents folder "$folder"."""))
       }
 
-    val live: ZLayer[Any, Throwable, WithDocumentsFolder] = ZLayer.fromZIO {
+    val live: ZLayer[WithHomeFolder, Throwable, WithDocumentsFolder] = ZLayer.fromZIO {
       documentsFolder.map(WithDocumentsFolder(_))
     }
 
@@ -97,7 +109,7 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
 
   override val bootstrap =
     (Runtime.removeDefaultLoggers >>> consoleLogger()) >>>
-      WithDocumentsFolder.live >>>
+      (WithHomeFolder.live >>> WithDocumentsFolder.live) >>>
       WithSettings.live
 
   implicit class InputLocationOps(private val self: TrainerRoadWorkoutZwiftWorkoutApp.InputLocation.type) extends AnyVal {
