@@ -24,8 +24,7 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
 ) extends ZIOAppDefault { self =>
 
   override val bootstrap =
-    Runtime.removeDefaultLoggers >>>
-      consoleLogger()
+    Runtime.removeDefaultLoggers >>> consoleLogger()
 
   type From = trainerroad.schema.web.WorkoutDetails
   type To   = zwift.schema.desktop.WorkoutFile
