@@ -10,6 +10,10 @@ case class ToolsApp(
   delegate: ZIOAppDefault,
 ) extends ZIOAppDefault { self =>
 
+  override val bootstrap =
+    Runtime.removeDefaultLoggers >>>
+      consoleLogger()
+
   val run = for {
     _ <- ZIO.logInfo(s"Running tool $delegate.")
     _ <- delegate.run
