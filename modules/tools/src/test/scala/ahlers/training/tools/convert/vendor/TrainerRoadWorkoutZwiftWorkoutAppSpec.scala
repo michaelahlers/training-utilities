@@ -1,8 +1,8 @@
 package ahlers.training.tools.convert.vendor
 
 import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp.Settings
+import ahlers.training.tools.convert.vendor.diffx.instances._
 import better.files.File
-import diffx.instances._
 import zio.diffx.DiffxAssertions._
 import zio.test._
 

@@ -2,8 +2,6 @@ package ahlers.training.tools.convert.vendor
 
 import ahlers.training.tools.ToolsApp
 import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.ToWorkoutFile
-import better.files.Resource
-import com.typesafe.config.ConfigFactory
 import java.net.URI
 import scala.xml.NodeSeq
 import scala.xml.PrettyPrinter
@@ -12,9 +10,6 @@ import trainerroad.schema.web.WorkoutDetails
 import zio.Runtime
 import zio.ZIO
 import zio.ZIOAppDefault
-import zio._
-import zio.config.magnolia._
-import zio.config.typesafe._
 import zio.json.JsonDecoder
 import zio.json.JsonStreamDelimiter
 import zio.logging.consoleLogger

@@ -9,12 +9,10 @@ import com.typesafe.config.ConfigFactory
 import zio.ConfigProvider
 import zio.Runtime
 import zio.ZIO
-import zio._
 import zio.cli.HelpDoc.Span.text
 import zio.cli._
 import zio.cli.extensions._
 import zio.cli.figlet.FigFont
-import zio.config.magnolia._
 import zio.config.magnolia.deriveConfig
 import zio.config.typesafe._
 import zio.logging.consoleLogger
