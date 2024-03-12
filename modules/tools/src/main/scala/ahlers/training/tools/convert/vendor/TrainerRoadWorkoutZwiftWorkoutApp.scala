@@ -7,6 +7,7 @@ import java.net.URI
 import scala.xml.NodeSeq
 import scala.xml.PrettyPrinter
 import scala.xml.encoding.syntax.XmlEncoderOps
+import trainerroad.schema.web.Details
 import trainerroad.schema.web.WorkoutDetails
 import zio.Chunk
 import zio.Hub
@@ -89,6 +90,32 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
       Encoded(converted, buffer)
     }
   }
+
+  case class Targeted(encoded: Encoded, outputLocation: OutputLocation)
+
+  val target: ZPipeline[Any, Throwable, Encoded, Targeted] =
+    ZPipeline.mapStream[Any, Throwable, Encoded, Targeted] { encoded =>
+      val details: Details = encoded
+        .converted
+        .from
+        .workout
+        .details
+
+      outputLocation
+        .map(outputLocation => ZStream.succeed(Targeted(encoded, outputLocation)))
+        .getOrElse {
+          ZStream.fromZIO(WithZwiftWorkoutsFolders.zwiftWorkoutsFolders)
+            .map(_.toNonEmptyChunk.toChunk)
+            .flattenChunks
+            .map { workoutFolder =>
+              val trainerRoadFolder = workoutFolder / "TrainerRoad"
+              val workoutFile       = trainerRoadFolder / s"${details.id}-${details.workoutName.toLowerCase}.zwo"
+
+              val outputLocation = OutputLocation(workoutFile.path.toUri)
+              Targeted(encoded, outputLocation)
+            }
+        }
+    }
 
   val write: ZSink[Any, Throwable, Encoded, Unit, Any] = {
 
