@@ -66,17 +66,21 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
     input >>> decode
   }
 
-  val convert: ZPipeline[Any, Throwable, From, To] =
-    ZPipeline.mapZIO(ToWorkoutFile
-      .from(_)
-      .map(ZIO.succeed(_))
-      .valueOr(ZIO.fail(_)))
+  case class Converted(from: From, to: To)
 
-  val to: ZSink[Any, Throwable, To, Unit, Any] = {
+  val convert: ZPipeline[Any, Throwable, From, Converted] =
+    ZPipeline.mapZIO(from =>
+      ToWorkoutFile
+        .from(from)
+        .map(to => ZIO.succeed(Converted(from, to)))
+        .valueOr(ZIO.fail(_)),
+    )
 
-    val encode: ZPipeline[Any, Throwable, To, Byte] = {
+  val to: ZSink[Any, Throwable, Converted, Unit, Any] = {
+
+    val encode: ZPipeline[Any, Throwable, Converted, Byte] = {
       val printer = new PrettyPrinter(160, 2)
-      ZPipeline[To].map(_.asXml) >>>
+      ZPipeline[Converted].map(_.to.asXml) >>>
         ZPipeline[NodeSeq].map(printer.formatNodes(_)) >>>
         ZPipeline[String].mapChunks(_.flatMap(_.getBytes))
     }
@@ -87,7 +91,7 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
       }
       .runCollect
 
-    ZSink.foreach[Any, Throwable, To] { to =>
+    ZSink.foreach[Any, Throwable, Converted] { to =>
       val encodedF: ZIO[Any, Throwable, Seq[Byte]] =
         ZStream.succeed(to).via(encode).runCollect
 
