@@ -76,14 +76,21 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
         .valueOr(ZIO.fail(_)),
     )
 
-  val to: ZSink[Any, Throwable, Converted, Unit, Any] = {
+  case class Encoded(converted: Converted, buffer: Chunk[Byte])
 
-    val encode: ZPipeline[Any, Throwable, Converted, Byte] = {
-      val printer = new PrettyPrinter(160, 2)
-      ZPipeline[Converted].map(_.to.asXml) >>>
-        ZPipeline[NodeSeq].map(printer.formatNodes(_)) >>>
-        ZPipeline[String].mapChunks(_.flatMap(_.getBytes))
+  val encode: ZPipeline[Any, Throwable, Converted, Encoded] = {
+    val printer = new PrettyPrinter(160, 2)
+
+    ZPipeline.map[Converted, Encoded] { converted =>
+      val buffer: Chunk[Byte] = Chunk.fromIterable(printer
+        .formatNodes(converted.to.asXml)
+        .getBytes)
+
+      Encoded(converted, buffer)
     }
+  }
+
+  val to: ZSink[Any, Throwable, Encoded, Unit, Any] = {
 
     val outputsF: ZIO[Any, Throwable, Chunk[ZSink[Any, Throwable, Byte, Byte, Long]]] = outputLocations
       .map { outputLocation =>
@@ -91,21 +98,17 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
       }
       .runCollect
 
-    ZSink.foreach[Any, Throwable, Converted] { to =>
-      val encodedF: ZIO[Any, Throwable, Seq[Byte]] =
-        ZStream.succeed(to).via(encode).runCollect
-
+    ZSink.foreach[Any, Throwable, Encoded] { encoded =>
       for {
-        encoded <- encodedF
         outputs <- outputsF
-        _       <- ZIO.foreachPar(outputs)(ZStream.fromIterable(encoded).run(_))
+        _       <- ZIO.foreachPar(outputs)(ZStream.fromIterable(encoded.buffer).run(_))
       } yield ()
     }
   }
 
   override val run = for {
     _ <- ZIO.logInfo(s"Performing $dryRun conversion of $inputLocation to $outputLocation.")
-    _ <- from >>> convert >>> to
+    _ <- from >>> convert >>> encode >>> to
   } yield ()
 
 }
