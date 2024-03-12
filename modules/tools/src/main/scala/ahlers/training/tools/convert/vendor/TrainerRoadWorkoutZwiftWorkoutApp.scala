@@ -103,14 +103,18 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
   val write: ZSink[Any, Throwable, Targeted, Unit, Any] =
     ZSink.foreach[Any, Throwable, Targeted] { targeted =>
       import targeted.encoded
-      ZStream.fromChunk(encoded.buffer) >>>
-        ZSink.fromFileURI(targeted.outputLocation.toUri)
+
+      val buffer = ZStream.fromChunk(encoded.buffer)
+      val write  = ZSink.fromFileURI(targeted.outputLocation.toUri)
+
+      for {
+        _ <- ZIO.logInfo(s"Performing $dryRun conversion of $inputLocation to ${targeted.outputLocation}.")
+        _ <- buffer >>> write
+      } yield ()
     }
 
-  override val run = for {
-    _ <- ZIO.logInfo(s"Performing $dryRun conversion of $inputLocation to $outputLocation.")
-    _ <- read >>> convert >>> encode >>> target >>> write
-  } yield ()
+  override val run =
+    read >>> convert >>> encode >>> target >>> write
 
 }
 
