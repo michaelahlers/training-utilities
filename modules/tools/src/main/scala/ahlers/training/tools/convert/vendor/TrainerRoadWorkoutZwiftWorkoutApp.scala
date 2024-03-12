@@ -31,24 +31,6 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
   outputLocation: Option[TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation],
 ) extends ZIOAppDefault { self =>
 
-  val outputLocations: ZStream[Any, Throwable, OutputLocation] = outputLocation
-    .map(ZStream.succeed(_))
-    .getOrElse {
-      ZStream.fromZIO(WithZwiftWorkoutsFolders.zwiftWorkoutsFolders)
-        .map(_.toNonEmptyChunk.toChunk)
-        .flattenChunks
-        .mapZIO { workoutFolder =>
-          val trainerRoadFolder = workoutFolder / "TrainerRoad"
-
-          /** @todo Don't eagerly initialize directories. */
-          ZIO.attempt(trainerRoadFolder.createIfNotExists(
-            asDirectory = true,
-            createParents = false,
-          ).path.toUri)
-        }
-        .map(OutputLocation)
-    }
-
   override val bootstrap =
     Runtime.removeDefaultLoggers >>> consoleLogger()
 
@@ -95,8 +77,9 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
 
   val target: ZPipeline[Any, Throwable, Encoded, Targeted] =
     ZPipeline.mapStream[Any, Throwable, Encoded, Targeted] { encoded =>
-      val details: Details = encoded
-        .converted
+      import encoded.converted
+
+      val details: Details = converted
         .from
         .workout
         .details
@@ -117,25 +100,16 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
         }
     }
 
-  val write: ZSink[Any, Throwable, Encoded, Unit, Any] = {
-
-    val outputsF: ZIO[Any, Throwable, Chunk[ZSink[Any, Throwable, Byte, Byte, Long]]] = outputLocations
-      .map { outputLocation =>
-        ZSink.fromFileURI(outputLocation.toUri)
-      }
-      .runCollect
-
-    ZSink.foreach[Any, Throwable, Encoded] { encoded =>
-      for {
-        outputs <- outputsF
-        _       <- ZIO.foreachPar(outputs)(ZStream.fromIterable(encoded.buffer).run(_))
-      } yield ()
+  val write: ZSink[Any, Throwable, Targeted, Unit, Any] =
+    ZSink.foreach[Any, Throwable, Targeted] { targeted =>
+      import targeted.encoded
+      ZStream.fromChunk(encoded.buffer) >>>
+        ZSink.fromFileURI(targeted.outputLocation.toUri)
     }
-  }
 
   override val run = for {
     _ <- ZIO.logInfo(s"Performing $dryRun conversion of $inputLocation to $outputLocation.")
-    _ <- read >>> convert >>> encode >>> write
+    _ <- read >>> convert >>> encode >>> target >>> write
   } yield ()
 
 }
