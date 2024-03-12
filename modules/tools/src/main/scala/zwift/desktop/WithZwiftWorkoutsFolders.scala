@@ -19,7 +19,7 @@ object WithZwiftWorkoutsFolders {
       else ZIO.fail(new IllegalStateException(s"""Couldn't find Zwift documents folder "$folder"."""))
     }
     .flatMap { workoutsFolder =>
-      ZIO.attempt(workoutsFolder.list(_.isDirectory).toSeq)
+      ZIO.attempt(workoutsFolder.children.filter(_.isDirectory).toSeq)
         .flatMap(NonEmptyList.fromIterableOption(_) match {
           case Some(userFolders) => ZIO.succeed(userFolders)
           case None              => ZIO.fail(new IllegalStateException(s"""Couldn't find any Zwift workouts folders in "$workoutsFolder"."""))
