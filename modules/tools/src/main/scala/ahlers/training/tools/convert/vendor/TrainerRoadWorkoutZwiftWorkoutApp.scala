@@ -54,7 +54,7 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
   type From = trainerroad.schema.web.WorkoutDetails
   type To   = zwift.schema.desktop.WorkoutFile
 
-  val from: ZStream[Any, Throwable, From] = {
+  val read: ZStream[Any, Throwable, From] = {
     val input: ZStream[Any, Throwable, Byte] =
       ZStream.fromFileURI(inputLocation.toUri)
 
@@ -90,7 +90,7 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
     }
   }
 
-  val to: ZSink[Any, Throwable, Encoded, Unit, Any] = {
+  val write: ZSink[Any, Throwable, Encoded, Unit, Any] = {
 
     val outputsF: ZIO[Any, Throwable, Chunk[ZSink[Any, Throwable, Byte, Byte, Long]]] = outputLocations
       .map { outputLocation =>
@@ -108,7 +108,7 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
 
   override val run = for {
     _ <- ZIO.logInfo(s"Performing $dryRun conversion of $inputLocation to $outputLocation.")
-    _ <- from >>> convert >>> encode >>> to
+    _ <- read >>> convert >>> encode >>> write
   } yield ()
 
 }
