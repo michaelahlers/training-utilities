@@ -92,7 +92,16 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
             .flattenChunks
             .map { workoutFolder =>
               val trainerRoadFolder = workoutFolder / "TrainerRoad"
-              val workoutFile       = trainerRoadFolder / s"${details.id}-${details.workoutName.toLowerCase}.zwo"
+              val workoutFile = {
+                val id = details.id
+                val name = details.workoutName
+                  .replace("+", "plus-")
+                  .replace("-", "minus-")
+                  .replace(' ', '-')
+                  .toLowerCase
+
+                trainerRoadFolder / s"$id-$name.zwo"
+              }
 
               val outputLocation = OutputLocation(workoutFile.path.toUri)
               Targeted(encoded, outputLocation)
