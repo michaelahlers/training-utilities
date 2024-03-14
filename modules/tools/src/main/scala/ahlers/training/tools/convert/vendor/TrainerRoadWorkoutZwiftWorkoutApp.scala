@@ -95,10 +95,11 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
               val workoutFile = {
                 val id = details.id
                 val name = details.workoutName
-                  .replace("+", "plus-")
-                  .replace("-", "minus-")
-                  .replace(' ', '-')
-                  .toLowerCase
+                  .toLowerCase()
+                  .replace("+", "plus ")
+                  .replace("-", "minus ")
+                  .split(' ')
+                  .mkString("-")
 
                 trainerRoadFolder / s"$id-$name.zwo"
               }
