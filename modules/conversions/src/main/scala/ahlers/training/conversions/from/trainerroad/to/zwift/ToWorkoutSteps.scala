@@ -15,7 +15,7 @@ import zwift.schema.desktop.WorkoutStep.Ramp
 import zwift.schema.desktop.WorkoutStep.SteadyState
 import zwift.schema.desktop.WorkoutStep.Warmup
 
-private[toZwift] object ToWorkoutSteps {
+object ToWorkoutSteps {
 
   def from(
     stepList: StepList.Cons,

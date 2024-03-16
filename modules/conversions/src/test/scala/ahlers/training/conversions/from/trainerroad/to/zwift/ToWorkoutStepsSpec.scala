@@ -1,9 +1,9 @@
 package ahlers.training.conversions.from.trainerroad.to.zwift
 
-import ahlers.training.conversions.from.trainerroad.to.zwift.instances._
+import ahlers.training.conversions.from.trainerroad.to.zwift.diffx.instances._
 import cats.data.NonEmptyList
-import cats.data.diffx.instances._
 import cats.scalatest.ValidatedValues._
+import com.softwaremill.diffx.cats._
 import com.softwaremill.diffx.scalatest.DiffShouldMatcher._
 import com.softwaremill.quicklens._
 import org.scalacheck.Arbitrary
