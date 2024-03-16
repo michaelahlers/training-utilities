@@ -2,7 +2,7 @@ package ahlers.training.tools.convert.vendor
 
 import ahlers.training.tools.ToolsApp
 import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation
-import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.ToWorkoutFile
+import ahlers.training.conversions.from.trainerroad.to.zwift.ToWorkoutFile
 import java.net.URI
 import scala.xml.NodeSeq
 import scala.xml.PrettyPrinter

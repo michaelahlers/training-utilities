@@ -1,6 +1,6 @@
-package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift
+package ahlers.training.conversions.from.trainerroad.to.zwift
 
-import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.diffx.instances._
+import ahlers.training.conversions.from.trainerroad.to.zwift.instances._
 import cats.data.NonEmptyList
 import cats.data.diffx.instances._
 import cats.scalatest.ValidatedValues._

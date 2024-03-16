@@ -1,6 +1,6 @@
-package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.diffx
+package ahlers.training.conversions.from.trainerroad.to.zwift.diffx
 
-import ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift.NoIntervalsInWorkoutException
+import ahlers.training.conversions.from.trainerroad.to.zwift.NoIntervalsInWorkoutException
 import com.softwaremill.diffx.Diff
 import com.softwaremill.diffx.generic.auto._
 

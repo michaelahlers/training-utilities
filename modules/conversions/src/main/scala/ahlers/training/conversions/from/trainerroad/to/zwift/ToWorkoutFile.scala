@@ -1,4 +1,4 @@
-package ahlers.trainingutilities.conversion.fromTrainerRoad.toZwift
+package ahlers.training.conversions.from.trainerroad.to.zwift
 
 import cats.data.NonEmptyList
 import cats.data.Validated
