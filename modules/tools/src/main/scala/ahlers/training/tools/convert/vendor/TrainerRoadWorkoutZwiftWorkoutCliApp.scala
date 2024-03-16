@@ -4,7 +4,7 @@ import ahlers.training.tools.ToolsApp
 import ahlers.training.tools.ToolsApp.DryRun
 import ahlers.training.tools.ToolsCliApp.DryRunTypeOps
 import ahlers.training.tools.WithHomeFolder
-import ahlers.trainingutilities.tools.BuildInfo
+import ahlers.training.tools.BuildInfo
 import better.files.File
 import better.files.Resource
 import com.typesafe.config.ConfigFactory

@@ -2,7 +2,7 @@ package ahlers.training.tools.convert
 
 import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp
 import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp
-import ahlers.trainingutilities.tools.BuildInfo
+import ahlers.training.tools.BuildInfo
 import zio.Runtime
 import zio.cli.HelpDoc.Span.text
 import zio.cli._
