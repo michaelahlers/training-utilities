@@ -4,4 +4,7 @@ ThisBuild / githubWorkflowJavaVersions :=
 
 ThisBuild / githubWorkflowPublishTargetBranches := Nil
 
-ThisBuild / githubWorkflowOSes += "windows-latest"
+ThisBuild / githubWorkflowOSes :=
+  "macos-latest" ::
+    "windows-latest" ::
+    Nil
