@@ -4,7 +4,7 @@ ThisBuild / githubWorkflowJavaVersions :=
 
 ThisBuild / githubWorkflowPublishTargetBranches := Nil
 
-ThisBuild / githubWorkflowOSes :=
+ThisBuild / githubWorkflowBuildRunsOnExtraLabels :=
   "macos-latest" ::
     "windows-latest" ::
     Nil
