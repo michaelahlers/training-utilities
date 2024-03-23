@@ -69,7 +69,7 @@ libraryDependencies +=
  * @see [[https://github.com/zio/zio-logging]]
  */
 libraryDependencies +=
-  "dev.zio" %% "zio-logging" % "2.2.1"
+  "dev.zio" %% "zio-logging" % "2.2.2"
 
 libraryDependencies ++=
   // "dev.zio"   %% "zio-config"          % "4.0.1" ::
