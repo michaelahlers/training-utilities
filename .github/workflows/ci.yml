@@ -39,6 +39,9 @@ jobs:
           java-version: 21
           cache: sbt
 
+      - name: Check for unused compile-time dependencies.
+        run: sbt '++ ${{ matrix.scala }}' unusedCompileDependenciesTest
+
       - name: Check that workflows are up to date
         run: sbt '++ ${{ matrix.scala }}' githubWorkflowCheck
 
