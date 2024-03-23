@@ -22,40 +22,40 @@ libraryDependencies +=
 libraryDependencies +=
   "com.github.pathikrit" %% "better-files" % "3.9.2"
 
-/**
- * @todo Might not be needed; consider removing.
- */
-libraryDependencies +=
-  "com.lihaoyi" %% "requests" % "0.8.0"
+///**
+// * @todo Might not be needed; consider removing.
+// */
+//libraryDependencies +=
+//  "com.lihaoyi" %% "requests" % "0.8.0"
 
-/**
- * @todo Might not be needed; consider removing.
- */
-libraryDependencies +=
-  "com.lihaoyi" %% "scalatags" % "0.12.0"
+///**
+// * @todo Might not be needed; consider removing.
+// */
+//libraryDependencies +=
+//  "com.lihaoyi" %% "scalatags" % "0.12.0"
 
-/**
- * Garmin's SDK for the Flexible and Interoperable Data Transfer (FIT) protocol, designed specifically for the storing and sharing of data that originates from sport, fitness and health devices.
- *
- * @see [[https://developer.garmin.com/fit/]]
- * @see [[https://mvnrepository.com/artifact/com.garmin/fit]]
- */
-libraryDependencies +=
-  "com.garmin" % "fit" % "21.126.0"
+///**
+// * Garmin's SDK for the Flexible and Interoperable Data Transfer (FIT) protocol, designed specifically for the storing and sharing of data that originates from sport, fitness and health devices.
+// *
+// * @see [[https://developer.garmin.com/fit/]]
+// * @see [[https://mvnrepository.com/artifact/com.garmin/fit]]
+// */
+//libraryDependencies +=
+//  "com.garmin" % "fit" % "21.126.0"
 
-/**
- * Patch and modify deeply nested case classes.
- * @see [[https://github.com/softwaremill/quicklens]]
- */
-libraryDependencies +=
-  "com.softwaremill.quicklens" %% "quicklens" % "1.9.6"
+///**
+// * Patch and modify deeply nested case classes.
+// * @see [[https://github.com/softwaremill/quicklens]]
+// */
+//libraryDependencies +=
+//  "com.softwaremill.quicklens" %% "quicklens" % "1.9.6"
 
-/**
- * A Scala library to pretty-print values and types.
- * @see [[https://github.com/com-lihaoyi/PPrint]]
- */
-libraryDependencies +=
-  "com.lihaoyi" %% "pprint" % "0.8.1"
+///**
+// * A Scala library to pretty-print values and types.
+// * @see [[https://github.com/com-lihaoyi/PPrint]]
+// */
+//libraryDependencies +=
+//  "com.lihaoyi" %% "pprint" % "0.8.1"
 
 /**
  * Simple logging for ZIO.
@@ -72,10 +72,10 @@ libraryDependencies +=
   "dev.zio" %% "zio-logging" % "2.2.1"
 
 libraryDependencies ++=
-  "dev.zio"   %% "zio-config"          % "4.0.1" ::
-    "dev.zio" %% "zio-config-magnolia" % "4.0.1" ::
+  // "dev.zio"   %% "zio-config"          % "4.0.1" ::
+  "dev.zio"   %% "zio-config-magnolia" % "4.0.1" ::
     "dev.zio" %% "zio-config-typesafe" % "4.0.1" ::
-    "dev.zio" %% "zio-config-yaml"     % "4.0.1" ::
+    // "dev.zio" %% "zio-config-yaml"     % "4.0.1" ::
     Nil
 
 /**
