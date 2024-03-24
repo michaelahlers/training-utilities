@@ -1,2 +1,2 @@
-name := "Training Utilities"
+name           := "Training Utilities"
 normalizedName := "training-utilities"

@@ -1,2 +1,2 @@
-name := "Tools"
+name           := "Tools"
 normalizedName := "tools"
