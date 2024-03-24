@@ -12,8 +12,24 @@ ThisBuild / githubWorkflowOSes :=
     "windows-latest" ::
     Nil
 
-ThisBuild / githubWorkflowBuildPreamble +=
-  Sbt(
+ThisBuild / githubWorkflowBuildPreamble ++= {
+  val unusedCompileDependencies = Sbt(
     commands = List("unusedCompileDependenciesTest"),
     name = Some("Check for unused compile-time dependencies."),
   )
+
+  val scalaFmtCheck = Sbt(
+    commands = List("scalafmtCheck"),
+    name = Some("Check Scala code formatting."),
+  )
+
+  val scalaFmtSbtCheck = Sbt(
+    commands = List("scalafmtSbtCheck"),
+    name = Some("Check sbt project formatting."),
+  )
+
+  unusedCompileDependencies ::
+    scalaFmtCheck ::
+    scalaFmtSbtCheck ::
+    Nil
+}
