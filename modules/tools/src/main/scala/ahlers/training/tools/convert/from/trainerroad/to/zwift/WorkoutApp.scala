@@ -1,8 +1,8 @@
 package ahlers.training.tools.convert.from.trainerroad.to.zwift
 
+import ahlers.training.conversions.from.trainerroad.to.zwift.ToWorkoutFile
 import ahlers.training.tools.ToolsApp
 import ahlers.training.tools.convert.from.trainerroad.to.zwift.WorkoutApp.OutputLocation
-import ahlers.training.conversions.from.trainerroad.to.zwift.ToWorkoutFile
 import java.net.URI
 import scala.xml.NodeSeq
 import scala.xml.PrettyPrinter
@@ -26,9 +26,9 @@ import zio.stream.ZStream
 import zwift.desktop.WithZwiftWorkoutsFolders
 
 case class WorkoutApp(
-                       dryRun: ToolsApp.DryRun,
-                       inputLocation: WorkoutApp.InputLocation,
-                       outputLocation: Option[WorkoutApp.OutputLocation],
+  dryRun: ToolsApp.DryRun,
+  inputLocation: WorkoutApp.InputLocation,
+  outputLocation: Option[WorkoutApp.OutputLocation],
 ) extends ZIOAppDefault { self =>
 
   override val bootstrap =

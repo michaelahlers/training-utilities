@@ -15,7 +15,7 @@ sealed trait ConvertApp extends ZIOAppDefault {
 object ConvertApp {
 
   case class FromTrainerRoadWorkoutToZwiftWorkout(
-                                                   delegate: WorkoutApp,
+    delegate: WorkoutApp,
   ) extends ConvertApp {
 
     override val run = for {
@@ -26,7 +26,7 @@ object ConvertApp {
   }
 
   def apply(
-             delegate: WorkoutApp,
+    delegate: WorkoutApp,
   ): ConvertApp = FromTrainerRoadWorkoutToZwiftWorkout(delegate)
 
 }
