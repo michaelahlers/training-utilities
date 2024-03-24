@@ -1,7 +1,7 @@
-package ahlers.training.tools.convert.vendor
+package ahlers.training.tools.convert.from.trainerroad.to.zwift
 
 import ahlers.training.tools.ToolsApp
-import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation
+import ahlers.training.tools.convert.from.trainerroad.to.zwift.WorkoutApp.OutputLocation
 import ahlers.training.conversions.from.trainerroad.to.zwift.ToWorkoutFile
 import java.net.URI
 import scala.xml.NodeSeq
@@ -25,10 +25,10 @@ import zio.stream.ZSink
 import zio.stream.ZStream
 import zwift.desktop.WithZwiftWorkoutsFolders
 
-case class TrainerRoadWorkoutZwiftWorkoutApp(
-  dryRun: ToolsApp.DryRun,
-  inputLocation: TrainerRoadWorkoutZwiftWorkoutApp.InputLocation,
-  outputLocation: Option[TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation],
+case class WorkoutApp(
+                       dryRun: ToolsApp.DryRun,
+                       inputLocation: WorkoutApp.InputLocation,
+                       outputLocation: Option[WorkoutApp.OutputLocation],
 ) extends ZIOAppDefault { self =>
 
   override val bootstrap =
@@ -128,7 +128,7 @@ case class TrainerRoadWorkoutZwiftWorkoutApp(
 
 }
 
-object TrainerRoadWorkoutZwiftWorkoutApp {
+object WorkoutApp {
   case class InputLocation(toUri: URI)
   case class OutputLocation(toUri: URI)
 }

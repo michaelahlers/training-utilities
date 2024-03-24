@@ -1,14 +1,14 @@
-package ahlers.training.tools.convert.vendor
+package ahlers.training.tools.convert.from.trainerroad.to.zwift
 
-import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp.Settings
-import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp.WithSettings
-import ahlers.training.tools.convert.vendor.diffx.instances._
+import ahlers.training.tools.convert.from.trainerroad.to.zwift.WorkoutCliApp.Settings
+import ahlers.training.tools.convert.from.trainerroad.to.zwift.WorkoutCliApp.WithSettings
+import ahlers.training.tools.convert.from.trainerroad.to.zwift.diffx.instances._
 import better.files.File
 import zio.ZIO
 import zio.diffx.DiffxAssertions._
 import zio.test._
 
-object TrainerRoadWorkoutZwiftWorkoutCliAppSpec extends ZIOSpecDefault {
+object WorkoutCliAppSpec extends ZIOSpecDefault {
 
   object WithSettingsSpec extends ZIOSpecDefault {
 

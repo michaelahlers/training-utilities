@@ -1,4 +1,4 @@
-package ahlers.training.tools.convert.vendor
+package ahlers.training.tools.convert.from.trainerroad.to.zwift
 
 import ahlers.training.tools.ToolsApp
 import ahlers.training.tools.ToolsApp.DryRun
@@ -20,7 +20,7 @@ import zio.config.magnolia.deriveConfig
 import zio.config.typesafe._
 import zio.logging.consoleLogger
 
-object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
+object WorkoutCliApp extends ZIOCliDefault {
 
   case class Settings(
     environment: Settings.Environment,
@@ -50,7 +50,7 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
   object WithSettings {
 
     val settings: ZIO[Any, Throwable, Settings] = ZIO.attempt(ConfigFactory
-      .parseURL(Resource.my.getUrl("TrainerRoadWorkoutZwiftWorkoutCliApp.conf"))
+      .parseURL(Resource.my.getUrl("WorkoutCliApp.conf"))
       .resolve())
       .flatMap(ConfigProvider
         .fromTypesafeConfig(_)
@@ -67,30 +67,30 @@ object TrainerRoadWorkoutZwiftWorkoutCliApp extends ZIOCliDefault {
       WithHomeFolder.live >>>
       WithSettings.live
 
-  implicit class InputLocationOps(private val self: TrainerRoadWorkoutZwiftWorkoutApp.InputLocation.type) extends AnyVal {
-    def options: Options[TrainerRoadWorkoutZwiftWorkoutApp.InputLocation] =
+  implicit class InputLocationOps(private val self: WorkoutApp.InputLocation.type) extends AnyVal {
+    def options: Options[WorkoutApp.InputLocation] =
       (Options.uri("input-uri") ?? """Where to find the TrainerRoad workout for conversion.""")
-        .map(TrainerRoadWorkoutZwiftWorkoutApp.InputLocation)
+        .map(WorkoutApp.InputLocation)
   }
 
-  implicit class OutputLocationOps(private val self: TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation.type) extends AnyVal {
-    def options: Options[TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation] =
+  implicit class OutputLocationOps(private val self: WorkoutApp.OutputLocation.type) extends AnyVal {
+    def options: Options[WorkoutApp.OutputLocation] =
       (Options.uri("output-uri") ?? """Where to save converted Zwift workout; if not specified, will attempt to guess.""")
-        .map(TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation)
+        .map(WorkoutApp.OutputLocation)
   }
 
-  val options: Options[(DryRun, TrainerRoadWorkoutZwiftWorkoutApp.InputLocation, Option[TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation])] =
+  val options: Options[(DryRun, WorkoutApp.InputLocation, Option[WorkoutApp.OutputLocation])] =
     ToolsApp.DryRun.options ++
-      TrainerRoadWorkoutZwiftWorkoutApp.InputLocation.options ++
-      TrainerRoadWorkoutZwiftWorkoutApp.OutputLocation.options.optional
+      WorkoutApp.InputLocation.options ++
+      WorkoutApp.OutputLocation.options.optional
 
   val args: Args[Unit] =
     Args.Empty
 
-  def command: Command[TrainerRoadWorkoutZwiftWorkoutApp] =
+  def command: Command[WorkoutApp] =
     Command("trainer-road-workout:zwift-workout", options, args)
       .withHelp(HelpDoc.p("Converts a TrainerRoad workout into a Zwift workout."))
-      .map((TrainerRoadWorkoutZwiftWorkoutApp.apply _).tupled)
+      .map((WorkoutApp.apply _).tupled)
 
   override val cliApp = CliApp.make(
     name = s"""${BuildInfo.name}: TrainerRoad Workout / Zwift Workout""",

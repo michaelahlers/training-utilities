@@ -1,7 +1,5 @@
 package ahlers.training.tools.convert
 
-import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp
-import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutCliApp
 import ahlers.training.tools.BuildInfo
 import zio.Runtime
 import zio.cli.HelpDoc.Span.text
@@ -22,7 +20,7 @@ object ConvertCliApp extends ZIOCliDefault {
   val helpDoc: HelpDoc = HelpDoc.p("Converts given workout or activity into a desired format.")
 
   val command: Command[ConvertApp] = Command("convert", options, args)
-    .subcommands(TrainerRoadWorkoutZwiftWorkoutCliApp.command.map(ConvertApp(_)))
+    .subcommands(from.trainerroad.to.zwift.WorkoutCliApp.command.map(ConvertApp(_)))
     .withHelp(helpDoc)
 
   override val cliApp = CliApp.make(
