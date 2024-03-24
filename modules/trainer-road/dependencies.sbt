@@ -17,7 +17,7 @@ libraryDependencies +=
  * @see [[https://www.scalactic.org/]]
  */
 libraryDependencies +=
-  "org.scalactic" %% "scalactic" % "3.2.17"
+  "org.scalactic" %% "scalactic" % "3.2.18"
 
 /**
  * A fast and secure JSON library with tight ZIO integration.
@@ -42,6 +42,6 @@ libraryDependencies +=
  * @see [[https://github.com/spotify/magnolify]]
  */
 libraryDependencies ++=
-  "org.scalacheck" %% "scalacheck"           % "1.14.1" % Test ::
+  "org.scalacheck" %% "scalacheck"           % "1.17.0" % Test ::
     "com.spotify"  %% "magnolify-scalacheck" % "0.7.0"  % Test ::
     Nil
