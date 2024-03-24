@@ -1,2 +1,2 @@
 enablePlugins(BuildInfoPlugin)
-buildInfoPackage := "ahlers.trainingutilities.tools"
+buildInfoPackage := "ahlers.training.tools"

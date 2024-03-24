@@ -1,8 +1,8 @@
 package ahlers.training.tools
 
+import ahlers.training.tools.BuildInfo
 import ahlers.training.tools.ToolsApp.DryRun
 import ahlers.training.tools.convert.ConvertCliApp
-import ahlers.trainingutilities.tools.BuildInfo
 import zio._
 import zio.cli.HelpDoc.Span.text
 import zio.cli._

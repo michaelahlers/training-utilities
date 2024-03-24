@@ -1,6 +1,18 @@
+lazy val `conversions` =
+  (project in file("modules") / "conversions")
+    .dependsOn(
+      `trainer-road`,
+      `trainer-road` % "test->test",
+      `zio-cli`,
+      `zwift`,
+      `zwift`     % "test->test",
+      `zio-diffx` % Test,
+    )
+
 lazy val `tools` =
   (project in file("modules") / "tools")
     .dependsOn(
+      `conversions`,
       `trainer-road`,
       `trainer-road` % "test->test",
       `zio-cli`,

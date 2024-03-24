@@ -1,6 +1,6 @@
 package ahlers.training.tools.convert
 
-import ahlers.training.tools.convert.vendor.TrainerRoadWorkoutZwiftWorkoutApp
+import ahlers.training.tools.convert.from.trainerroad.to.zwift.WorkoutApp
 import zio._
 import zio.logging.consoleLogger
 
@@ -15,7 +15,7 @@ sealed trait ConvertApp extends ZIOAppDefault {
 object ConvertApp {
 
   case class FromTrainerRoadWorkoutToZwiftWorkout(
-    delegate: TrainerRoadWorkoutZwiftWorkoutApp,
+    delegate: WorkoutApp,
   ) extends ConvertApp {
 
     override val run = for {
@@ -26,7 +26,7 @@ object ConvertApp {
   }
 
   def apply(
-    delegate: TrainerRoadWorkoutZwiftWorkoutApp,
+    delegate: WorkoutApp,
   ): ConvertApp = FromTrainerRoadWorkoutToZwiftWorkout(delegate)
 
 }
