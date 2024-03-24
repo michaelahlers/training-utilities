@@ -135,4 +135,4 @@ libraryDependencies ++=
  * @see [[https://github.com/IronCoreLabs/cats-scalatest]]
  */
 libraryDependencies +=
-  "com.ironcorelabs" %% "cats-scalatest" % "4.0.0" % Test
+  "com.ironcorelabs" %% "cats-scalatest" % "3.1.1" % Test
