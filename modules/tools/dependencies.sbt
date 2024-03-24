@@ -43,12 +43,12 @@ libraryDependencies +=
 //libraryDependencies +=
 //  "com.garmin" % "fit" % "21.126.0"
 
-///**
-// * Patch and modify deeply nested case classes.
-// * @see [[https://github.com/softwaremill/quicklens]]
-// */
-//libraryDependencies +=
-//  "com.softwaremill.quicklens" %% "quicklens" % "1.9.6"
+/**
+ * Patch and modify deeply nested case classes.
+ * @see [[https://github.com/softwaremill/quicklens]]
+ */
+libraryDependencies +=
+  "com.softwaremill.quicklens" %% "quicklens" % "1.9.6" % Test
 
 ///**
 // * A Scala library to pretty-print values and types.
