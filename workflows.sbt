@@ -6,15 +6,14 @@ ThisBuild / githubWorkflowJavaVersions :=
 
 ThisBuild / githubWorkflowPublishTargetBranches := Nil
 
-ThisBuild / githubWorkflowBuildRunsOnExtraLabels :=
-  "macos-latest" ::
+ThisBuild / githubWorkflowOSes :=
+  "ubuntu-latest" ::
+    "macos-latest" ::
     "windows-latest" ::
     Nil
 
 ThisBuild / githubWorkflowBuildPreamble +=
   Sbt(
-    commands =
-      "unusedCompileDependenciesTest" ::
-        Nil,
+    commands = List("unusedCompileDependenciesTest"),
     name = Some("Check for unused compile-time dependencies."),
   )
