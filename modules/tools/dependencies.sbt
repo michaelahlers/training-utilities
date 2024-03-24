@@ -90,7 +90,7 @@ libraryDependencies +=
  * @see [[https://www.scalatest.org/]]
  */
 libraryDependencies +=
-  "org.scalatest" %% "scalatest" % "3.2.17" % Test
+  "org.scalatest" %% "scalatest" % "3.2.18" % Test
 
 /**
  * Property-based testing for Scala, with support for ScalaTest.
