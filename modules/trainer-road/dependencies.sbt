@@ -17,7 +17,7 @@ libraryDependencies +=
  * @see [[https://www.scalactic.org/]]
  */
 libraryDependencies +=
-  "org.scalactic" %% "scalactic" % "3.2.17"
+  "org.scalactic" %% "scalactic" % "3.2.18"
 
 /**
  * A fast and secure JSON library with tight ZIO integration.
