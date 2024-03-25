@@ -17,7 +17,7 @@ libraryDependencies +=
  * @see [[https://github.com/IronCoreLabs/cats-scalatest]]
  */
 libraryDependencies +=
-  "com.ironcorelabs" %% "cats-scalatest" % "3.0.5" % Test
+  "com.ironcorelabs" %% "cats-scalatest" % "3.1.1" % Test
 
 /**
  * Readable deltas for Scala case classes.
