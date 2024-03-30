@@ -98,6 +98,7 @@ case class WorkoutApp(
                   .toLowerCase()
                   .replace("+", "plus ")
                   .replace("-", "minus ")
+                  .replace("'", " ")
                   .split(' ')
                   .mkString("-")
 
