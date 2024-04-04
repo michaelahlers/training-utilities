@@ -1,11 +1,7 @@
-enablePlugins(GraalVMNativeImagePlugin)
-enablePlugins(JavaAppPackaging)
+enablePlugins(NativeImagePlugin)
 
-graalVMNativeImageOptions :=
-  "--allow-incomplete-classpath" ::
-    "--report-unsupported-elements-at-runtime" ::
-    "--initialize-at-build-time" ::
-    "--no-fallback" ::
-    Nil
+Compile / mainClass := Some("ahlers.training.tools.ToolsCliApp")
 
-GraalVMNativeImage / mainClass := Some("ahlers.training.tools.ToolsCliApp")
+nativeImageVersion  := "21.0.2"
+nativeImageJvm      := "graalvm-java21"
+nativeImageJvmIndex := "cs"
