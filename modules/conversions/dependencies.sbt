@@ -10,14 +10,14 @@ libraryDependencies +=
  * @see [[https://github.com/softwaremill/quicklens]]
  */
 libraryDependencies +=
-  "com.softwaremill.quicklens" %% "quicklens" % "1.9.6"
+  "com.softwaremill.quicklens" %% "quicklens" % "1.9.7"
 
 /**
  * ScalaTest bindings for Cats.
  * @see [[https://github.com/IronCoreLabs/cats-scalatest]]
  */
 libraryDependencies +=
-  "com.ironcorelabs" %% "cats-scalatest" % "3.0.5" % Test
+  "com.ironcorelabs" %% "cats-scalatest" % "3.1.1" % Test
 
 /**
  * Readable deltas for Scala case classes.
@@ -38,9 +38,9 @@ libraryDependencies ++=
  * @see [[https://github.com/spotify/magnolify]]
  */
 libraryDependencies ++=
-  "org.scalacheck"      %% "scalacheck"           % "1.14.1"   % Test ::
-    "org.scalatestplus" %% "scalacheck-1-17"      % "3.2.17.0" % Test ::
-    "com.spotify"       %% "magnolify-scalacheck" % "0.7.0"    % Test ::
+  "org.scalacheck"      %% "scalacheck"           % "1.17.0"   % Test ::
+    "org.scalatestplus" %% "scalacheck-1-17"      % "3.2.18.0" % Test ::
+    "com.spotify"       %% "magnolify-scalacheck" % "0.7.2"    % Test ::
     Nil
 
 /**
@@ -48,4 +48,4 @@ libraryDependencies ++=
  * @see [[https://www.scalatest.org/]]
  */
 libraryDependencies +=
-  "org.scalatest" %% "scalatest" % "3.2.17" % Test
+  "org.scalatest" %% "scalatest" % "3.2.18" % Test
