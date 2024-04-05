@@ -33,3 +33,21 @@ ThisBuild / githubWorkflowBuildPreamble ++= {
     scalaFmtSbtCheck ::
     Nil
 }
+
+ThisBuild / githubWorkflowTargetTags :=
+  "v0.1*" ::
+    Nil
+
+ThisBuild / githubWorkflowPublishTargetBranches :=
+  RefPredicate.StartsWith(Ref.Tag("v0.1")) ::
+    Nil
+
+ThisBuild / githubWorkflowPublish := {
+  val ciRelease = WorkflowStep.Sbt(
+    commands = List("ci-release"),
+    name = Some("Publish project artifacts."),
+  )
+
+  ciRelease ::
+    Nil
+}
