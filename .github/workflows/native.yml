@@ -29,9 +29,9 @@ jobs:
           #  uploaded_filename: tools_x86-64_windows.exe
           #  local_path: modules\tools\target\native-image\Tools.exe
     env:
-      # define Java options for both official sbt and sbt-extras
-      JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
-      JVM_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      # Define Java options for both official sbt and sbt-extras.
+      JAVA_OPTS: -Xms2G -Xmx2G -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      JVM_OPTS: -Xms2G -Xmx2G -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
     steps:
       - uses: actions/checkout@v3
       - name: Setup JDK
