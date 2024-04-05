@@ -10,7 +10,7 @@ name: Native Image
 on:
   push:
     branches:
-      - main
+      - v0.1.x
   pull_request:
   release:
     types: [ published ]
