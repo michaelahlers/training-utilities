@@ -1,6 +1,11 @@
+# It's necessary for this workflow to have "read and write permissions" for all scopes in the repository.
+#
 # See also:
 # - https://github.com/scalameta/sbt-native-image?tab=readme-ov-file#generate-native-image-from-github-actions
 # - https://github.com/scalameta/sbt-native-image/blob/main/.github/workflows/native.yml
+# - https://github.com/michaelahlers/training-utilities/settings/actions
+#
+# TODO: Determine if access can be limited for publishing artifacts to a release.
 name: Native Image
 on:
   push:
