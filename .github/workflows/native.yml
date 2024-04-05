@@ -1,0 +1,65 @@
+# See also:
+# - https://github.com/scalameta/sbt-native-image?tab=readme-ov-file#generate-native-image-from-github-actions
+# - https://github.com/scalameta/sbt-native-image/blob/main/.github/workflows/native.yml
+name: Native Image
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  release:
+    types: [ published ]
+jobs:
+  native-image:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        #os: [ macos-latest, ubuntu-latest, windows-latest ]
+        os: [ macos-latest, ubuntu-latest ]
+        include:
+          # Replace "example" with the name your binary
+          - os: macos-latest
+            uploaded_filename: tools_x86-64_macos
+            local_path: modules/tools/target/native-image/Tools
+          - os: ubuntu-latest
+            uploaded_filename: tools_x86-64_linux
+            local_path: modules/tools/target/native-image/Tools
+          #- os: windows-latest
+          #  uploaded_filename: tools_x86-64_windows.exe
+          #  local_path: modules\tools\target\native-image\Tools.exe
+    env:
+      # Define Java options for both official sbt and sbt-extras.
+      JAVA_OPTS: -Xms2G -Xmx2G -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      JVM_OPTS: -Xms2G -Xmx2G -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - run: git fetch --tags || true
+      #- name: Setup Windows C++ toolchain
+      #  uses: ilammy/msvc-dev-cmd@v1
+      #  if: ${{ matrix.os == 'windows-latest' }}
+      - name: Build
+        shell: bash
+        run: |
+          echo $(pwd)
+          sbt clean tools/nativeImage
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ${{ matrix.local_path }}
+          name: ${{ matrix.uploaded_filename }}
+      - name: Upload Release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ matrix.local_path }}
+          asset_name: ${{ matrix.uploaded_filename }}
+          asset_content_type: application/zip
