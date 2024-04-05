@@ -12,6 +12,7 @@ on:
     branches: ['**']
   push:
     branches: ['**']
+    tags: [v0.1*]
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -71,3 +72,62 @@ jobs:
       - name: Build project
         shell: bash
         run: sbt '++ ${{ matrix.scala }}' test
+
+      - name: Compress target directories
+        shell: bash
+        run: tar cf targets.tar modules/trainer-road/target modules/zwift/target modules/zio-diffx/target modules/zio-json/target modules/tools/target modules/zio-cli/target target modules/conversions/target modules/scala-xml/target project/target
+
+      - name: Upload target directories
+        uses: actions/upload-artifact@v4
+        with:
+          name: target-${{ matrix.os }}-${{ matrix.scala }}-${{ matrix.java }}
+          path: targets.tar
+
+  publish:
+    name: Publish Artifacts
+    needs: [build]
+    if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v0.1'))
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        scala: [2.13.13]
+        java: [temurin@21]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Ignore line ending differences in git
+        if: contains(runner.os, 'windows')
+        run: git config --global core.autocrlf false
+
+      - name: Configure pagefile for Windows
+        if: contains(runner.os, 'windows')
+        uses: al-cheb/configure-pagefile-action@v1.4
+        with:
+          minimum-size: 2GB
+          maximum-size: 8GB
+          disk-root: 'C:'
+
+      - name: Checkout current branch (full)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java (temurin@21)
+        if: matrix.java == 'temurin@21'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+
+      - name: Download target directories (2.13.13)
+        uses: actions/download-artifact@v4
+        with:
+          name: target-${{ matrix.os }}-2.13.13-${{ matrix.java }}
+
+      - name: Inflate target directories (2.13.13)
+        run: |
+          tar xf targets.tar
+          rm targets.tar
+
+      - name: Publish project artifacts.
+        run: sbt ci-release
