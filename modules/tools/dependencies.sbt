@@ -136,3 +136,7 @@ libraryDependencies ++=
  */
 libraryDependencies +=
   "com.ironcorelabs" %% "cats-scalatest" % "3.1.1" % Test
+
+/** Included by [[NativeImagePlugin]]. */
+unusedCompileDependenciesFilter -=
+  moduleFilter(organization = "org.scalameta", name = "svm-subs")
