@@ -1,3 +1,6 @@
+/**
+ * @see [[https://github.com/scalameta/sbt-native-image]]
+ */
 enablePlugins(NativeImagePlugin)
 
 Compile / mainClass := Some("ahlers.training.tools.ToolsCliApp")
