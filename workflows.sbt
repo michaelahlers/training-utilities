@@ -1,3 +1,5 @@
+import sbtghactions.Ref.Tag
+import sbtghactions.RefPredicate.StartsWith
 import sbtghactions.WorkflowStep.Sbt
 
 ThisBuild / githubWorkflowJavaVersions :=
@@ -39,11 +41,11 @@ ThisBuild / githubWorkflowTargetTags :=
     Nil
 
 ThisBuild / githubWorkflowPublishTargetBranches :=
-  RefPredicate.StartsWith(Ref.Tag("v0.1")) ::
+  StartsWith(Tag("v0.1")) ::
     Nil
 
 ThisBuild / githubWorkflowPublish := {
-  val ciRelease = WorkflowStep.Sbt(
+  val ciRelease = Sbt(
     commands = List("ci-release"),
     name = Some("Publish project artifacts."),
   )
