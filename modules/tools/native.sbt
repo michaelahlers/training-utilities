@@ -1,5 +1,6 @@
 /**
  * @see [[https://github.com/scalameta/sbt-native-image]]
+ * @see [[https://www.vandebron.tech/blog/building-native-images-and-compiling-with-graalvm-and-sbt]]
  */
 enablePlugins(NativeImagePlugin)
 
