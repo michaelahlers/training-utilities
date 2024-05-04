@@ -10,9 +10,9 @@ import zio.json.jsonField
  * @param milliseconds In serialization, the field field is misnamed compared to [[IntervalData.start]].
  */
 case class WorkoutData(
-  @jsonField("seconds") offset: Time,
-  memberFtpPercent: Float,
-  ftpPercent: Float,
+  @jsonField("Seconds") offset: Time,
+  @jsonField("MemberFtpPercent") memberFtpPercent: Float,
+  @jsonField("FtpPercent") ftpPercent: Float,
 )
 
 object WorkoutData {

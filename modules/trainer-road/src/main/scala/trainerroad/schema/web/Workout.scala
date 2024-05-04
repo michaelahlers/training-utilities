@@ -9,8 +9,8 @@ import zio.json.jsonField
 case class Workout(
   @jsonField("Details") details: Details,
   @jsonField("Tags") tags: Seq[String],
-  workoutData: NonEmptyList[WorkoutData],
-  intervalData: NonEmptyList[IntervalData],
+  @jsonField("WorkoutData") workoutData: NonEmptyList[WorkoutData],
+  @jsonField("IntervalData") intervalData: NonEmptyList[IntervalData],
   @jsonField("ProfileName") profileName: String,
 )
 
