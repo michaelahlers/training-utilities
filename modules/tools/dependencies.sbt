@@ -73,7 +73,7 @@ libraryDependencies +=
 
 libraryDependencies ++=
   // "dev.zio"   %% "zio-config"          % "4.0.1" ::
-  "dev.zio"   %% "zio-config-magnolia" % "4.0.1" ::
+  "dev.zio"   %% "zio-config-magnolia" % "4.0.2" ::
     "dev.zio" %% "zio-config-typesafe" % "4.0.1" ::
     // "dev.zio" %% "zio-config-yaml"     % "4.0.1" ::
     Nil
