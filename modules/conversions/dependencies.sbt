@@ -38,7 +38,7 @@ libraryDependencies ++=
  * @see [[https://github.com/spotify/magnolify]]
  */
 libraryDependencies ++=
-  "org.scalacheck"      %% "scalacheck"           % "1.17.0"   % Test ::
+  "org.scalacheck"      %% "scalacheck"           % "1.18.1"   % Test ::
     "org.scalatestplus" %% "scalacheck-1-17"      % "3.2.18.0" % Test ::
     "com.spotify"       %% "magnolify-scalacheck" % "0.7.2"    % Test ::
     Nil
