@@ -125,7 +125,7 @@ libraryDependencies ++=
     Nil
 
 libraryDependencies ++=
-  "dev.zio"   %% "zio-test"          % "2.1-RC1" % Test ::
+  "dev.zio"   %% "zio-test"          % "2.1.11" % Test ::
     "dev.zio" %% "zio-test-sbt"      % "2.1-RC1" % Test ::
     "dev.zio" %% "zio-test-magnolia" % "2.1-RC1" % Test ::
     Nil
