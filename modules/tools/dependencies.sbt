@@ -62,7 +62,7 @@ libraryDependencies +=
  * @see [[https://github.com/zio/zio-logging]]
  */
 libraryDependencies +=
-  "dev.zio" %% "zio-streams" % "2.0.21"
+  "dev.zio" %% "zio-streams" % "2.1.11"
 
 /**
  * Simple logging for ZIO.
