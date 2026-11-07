@@ -10,7 +10,7 @@ libraryDependencies +=
  * @see [[https://github.com/softwaremill/quicklens]]
  */
 libraryDependencies +=
-  "com.softwaremill.quicklens" %% "quicklens" % "1.9.7"
+  "com.softwaremill.quicklens" %% "quicklens" % "1.9.15"
 
 /**
  * ScalaTest bindings for Cats.
